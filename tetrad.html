@@ -1,0 +1,2387 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Электронная тетрадь — Основы SQL</title>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=PT+Sans:wght@400;700&family=PT+Sans+Narrow:wght@400;700&display=swap');
+
+    :root {
+      --cy: #0e7fc2;
+      /* голубой основной */
+      --cy2: #1a9de0;
+      /* чуть светлее */
+      --cy3: #e3f4fc;
+      /* бледно-голубой фон */
+      --cy4: #b8ddf5;
+      /* голубая рамка */
+      --or: #d95f0a;
+      /* оранжевый акцент */
+      --or2: #f07830;
+      --or3: #fff2e8;
+      --or4: #e8884a;
+      --bg: #f3f6fb;
+      --sur: #ffffff;
+      --brd: #cdd5e3;
+      --brd2: #96aac6;
+      --tx: #142240;
+      --tx2: #374e72;
+      --mu: #647898;
+      --gr: #186640;
+      --grl: #e4f2ea;
+      --re: #a81c1c;
+      --rel: #fce8e8;
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'PT Sans', sans-serif;
+      --cond: 'PT Sans Narrow', sans-serif;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html {
+      scroll-behavior: smooth
+    }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--tx);
+      font-size: 15px;
+      line-height: 1.6
+    }
+
+    /* ── ШАПКА ── */
+    .hdr {
+      background: var(--cy);
+      border-bottom: 3px solid var(--or);
+      position: sticky;
+      top: 0;
+      z-index: 300
+    }
+
+    .hdr-in {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 11px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px
+    }
+
+    .hdr-eye {
+      font-family: var(--cond);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: #b8ddf5
+    }
+
+    .hdr-ttl {
+      font-family: var(--cond);
+      font-size: 19px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2
+    }
+
+    .hdr-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .tbtn {
+      font-family: var(--cond);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 13px;
+      border: 1px solid var(--or4);
+      color: var(--or4);
+      background: none;
+      cursor: pointer;
+      transition: .15s;
+      letter-spacing: .04em
+    }
+
+    .tbtn:hover,
+    .tbtn.on {
+      background: var(--or);
+      border-color: var(--or);
+      color: #fff
+    }
+
+    /* ── СУББАР ── */
+    .sub {
+      background: var(--sur);
+      border-bottom: 1px solid var(--brd);
+      position: sticky;
+      top: 58px;
+      z-index: 200
+    }
+
+    .sub-in {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      overflow-x: auto;
+      gap: 0
+    }
+
+    .sub-in::-webkit-scrollbar {
+      height: 0
+    }
+
+    .sn {
+      font-family: var(--cond);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--mu);
+      padding: 9px 14px;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      text-decoration: none;
+      transition: .15s
+    }
+
+    .sn:hover {
+      color: var(--tx);
+      border-bottom-color: var(--brd2)
+    }
+
+    .sn.done {
+      color: var(--gr)
+    }
+
+    .sn.done::before {
+      content: '✓ '
+    }
+
+    /* ── WRAP ── */
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 24px 80px
+    }
+
+    .sec {
+      margin-bottom: 52px
+    }
+
+    /* ── HERO ВВОДА ИМЕНИ ── */
+    .name-hero {
+      background: var(--cy);
+      color: #fff;
+      padding: 28px 32px;
+      margin-bottom: 28px
+    }
+
+    .name-hero-title {
+      font-family: var(--cond);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: #b8ddf5;
+      margin-bottom: 12px
+    }
+
+    .name-row {
+      display: flex;
+      gap: 14px;
+      align-items: flex-end;
+      flex-wrap: wrap
+    }
+
+    .name-field {
+      flex: 1;
+      min-width: 200px
+    }
+
+    .name-field label {
+      display: block;
+      font-family: var(--cond);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+      color: #b8ddf5;
+      margin-bottom: 5px
+    }
+
+    .name-in {
+      width: 100%;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, .15);
+      border: 1px solid rgba(255, 255, 255, .3);
+      color: #fff;
+      font-family: var(--sans);
+      font-size: 16px;
+      font-weight: 700;
+      outline: none;
+      transition: border-color .15s
+    }
+
+    .name-in::placeholder {
+      color: rgba(255, 255, 255, .45);
+      font-weight: 400
+    }
+
+    .name-in:focus {
+      border-color: #fff
+    }
+
+    .name-confirm {
+      display: block;
+      font-family: var(--cond);
+      font-size: 11px;
+      color: #b8ddf5;
+      margin-top: 5px;
+      min-height: 16px
+    }
+
+    /* ── ЗАГОЛОВКИ СЕКЦИЙ ── */
+    .sec-hd {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      border-bottom: 2px solid var(--cy);
+      padding-bottom: 9px;
+      margin-bottom: 20px
+    }
+
+    .sec-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      border: 1px solid var(--or4);
+      color: var(--or);
+      padding: 1px 8px;
+      flex-shrink: 0
+    }
+
+    .sec-name {
+      font-family: var(--cond);
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--cy)
+    }
+
+    .sec-min {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--mu);
+      flex-shrink: 0
+    }
+
+    /* ── ЛОКИ СЕКЦИЙ ── */
+    .sec-body {
+      transition: opacity .3s
+    }
+
+    .sec-locked {
+      position: relative
+    }
+
+    .sec-locked .sec-body {
+      opacity: 0;
+      pointer-events: none;
+      user-select: none;
+      filter: blur(3px)
+    }
+
+    .lock-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(243, 246, 251, .88);
+      z-index: 10;
+      gap: 10px;
+      animation: fadeIn .3s ease
+    }
+
+    .lock-icon {
+      font-size: 36px;
+      color: var(--mu)
+    }
+
+    .lock-text {
+      font-family: var(--cond);
+      font-size: 14px;
+      color: var(--mu);
+      font-weight: 700
+    }
+
+    .unlocking .lock-overlay {
+      animation: unlockAnim .5s ease forwards
+    }
+
+    @keyframes unlockAnim {
+      0% {
+        opacity: 1;
+        transform: scale(1)
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(.95)
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    /* ── КАРТОЧКИ ── */
+    .card {
+      background: var(--sur);
+      border: 1px solid var(--brd);
+      padding: 20px 24px;
+      margin-bottom: 14px
+    }
+
+    .card-cy {
+      border-left: 3px solid var(--cy);
+      background: var(--cy3)
+    }
+
+    .card-or {
+      border-left: 3px solid var(--or);
+      background: var(--or3)
+    }
+
+    .card-nv {
+      background: var(--cy);
+      border: none;
+      color: #c8dcf0
+    }
+
+    .card-gr {
+      border-left: 3px solid var(--gr);
+      background: var(--grl)
+    }
+
+    .ctitle {
+      font-family: var(--cond);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+      color: var(--mu);
+      margin-bottom: 12px
+    }
+
+    .ctitle-or {
+      color: var(--or)
+    }
+
+    .ctitle-cy {
+      color: var(--cy)
+    }
+
+    hr.rule {
+      border: none;
+      border-top: 1px solid var(--brd);
+      margin: 28px 0
+    }
+
+    /* ── ТАБЛИЦА ДАННЫХ ── */
+    .dtbl-wrap {
+      overflow-x: auto
+    }
+
+    .dtbl {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--mono);
+      font-size: 12px
+    }
+
+    .dtbl th {
+      background: var(--cy);
+      color: #c8dcf0;
+      padding: 7px 11px;
+      text-align: left;
+      font-weight: 600;
+      white-space: nowrap
+    }
+
+    .dtbl td {
+      padding: 6px 11px;
+      border-bottom: 1px solid var(--brd);
+      color: var(--tx2)
+    }
+
+    .dtbl tr:hover td {
+      background: var(--cy3)
+    }
+
+    .pk {
+      color: var(--or);
+      font-weight: 600
+    }
+
+    .dup {
+      color: var(--re);
+      font-weight: 600
+    }
+
+    /* ── КОД ── */
+    .code {
+      background: #182035;
+      color: #c8d8f0;
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.85;
+      padding: 15px 18px;
+      overflow-x: auto
+    }
+
+    .kw {
+      color: #7fbbff;
+      font-weight: 600
+    }
+
+    .fn {
+      color: #ffd080
+    }
+
+    .st {
+      color: #9ee89e
+    }
+
+    .nm {
+      color: #ffad7a
+    }
+
+    .cm {
+      color: #4e6890;
+      font-style: italic
+    }
+
+    .tb {
+      color: #ddbbff
+    }
+
+    .code-in {
+      width: 100%;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--tx);
+      background: #f8faff;
+      border: 1px solid var(--brd);
+      border-left: 3px solid var(--cy);
+      padding: 12px 14px;
+      outline: none;
+      resize: vertical;
+      min-height: 52px;
+      transition: border-left-color .15s
+    }
+
+    .code-in:focus {
+      border-left-color: var(--or)
+    }
+
+    /* ── ПОЛЯ ── */
+    textarea,
+    input[type=text] {
+      font-family: var(--sans);
+      font-size: 14px;
+      color: var(--tx);
+      background: #fff;
+      border: 1px solid var(--brd);
+      padding: 9px 12px;
+      outline: none;
+      width: 100%;
+      transition: border-color .15s
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 78px
+    }
+
+    textarea:focus,
+    input[type=text]:focus {
+      border-color: var(--cy)
+    }
+
+    label.lbl {
+      display: block;
+      font-family: var(--cond);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--mu);
+      margin-bottom: 5px
+    }
+
+    /* ── КНОПКИ ── */
+    .btn {
+      font-family: var(--cond);
+      font-weight: 700;
+      font-size: 14px;
+      padding: 8px 18px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: .15s
+    }
+
+    .btn-cy {
+      background: var(--cy);
+      color: #fff
+    }
+
+    .btn-cy:hover {
+      background: var(--cy2)
+    }
+
+    .btn-or {
+      background: var(--or);
+      color: #fff
+    }
+
+    .btn-or:hover {
+      opacity: .86
+    }
+
+    .btn-out {
+      background: none;
+      border: 1px solid var(--brd2);
+      color: var(--tx2)
+    }
+
+    .btn-out:hover {
+      border-color: var(--cy);
+      color: var(--cy)
+    }
+
+    .btn-sm {
+      padding: 5px 11px;
+      font-size: 12px
+    }
+
+    /* ── ГОЛОСОВАНИЕ ── */
+    .vopt {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      border: 1px solid var(--brd);
+      background: var(--sur);
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: border-color .15s;
+      position: relative;
+      overflow: hidden
+    }
+
+    .vopt:hover {
+      border-color: var(--cy2)
+    }
+
+    .vopt.mv {
+      border-color: var(--or);
+      border-left-width: 3px
+    }
+
+    .vopt .vf {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      background: var(--cy3);
+      transition: width .4s ease;
+      pointer-events: none
+    }
+
+    .vopt .vt {
+      flex: 1;
+      font-size: 14px;
+      z-index: 1
+    }
+
+    .vopt .vc {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--mu);
+      z-index: 1;
+      min-width: 44px;
+      text-align: right
+    }
+
+    .vopt .vp {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--or);
+      z-index: 1;
+      min-width: 34px;
+      text-align: right
+    }
+
+    /* ── СТЕНА ── */
+    .wall {
+      min-height: 72px;
+      max-height: 280px;
+      overflow-y: auto;
+      border: 1px solid var(--brd);
+      background: var(--bg);
+      padding: 10px;
+      margin-bottom: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px
+    }
+
+    .wmsg {
+      background: var(--sur);
+      border: 1px solid var(--brd);
+      padding: 8px 11px;
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      animation: slideUp .22s ease
+    }
+
+    .wauth {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--or);
+      white-space: nowrap;
+      flex-shrink: 0
+    }
+
+    .wbody {
+      flex: 1;
+      line-height: 1.4
+    }
+
+    .upbtn {
+      background: none;
+      border: 1px solid var(--brd);
+      cursor: pointer;
+      font-size: 12px;
+      padding: 2px 8px;
+      color: var(--mu);
+      transition: .15s;
+      white-space: nowrap
+    }
+
+    .upbtn:hover {
+      border-color: var(--or);
+      color: var(--or)
+    }
+
+    .upbtn.up {
+      background: var(--or3);
+      border-color: var(--or);
+      color: var(--or)
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(-5px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    /* ── DUOLINGO ── */
+    .duo {
+      border: 1px solid var(--brd);
+      background: var(--sur);
+      padding: 18px 20px;
+      margin-bottom: 14px
+    }
+
+    .duo-q {
+      font-size: 14px;
+      color: var(--tx2);
+      margin-bottom: 14px;
+      padding: 10px 14px;
+      background: var(--cy3);
+      border-left: 3px solid var(--cy)
+    }
+
+    .duo-zone {
+      min-height: 46px;
+      border: 2px dashed var(--brd2);
+      background: #f8faff;
+      padding: 7px 10px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      transition: border-color .2s
+    }
+
+    .duo-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px
+    }
+
+    .tok {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 11px;
+      border: 1px solid var(--brd2);
+      background: var(--sur);
+      cursor: pointer;
+      user-select: none;
+      transition: .12s
+    }
+
+    .tok:hover {
+      background: var(--cy3);
+      border-color: var(--cy)
+    }
+
+    .tok.used {
+      opacity: .3;
+      pointer-events: none
+    }
+
+    .tok.placed {
+      background: var(--cy);
+      color: #fff;
+      border-color: var(--cy);
+      cursor: pointer
+    }
+
+    .tok.placed:hover {
+      background: var(--cy2)
+    }
+
+    .tok.kw-t {
+      border-color: #7aacee
+    }
+
+    .tok.fn-t {
+      border-color: #e8a830
+    }
+
+    .tok.tb-t {
+      border-color: #bb88ee
+    }
+
+    .tok.sy-t {
+      border-color: #60a878
+    }
+
+    .duo-res {
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 8px 12px;
+      margin-top: 8px;
+      display: none
+    }
+
+    .duo-res.ok {
+      background: var(--grl);
+      border-left: 3px solid var(--gr);
+      color: var(--gr);
+      display: block
+    }
+
+    .duo-res.er {
+      background: var(--rel);
+      border-left: 3px solid var(--re);
+      color: var(--re);
+      display: block
+    }
+
+    /* Таблица результата Duolingo */
+    .duo-table {
+      margin-top: 10px;
+      border: 1px solid var(--brd);
+      display: none
+    }
+
+    .duo-table.show {
+      display: block;
+      animation: slideUp .3s ease
+    }
+
+    .duo-table table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--mono);
+      font-size: 11px
+    }
+
+    .duo-table th {
+      background: var(--cy);
+      color: #c8dcf0;
+      padding: 5px 10px;
+      text-align: left
+    }
+
+    .duo-table td {
+      padding: 5px 10px;
+      border-bottom: 1px solid var(--brd);
+      color: var(--tx2)
+    }
+
+    /* ── ГОСТ МАТЧ ── */
+    .mc {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px
+    }
+
+    .mch {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--mu);
+      padding: 3px 0 8px
+    }
+
+    .mi {
+      padding: 10px 13px;
+      border: 1px solid var(--brd);
+      background: var(--sur);
+      cursor: pointer;
+      font-size: 13px;
+      line-height: 1.4;
+      transition: .13s;
+      margin-bottom: 7px
+    }
+
+    .mi:hover {
+      border-color: var(--cy);
+      background: var(--cy3)
+    }
+
+    .mi.sel {
+      border-color: var(--or);
+      background: var(--or3)
+    }
+
+    .mi.ok {
+      border-color: var(--gr);
+      background: var(--grl);
+      cursor: default
+    }
+
+    .mi.er {
+      border-color: var(--re);
+      background: var(--rel);
+      animation: shake .3s
+    }
+
+    .mi-kw {
+      font-family: var(--mono);
+      font-weight: 600;
+      color: var(--cy)
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0)
+      }
+
+      25% {
+        transform: translateX(-5px)
+      }
+
+      75% {
+        transform: translateX(5px)
+      }
+    }
+
+    /* ── INSERT ПАЗЛ ── */
+    .ins-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px
+    }
+
+    .ins-f {
+      width: 100%;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--tx);
+      padding: 7px 10px;
+      border: 1px solid var(--brd);
+      border-bottom: 2px solid var(--or4);
+      background: var(--or3);
+      outline: none;
+      transition: border-bottom-color .15s
+    }
+
+    .ins-f:focus {
+      border-bottom-color: var(--cy)
+    }
+
+    .ins-f.ok {
+      border-bottom-color: var(--gr);
+      background: var(--grl)
+    }
+
+    .ins-f.er {
+      border-bottom-color: var(--re);
+      background: var(--rel)
+    }
+
+    /* ── САМООЦЕНКА ── */
+    .chl {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 13px;
+      border-bottom: 1px solid var(--brd);
+      font-size: 14px
+    }
+
+    .chb {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      border: 2px solid var(--brd2);
+      background: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      transition: .13s
+    }
+
+    .chb.on {
+      border-color: var(--gr);
+      background: var(--gr);
+      color: #fff
+    }
+
+    .gbox-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      flex-wrap: wrap
+    }
+
+    .gbox {
+      border: 1px solid var(--brd);
+      padding: 12px 20px;
+      text-align: center;
+      min-width: 80px
+    }
+
+    .gnum {
+      font-family: var(--mono);
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--tx)
+    }
+
+    .glbl {
+      font-size: 11px;
+      color: var(--mu)
+    }
+
+    .gbox.hl {
+      border: 2px solid var(--or)
+    }
+
+    .gbox.hl .gnum {
+      color: var(--or)
+    }
+
+    /* ── ПОПС ── */
+    .pg {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px
+    }
+
+    .pc {
+      position: relative
+    }
+
+    .pb {
+      position: absolute;
+      top: 6px;
+      right: 10px;
+      font-family: var(--mono);
+      font-size: 38px;
+      font-weight: 600;
+      color: var(--cy);
+      opacity: .07;
+      pointer-events: none;
+      line-height: 1
+    }
+
+    .pl {
+      font-family: var(--cond);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--or);
+      margin-bottom: 5px
+    }
+
+    /* ── МАРШРУТ ── */
+    .rtbl {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px
+    }
+
+    .rtbl th {
+      background: var(--cy);
+      color: #c8dcf0;
+      padding: 7px 12px;
+      text-align: left;
+      font-family: var(--cond);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em
+    }
+
+    .rtbl td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--brd);
+      vertical-align: top
+    }
+
+    .rtbl tr.dn td {
+      opacity: .5;
+      text-decoration: line-through
+    }
+
+    .tm {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--mu)
+    }
+
+    .pt {
+      height: 5px;
+      background: var(--brd);
+      margin-top: 14px
+    }
+
+    .pf {
+      height: 100%;
+      background: var(--or);
+      transition: width .35s ease
+    }
+
+    /* ── ИНФОБОКСЫ ── */
+    .info {
+      border-left: 3px solid var(--cy);
+      background: var(--cy3);
+      padding: 11px 15px;
+      font-size: 13px;
+      color: var(--tx2);
+      margin: 10px 0
+    }
+
+    .warn {
+      border-left: 3px solid var(--or);
+      background: var(--or3);
+      padding: 11px 15px;
+      font-size: 13px;
+      color: var(--tx2);
+      margin: 10px 0
+    }
+
+    /* ── АНИМАЦИИ ПРАЗДНИКА ── */
+    .confetti-wrap {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 9999;
+      overflow: hidden
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      top: -10px;
+      border-radius: 2px;
+      animation: confFall linear forwards
+    }
+
+    @keyframes confFall {
+      to {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 0
+      }
+    }
+
+    /* ── QR ── */
+    .qr-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px
+    }
+
+    .qr-svg {
+      border: 2px solid var(--cy);
+      padding: 8px;
+      background: #fff;
+      display: block
+    }
+
+    .qr-link {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--cy);
+      text-decoration: none;
+      word-break: break-all
+    }
+
+    .qr-link:hover {
+      text-decoration: underline
+    }
+
+    /* ── ТАЙМЕР ── */
+    .timer {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--cy);
+      color: #fff;
+      border-bottom: 3px solid var(--or);
+      padding: 9px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 400;
+      font-family: var(--mono);
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(14, 127, 194, .3)
+    }
+
+    .tbtn2 {
+      background: none;
+      border: none;
+      color: var(--or4);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 0
+    }
+
+    /* ── ПАНЕЛЬ ПРЕПОДАВАТЕЛЯ ── */
+    #tp {
+      display: none;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 360px;
+      background: #0d1e38;
+      color: #fff;
+      z-index: 500;
+      overflow-y: auto;
+      border-left: 3px solid var(--or);
+      padding: 20px
+    }
+
+    #tp.open {
+      display: block
+    }
+
+    .tp-ttl {
+      font-family: var(--cond);
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, .12);
+      display: flex;
+      justify-content: space-between;
+      align-items: center
+    }
+
+    .tp-x {
+      background: none;
+      border: none;
+      color: #7a9acc;
+      cursor: pointer;
+      font-size: 17px
+    }
+
+    .tp-sec {
+      margin-bottom: 18px
+    }
+
+    .tp-stl {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--or4);
+      margin-bottom: 9px
+    }
+
+    .tp-row {
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid rgba(255, 255, 255, .09);
+      padding: 7px 11px;
+      margin-bottom: 5px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px
+    }
+
+    .tp-au {
+      color: var(--or4);
+      font-family: var(--mono);
+      font-size: 10px;
+      flex-shrink: 0
+    }
+
+    .tp-bd {
+      color: #c8d8f0;
+      line-height: 1.35
+    }
+
+    .tp-vb {
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid rgba(255, 255, 255, .09);
+      padding: 9px 11px;
+      margin-bottom: 5px
+    }
+
+    .tp-vf {
+      height: 4px;
+      background: var(--or);
+      margin-top: 4px;
+      transition: width .4s
+    }
+
+    .tp-st {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      padding: 3px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .06)
+    }
+
+    .tp-nm {
+      font-family: var(--mono);
+      color: var(--or4)
+    }
+
+    /* ── УПРАВЛЕНИЕ РАЗДЕЛАМИ (в панели) ── */
+    .sec-ctrl {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border: 1px solid rgba(255, 255, 255, .1);
+      margin-bottom: 6px;
+      background: rgba(255, 255, 255, .04)
+    }
+
+    .sc-name {
+      font-size: 12px;
+      color: #c8d8f0
+    }
+
+    .sc-btn {
+      font-family: var(--cond);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border: none;
+      cursor: pointer;
+      transition: .15s
+    }
+
+    .sc-btn.locked {
+      background: rgba(255, 255, 255, .1);
+      color: #7a9acc
+    }
+
+    .sc-btn.unlocked {
+      background: var(--cy);
+      color: #fff
+    }
+
+    .sc-btn:hover {
+      opacity: .8
+    }
+
+    /* ── СЕТКИ ── */
+    .g2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px
+    }
+
+    .mt8 {
+      margin-top: 8px
+    }
+
+    .mt12 {
+      margin-top: 12px
+    }
+
+    .mt16 {
+      margin-top: 16px
+    }
+
+    .mb12 {
+      margin-bottom: 12px
+    }
+
+    @media(max-width:640px) {
+
+      .g2,
+      .pg,
+      .mc,
+      .ins-grid {
+        grid-template-columns: 1fr
+      }
+
+      .wrap {
+        padding: 20px 14px 80px
+      }
+
+      #tp {
+        width: 100%
+      }
+
+      .name-row {
+        flex-direction: column
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══ ШАПКА ══ -->
+  <header class="hdr">
+    <div class="hdr-in">
+      <div>
+        <div class="hdr-eye">УП.02 · 09.01.03 · Комбинированный урок</div>
+        <div class="hdr-ttl">Электронная тетрадь — Основы SQL</div>
+      </div>
+      <div class="hdr-right">
+        <button class="tbtn" id="tBtn" onclick="toggleTeacher()">⚙ Преподаватель</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══ СУББАР ══ -->
+  <nav class="sub">
+    <div class="sub-in">
+      <a class="sn" href="#s0">Маршрут</a>
+      <a class="sn" href="#s1">Целеполагание</a>
+      <a class="sn" href="#s2">Повторение</a>
+      <a class="sn" href="#s3">Демонстрация</a>
+      <a class="sn" href="#s4">Практика</a>
+      <a class="sn" href="#s5">Оценивание</a>
+      <a class="sn" href="#s6">Рефлексия</a>
+    </div>
+  </nav>
+
+  <!-- ══ КОНТЕНТ ══ -->
+  <main class="wrap">
+
+    <!-- HERO: ввод имени -->
+    <div class="name-hero">
+      <div class="name-hero-title">Представьтесь, чтобы начать</div>
+      <div class="name-row">
+        <div class="name-field">
+          <label>Фамилия Имя Отчество</label>
+          <input class="name-in" id="nameIn" placeholder="Иванов Иван Иванович" maxlength="60"
+            oninput="setName(this.value)">
+          <span class="name-confirm" id="nameConfirm"></span>
+        </div>
+        <div class="name-field" style="max-width:200px">
+          <label>Группа</label>
+          <input class="name-in" id="grpIn" placeholder="ИТ-241" maxlength="20" oninput="setGrp(this.value)"
+            style="font-size:15px;font-weight:400">
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 00 МАРШРУТ ── -->
+    <section class="sec" id="s0">
+      <div class="sec-hd">
+        <span class="sec-tag">00</span>
+        <span class="sec-name">Маршрутная карта</span>
+        <span class="sec-min">45 мин</span>
+      </div>
+      <div class="card">
+        <table class="rtbl" id="rtbl">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Этап</th>
+              <th>Содержание</th>
+              <th>Мин.</th>
+              <th>✓</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="rr0">
+              <td>1</td>
+              <td>Подготовка</td>
+              <td>Приветствие, знакомство, ТБ, рабочее место</td>
+              <td class="tm">3</td>
+              <td><button class="chb" onclick="toggleRoute(0,this)"></button></td>
+            </tr>
+            <tr id="rr1">
+              <td>2</td>
+              <td>Целеполагание</td>
+              <td>Брейншторм — тема и цель занятия</td>
+              <td class="tm">5</td>
+              <td><button class="chb" onclick="toggleRoute(1,this)"></button></td>
+            </tr>
+            <tr id="rr2">
+              <td>3</td>
+              <td>Повторение</td>
+              <td>ГОСТ-термины + SQL Duolingo</td>
+              <td class="tm">10</td>
+              <td><button class="chb" onclick="toggleRoute(2,this)"></button></td>
+            </tr>
+            <tr id="rr3">
+              <td>4</td>
+              <td>Демонстрация</td>
+              <td>Мастер-класс: SELECT-запросы в SQLiteOnline</td>
+              <td class="tm">6</td>
+              <td><button class="chb" onclick="toggleRoute(3,this)"></button></td>
+            </tr>
+            <tr id="rr4">
+              <td>5</td>
+              <td>Физкульт</td>
+              <td>«Три SQL-слова» — называем по кругу</td>
+              <td class="tm">2</td>
+              <td><button class="chb" onclick="toggleRoute(4,this)"></button></td>
+            </tr>
+            <tr id="rr5">
+              <td>6</td>
+              <td>Практика</td>
+              <td>INSERT-пазл + 6 SELECT-заданий</td>
+              <td class="tm">15</td>
+              <td><button class="chb" onclick="toggleRoute(5,this)"></button></td>
+            </tr>
+            <tr id="rr6">
+              <td>7</td>
+              <td>Оценивание</td>
+              <td>Сверка с эталоном, самооценка</td>
+              <td class="tm">5</td>
+              <td><button class="chb" onclick="toggleRoute(6,this)"></button></td>
+            </tr>
+            <tr id="rr7">
+              <td>8</td>
+              <td>ДЗ</td>
+              <td>Домашнее задание по SQL</td>
+              <td class="tm">2</td>
+              <td><button class="chb" onclick="toggleRoute(7,this)"></button></td>
+            </tr>
+            <tr id="rr8">
+              <td>9</td>
+              <td>Рефлексия</td>
+              <td>П-О-П-С эссе</td>
+              <td class="tm">3</td>
+              <td><button class="chb" onclick="toggleRoute(8,this)"></button></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pt">
+          <div class="pf" id="rProg" style="width:0%"></div>
+        </div>
+      </div>
+    </section>
+    <hr class="rule">
+
+    <!-- ── 01 ЦЕЛЕПОЛАГАНИЕ ── -->
+    <section class="sec sec-locked" id="s1" data-sec="1">
+      <div class="sec-hd">
+        <span class="sec-tag">01</span>
+        <span class="sec-name">Целеполагание</span>
+        <span class="sec-min">5 мин</span>
+      </div>
+      <div class="sec-body">
+
+        <!-- Мотивирующий вопрос без таблицы аномалий -->
+        <div class="card card-cy">
+          <div class="ctitle ctitle-cy">AHA-момент — что общего у этих систем?</div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
+            <div style="flex:1;min-width:200px">
+              <p style="font-size:14px;color:var(--tx2);line-height:1.7">
+                Банковское приложение, ВКонтакте, система записи в поликлинику, интернет-магазин —<br>
+                все они хранят данные и позволяют быстро их найти.<br><br>
+                <strong>Как именно они это делают? Каким языком «разговаривают» с базой данных?</strong>
+              </p>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <div
+                style="background:var(--cy);color:#fff;padding:10px 16px;font-family:var(--cond);font-size:13px;font-weight:700;text-align:center;min-width:80px">
+                ВКонтакте<br><span style="font-size:10px;opacity:.7">~100 млн записей</span></div>
+              <div
+                style="background:var(--or);color:#fff;padding:10px 16px;font-family:var(--cond);font-size:13px;font-weight:700;text-align:center;min-width:80px">
+                Сбербанк<br><span style="font-size:10px;opacity:.7">~180 млн клиентов</span></div>
+              <div
+                style="background:#186640;color:#fff;padding:10px 16px;font-family:var(--cond);font-size:13px;font-weight:700;text-align:center;min-width:80px">
+                Поликлиника<br><span style="font-size:10px;opacity:.7">база пациентов</span></div>
+            </div>
+          </div>
+          <textarea id="ahaA" placeholder="Что их объединяет? Напишите свою версию…" style="margin-top:4px"></textarea>
+        </div>
+
+        <!-- Брейншторм темы -->
+        <div class="card">
+          <div class="ctitle">Предложите формулировку темы занятия</div>
+          <p style="font-size:13px;color:var(--tx2);margin-bottom:11px">Как называется язык, с помощью которого
+            программы обращаются к базам данных? Что мы сегодня изучаем? Напишите вариант — и проголосуйте за чужие.</p>
+          <div class="wall" id="topicWall">
+            <div style="color:var(--mu);font-size:13px">Пока нет предложений — будьте первым…</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <input type="text" id="topicIn" placeholder="Ваш вариант темы…" style="flex:1"
+              onkeydown="if(event.key==='Enter')submitTopic()">
+            <button class="btn btn-or" onclick="submitTopic()">Отправить</button>
+          </div>
+        </div>
+
+        <!-- Голосование -->
+        <div class="card">
+          <div class="ctitle">Что важнее освоить сегодня? — проголосуйте</div>
+          <div id="voteBox">
+            <div class="vopt" onclick="castVote(0)">
+              <div class="vf" style="width:0%"></div><span class="vt">Писать SELECT-запросы и получать нужные
+                данные</span><span class="vc" id="vc0">0</span><span class="vp" id="vp0">0%</span>
+            </div>
+            <div class="vopt" onclick="castVote(1)">
+              <div class="vf" style="width:0%"></div><span class="vt">Фильтровать данные через WHERE</span><span
+                class="vc" id="vc1">0</span><span class="vp" id="vp1">0%</span>
+            </div>
+            <div class="vopt" onclick="castVote(2)">
+              <div class="vf" style="width:0%"></div><span class="vt">Добавлять данные в базу через INSERT
+                INTO</span><span class="vc" id="vc2">0</span><span class="vp" id="vp2">0%</span>
+            </div>
+            <div class="vopt" onclick="castVote(3)">
+              <div class="vf" style="width:0%"></div><span class="vt">Считать итоги: COUNT, AVG, SUM, GROUP
+                BY</span><span class="vc" id="vc3">0</span><span class="vp" id="vp3">0%</span>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--mu);margin-top:8px">Голоса отображаются в панели преподавателя в реальном
+            времени.</p>
+        </div>
+
+        <!-- Итог -->
+        <div class="card">
+          <div class="ctitle">Запишите итоговые формулировки</div>
+          <div class="g2 mb12">
+            <div><label class="lbl">Тема</label><input type="text" id="fTop" placeholder="Основы SQL: …"></div>
+            <div><label class="lbl">Цель</label><input type="text" id="fGoal" placeholder="Сформировать умение…"></div>
+          </div>
+          <label class="lbl">Задачи (не менее 3)</label>
+          <textarea id="fTasks" placeholder="1. …&#10;2. …&#10;3. …"></textarea>
+        </div>
+      </div><!-- /sec-body -->
+    </section>
+    <hr class="rule">
+
+    <!-- ── 02 ПОВТОРЕНИЕ ── -->
+    <section class="sec sec-locked" id="s2" data-sec="2">
+      <div class="sec-hd">
+        <span class="sec-tag">02</span>
+        <span class="sec-name">Повторение</span>
+        <span class="sec-min">10 мин</span>
+      </div>
+      <div class="sec-body">
+
+        <div class="card">
+          <div class="ctitle ctitle-or">Термины и определения — нажмите термин, затем его определение</div>
+          <p style="font-size:13px;color:var(--tx2);margin-bottom:13px">После — обсудим: зачем знать эталонные
+            определения, а не просто «своими словами»?</p>
+          <div class="mc">
+            <div>
+              <div class="mch">Термин</div>
+              <div id="mT"></div>
+            </div>
+            <div>
+              <div class="mch">Определение</div>
+              <div id="mD"></div>
+            </div>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:10px;align-items:center">
+            <button class="btn btn-out btn-sm" onclick="resetMatch()">↺ Сбросить</button>
+            <span id="mSt" style="font-size:13px;color:var(--mu)">Совпадений: 0 / 6</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="ctitle ctitle-or">SQL-конструктор — соберите запрос из блоков</div>
+          <p style="font-size:13px;color:var(--tx2);margin-bottom:13px">Нажимайте блоки в правильном порядке. Лишние —
+            для запутывания. После проверки увидите «результат» запроса.</p>
+          <div id="duoWrap"></div>
+        </div>
+
+        <div class="card">
+          <div class="ctitle">Объясни соседу устно — потом запиши главное</div>
+          <p style="font-size:14px;color:var(--tx2);margin-bottom:8px">Чем <strong>SELECT</strong> отличается от
+            <strong>INSERT</strong>?
+          </p>
+          <textarea id="explainN" placeholder="SELECT — это…, а INSERT — это… Главное отличие…"></textarea>
+        </div>
+      </div>
+    </section>
+    <hr class="rule">
+
+    <!-- ── 03 ДЕМОНСТРАЦИЯ ── -->
+    <section class="sec sec-locked" id="s3" data-sec="3">
+      <div class="sec-hd">
+        <span class="sec-tag">03</span>
+        <span class="sec-name">Демонстрация — мастер-класс</span>
+        <span class="sec-min">6 мин</span>
+      </div>
+      <div class="sec-body">
+
+        <div class="card card-cy">
+          <div class="ctitle ctitle-cy">Инструмент занятия — SQLiteOnline</div>
+          <p style="font-size:14px;color:var(--tx2);margin-bottom:14px">
+            Преподаватель показывает работу в браузере. Откройте на своём компьютере и следите вместе:
+          </p>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <a href="https://sqliteonline.com" target="_blank" class="btn btn-cy">Открыть SQLiteOnline →</a>
+            <span style="font-size:13px;color:var(--mu)">Нажмите кнопку — откроется в новой вкладке</span>
+          </div>
+          <div class="info mt12">
+            <strong>Как загрузить файл:</strong> SQLiteOnline → File → Open DB → выбрать <code
+              style="font-family:var(--mono)">priemy.db</code>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="ctitle">Синтаксис SELECT — запишите схему</div>
+          <div class="code">
+            <span class="kw">SELECT</span> <span class="cm">-- что выбрать: конкретные столбцы или * (все)</span>
+            <span class="kw">FROM</span> <span class="cm">-- откуда: имя таблицы</span>
+            <span class="kw">WHERE</span> <span class="cm">-- условие фильтрации (необязательно)</span>
+            <span class="kw">ORDER BY</span> <span class="cm">-- сортировка ASC / DESC (необязательно)</span><span
+              class="cm">;</span>
+          </div>
+          <label class="lbl mt12">Ваши заметки с демонстрации</label>
+          <textarea id="demoNotes"
+            placeholder="Что показывал преподаватель? Что было неожиданным? Что запомнилось?"></textarea>
+        </div>
+
+        <!-- Угадай результат -->
+        <div class="card">
+          <div class="ctitle ctitle-or">Угадайте результат — запишите прогноз ДО показа</div>
+          <div class="mb12">
+            <div class="code"><span class="kw">SELECT</span> <span class="fn">COUNT</span>(*) <span
+                class="kw">FROM</span> <span class="tb">Priemy</span>;</div>
+            <label class="lbl mt8">Прогноз</label>
+            <input type="text" id="g1" placeholder="Этот запрос вернёт…">
+          </div>
+          <div class="mb12">
+            <div class="code"><span class="kw">SELECT DISTINCT</span> FIO_vracha <span class="kw">FROM</span> <span
+                class="tb">Priemy</span>;</div>
+            <label class="lbl mt8">Прогноз</label>
+            <input type="text" id="g2" placeholder="Этот запрос вернёт…">
+          </div>
+          <div>
+            <div class="code"><span class="kw">SELECT</span> * <span class="kw">FROM</span> <span
+                class="tb">Priemy</span> <span class="kw">WHERE</span> Tsena &gt; <span class="nm">1000</span> <span
+                class="kw">ORDER BY</span> Tsena <span class="kw">DESC</span>;</div>
+            <label class="lbl mt8">Прогноз</label>
+            <input type="text" id="g3" placeholder="Этот запрос вернёт…">
+          </div>
+        </div>
+
+        <!-- Вопросы -->
+        <div class="card">
+          <div class="ctitle">Вопросы преподавателю</div>
+          <div class="wall" id="qWall">
+            <div style="color:var(--mu);font-size:13px">Вопросов пока нет…</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <input type="text" id="qIn" placeholder="Что непонятно?" style="flex:1"
+              onkeydown="if(event.key==='Enter')submitQ()">
+            <button class="btn btn-cy" onclick="submitQ()">Задать</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <hr class="rule">
+
+    <!-- ── 04 ПРАКТИКА ── -->
+    <section class="sec sec-locked" id="s4" data-sec="4">
+      <div class="sec-hd">
+        <span class="sec-tag">04</span>
+        <span class="sec-name">Практическая работа</span>
+        <span class="sec-min">15 мин</span>
+      </div>
+      <div class="sec-body">
+        <div class="info">Используйте <strong>sqliteonline.com</strong> и файл <strong>priemy.db</strong>. Выполняйте
+          задания по порядку.</div>
+
+        <!-- INSERT пазл -->
+        <div class="card mt12">
+          <div class="ctitle">Задание 1 <span style="color:var(--or)">[+1 б.]</span> — INSERT INTO: заполните значения
+          </div>
+          <p style="font-size:13px;color:var(--tx2);margin-bottom:13px">Нужно добавить нового пациента. Впишите
+            правильные значения в каждое поле.<br>
+            Данные: <strong>Нилов Андрей · +79221009090 · Петрова А.И. · Терапевт · Консультация · 700 · кабинет
+              101</strong></p>
+          <div class="code mb12">
+            <span class="kw">INSERT INTO</span> <span class="tb">Priemy</span> (FIO_pacienta, Telefon, FIO_vracha, Spec,
+            Usluga, Tsena, Cabinet)<br>
+            <span class="kw">VALUES</span> (<span class="st">'?'</span>, <span class="st">'?'</span>, <span
+              class="st">'?'</span>, <span class="st">'?'</span>, <span class="st">'?'</span>, <span
+              class="nm">?</span>, <span class="st">'?'</span>);
+          </div>
+          <div class="ins-grid">
+            <div><label class="lbl">FIO_pacienta (текст — в кавычках)</label><input class="ins-f" id="i0"
+                placeholder="'Нилов Андрей'"></div>
+            <div><label class="lbl">Telefon (текст)</label><input class="ins-f" id="i1" placeholder="'+79221009090'">
+            </div>
+            <div><label class="lbl">FIO_vracha (текст)</label><input class="ins-f" id="i2" placeholder="'Петрова А.И.'">
+            </div>
+            <div><label class="lbl">Spec (текст)</label><input class="ins-f" id="i3" placeholder="'Терапевт'"></div>
+            <div><label class="lbl">Usluga (текст)</label><input class="ins-f" id="i4" placeholder="'Консультация'">
+            </div>
+            <div><label class="lbl">Tsena (число, без кавычек)</label><input class="ins-f" id="i5" placeholder="700">
+            </div>
+            <div><label class="lbl">Cabinet (текст)</label><input class="ins-f" id="i6" placeholder="'101'"></div>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <button class="btn btn-or" onclick="checkInsert()">Проверить</button>
+            <span id="insRes" style="font-size:13px"></span>
+          </div>
+          <div class="code" id="insPrev" style="margin-top:12px;font-size:12px;display:none"></div>
+        </div>
+
+        <div id="selWrap"></div>
+      </div>
+    </section>
+    <hr class="rule">
+
+    <!-- ── 05 ОЦЕНИВАНИЕ ── -->
+    <section class="sec sec-locked" id="s5" data-sec="5">
+      <div class="sec-hd">
+        <span class="sec-tag">05</span>
+        <span class="sec-name">Формирующее оценивание</span>
+        <span class="sec-min">5 мин</span>
+      </div>
+      <div class="sec-body">
+        <div class="card">
+          <div class="ctitle">Сверьтесь с эталоном — отметьте выполненное</div>
+          <p style="font-size:13px;color:var(--mu);margin-bottom:13px">Эталон на экране преподавателя. 1 задание = 1
+            балл.</p>
+          <div id="assessList"></div>
+          <div class="gbox-row">
+            <div class="gbox">
+              <div class="gnum" id="scoreN">0</div>
+              <div class="glbl">баллов из 7</div>
+            </div>
+            <div class="gbox hl">
+              <div class="gnum" id="gradeN">—</div>
+              <div class="glbl">оценка</div>
+            </div>
+          </div>
+          <div class="info mt12"><strong>Шкала:</strong> 7–6 б. → «5» &nbsp;|&nbsp; 5 б. → «4» &nbsp;|&nbsp; 4–3 б. →
+            «3» &nbsp;|&nbsp; &lt;3 б. → «2»</div>
+        </div>
+        <div class="card">
+          <div class="ctitle">Рефлексия на занятие</div>
+          <div class="g2">
+            <div><label class="lbl">Что было труднее всего?</label><textarea id="hard"
+                placeholder="Труднее всего мне дался…"></textarea></div>
+            <div><label class="lbl">Что пригодится в профессии?</label><textarea id="take"
+                placeholder="В работе оператора ИС пригодится…"></textarea></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <hr class="rule">
+
+    <!-- ── 06 РЕФЛЕКСИЯ ── -->
+    <section class="sec sec-locked" id="s6" data-sec="6">
+      <div class="sec-hd">
+        <span class="sec-tag">06</span>
+        <span class="sec-name">Рефлексия — П-О-П-С</span>
+        <span class="sec-min">3 мин</span>
+      </div>
+      <div class="sec-body">
+        <div class="card">
+          <div class="ctitle">Тема эссе: «SQL нужен оператору ИС, потому что…»</div>
+          <p style="font-size:13px;color:var(--mu);margin-bottom:15px">Минимум одно предложение в каждом поле. После —
+            проверьте через Алису или GigaChat.</p>
+          <div class="pg">
+            <div class="pc">
+              <div class="pb">П</div>
+              <div class="pl">П — Позиция: «Я полагаю, что…»</div><textarea id="pP"
+                placeholder="Я полагаю, что SQL необходим специалисту…"></textarea>
+            </div>
+            <div class="pc">
+              <div class="pb">О</div>
+              <div class="pl">О — Обоснование: «Потому что…»</div><textarea id="pO"
+                placeholder="Потому что без SQL невозможно…"></textarea>
+            </div>
+            <div class="pc">
+              <div class="pb">П</div>
+              <div class="pl">П — Пример: «Например…»</div><textarea id="pPr"
+                placeholder="Например, когда регистратор ищет данные пациента…"></textarea>
+            </div>
+            <div class="pc">
+              <div class="pb">С</div>
+              <div class="pl">С — Следствие: «Таким образом…»</div><textarea id="pS"
+                placeholder="Таким образом, владение SQL позволяет…"></textarea>
+            </div>
+          </div>
+          <div class="warn mt16">
+            <strong>Проверьте через нейросеть:</strong> скопируйте эссе и попросите
+            <a href="https://ya.ru/ai/alice" target="_blank" style="color:var(--cy)">Алису</a> или
+            <a href="https://gigachat.ru" target="_blank" style="color:var(--cy)">GigaChat</a>
+            оценить его по формуле ПОПС и дать обратную связь.
+          </div>
+        </div>
+
+        <!-- ДЗ с QR -->
+        <div class="card">
+          <div class="ctitle ctitle-or">Домашнее задание</div>
+          <p style="font-size:14px;color:var(--tx2);line-height:1.7;margin-bottom:16px">
+            Зайдите на <strong>sqliteonline.com</strong>. Используйте ту же базу <strong>priemy.db</strong>.<br>
+            Выполните <strong>5 заданий по SQL</strong>: напишите запросы и сохраните результаты скриншотами.
+          </p>
+          <div class="g2" style="gap:20px;align-items:start">
+            <div>
+              <ol style="font-size:14px;color:var(--tx2);line-height:2;padding-left:20px">
+                <li>Выведите всех пациентов, которых принял врач <em>Сидоров В.П.</em></li>
+                <li>Найдите все услуги дешевле 1000 рублей, отсортируйте по цене</li>
+                <li>Подсчитайте, сколько раз каждый пациент приходил на приём (GROUP BY)</li>
+                <li>Найдите самую дорогую услугу (MAX)</li>
+                <li>Выведите уникальные специальности врачей (DISTINCT)</li>
+              </ol>
+            </div>
+            <div>
+              <div class="ctitle mb-4">QR — инструкция и база данных</div>
+              <div class="qr-wrap">
+                <svg class="qr-svg" id="qrSvg" width="140" height="140"></svg>
+                <a class="qr-link" href="https://sqliteonline.com" target="_blank" id="qrLink">sqliteonline.com</a>
+                <p style="font-size:12px;color:var(--mu)">Файл priemy.db получите у преподавателя</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══ ТАЙМЕР ══ -->
+  <div class="timer">
+    <span id="timerD">45:00</span>
+    <button class="tbtn2" id="timerBtn" onclick="toggleTimer()">▶</button>
+  </div>
+
+  <!-- ══ КОНФЕТТИ ══ -->
+  <div class="confetti-wrap" id="confWrap"></div>
+
+  <!-- ══ ПАНЕЛЬ ПРЕПОДАВАТЕЛЯ ══ -->
+  <div id="tp">
+    <div class="tp-ttl">
+      Панель преподавателя
+      <button class="tp-x" onclick="toggleTeacher()">✕</button>
+    </div>
+
+    <!-- Управление разделами -->
+    <div class="tp-sec">
+      <div class="tp-stl">Управление разделами</div>
+      <div id="secControls"></div>
+    </div>
+
+    <div class="tp-sec">
+      <div class="tp-stl">Онлайн</div>
+      <div class="tp-st"><span>Устройств</span><span class="tp-nm" id="tpOnline">0</span></div>
+      <div class="tp-st"><span>С именем</span><span class="tp-nm" id="tpNamed">0</span></div>
+    </div>
+
+    <div class="tp-sec">
+      <div class="tp-stl">Голосование — цели</div>
+      <div id="tpV"></div>
+    </div>
+
+    <div class="tp-sec">
+      <div class="tp-stl">Варианты темы</div>
+      <div id="tpT"></div>
+    </div>
+
+    <div class="tp-sec">
+      <div class="tp-stl">Вопросы студентов</div>
+      <div id="tpQ"></div>
+    </div>
+
+    <div class="tp-sec">
+      <div class="tp-stl">Самооценка</div>
+      <div id="tpSc"></div>
+    </div>
+  </div>
+
+  <!-- ══ СКРИПТЫ ══ -->
+  <script>
+    /* ── FIREBASE CONFIG ─────────────────────────────────────
+       Замените YOUR_... на данные из console.firebase.google.com
+       → Настройки проекта → Ваши приложения → Web               */
+    const FB = {
+      apiKey: "AIzaSyBQD-mSquCzINoLZmGtnNZof-IAZB4VtQ4",
+      authDomain: "realtime-database-a08f7.firebaseapp.com",
+      projectId: "realtime-database-a08f7",
+      storageBucket: "realtime-database-a08f7.firebasestorage.app",
+      messagingSenderId: "739910819698",
+      appId: "1:739910819698:web:5991209d18864b546707eb",
+      measurementId: "G-RQ3223NZMN"
+    };
+
+
+    const PASS = "sql2025";          /* пароль панели — измените */
+    const SESSION = "lesson_" + new Date().toISOString().slice(0, 10);
+    /* ─────────────────────────────────────────────────────── */
+
+    let db = null;
+    let SK = localStorage.getItem("sk") || ("s" + Math.random().toString(36).slice(2, 9));
+    localStorage.setItem("sk", SK);
+
+    try { firebase.initializeApp(FB); db = firebase.database(); initFB(); }
+    catch (e) { /* работаем локально */ }
+
+    function R(p) { return db ? db.ref(SESSION + "/" + p) : null; }
+    function el(id) { return document.getElementById(id); }
+    function ld(k, d) { try { return JSON.parse(localStorage.getItem(k)) || d; } catch { return d; } }
+    function sv(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
+
+    /* ── Firebase ── */
+    function initFB() {
+      if (!db) return;
+      const pr = R("presence/" + SK);
+      pr.set({ t: Date.now(), name: ld("uname", ""), grp: ld("ugrp", "") });
+      pr.onDisconnect().remove();
+      R("votes").on("value", s => { const d = s.val() || {}; renderVotes(d); tpV(d); });
+      R("topics").on("value", s => { const d = s.val() || {}; renderWall("topicWall", d, true); tpTopics(d); });
+      R("questions").on("value", s => { const d = s.val() || {}; renderWall("qWall", d, false); tpQs(d); });
+      R("presence").on("value", s => {
+        const d = s.val() || {}, ks = Object.keys(d);
+        el("tpOnline").textContent = ks.length;
+        el("tpNamed").textContent = ks.filter(k => d[k].name).length;
+      });
+      R("scores").on("value", s => { tpScores(s.val() || {}); });
+      R("secLocks").on("value", s => { applyLocks(s.val() || {}); });
+    }
+
+    /* ── ИМЯ ── */
+    el("nameIn").value = ld("uname", "");
+    el("grpIn").value = ld("ugrp", "");
+    updateNameConfirm();
+
+    function setName(v) {
+      sv("uname", v);
+      updateNameConfirm();
+      if (db) R("presence/" + SK + "/name").set(v);
+    }
+    function setGrp(v) {
+      sv("ugrp", v);
+      if (db) R("presence/" + SK + "/grp").set(v);
+    }
+    function updateNameConfirm() {
+      const n = ld("uname", ""), g = ld("ugrp", "");
+      el("nameConfirm").textContent = n ? "✓ Сохранено" + (g ? " · Группа: " + g : "") : "";
+    }
+
+    /* ── МАРШРУТ ── */
+    let routeDone = ld("route", []);
+    routeDone.forEach(i => {
+      const b = document.querySelector("#rr" + i + " .chb");
+      if (b) { b.classList.add("on"); b.textContent = "✓"; el("rr" + i).classList.add("dn"); }
+    });
+    updateRP();
+    function toggleRoute(i, btn) {
+      btn.classList.toggle("on");
+      btn.textContent = btn.classList.contains("on") ? "✓" : "";
+      el("rr" + i).classList.toggle("dn", btn.classList.contains("on"));
+      const ix = routeDone.indexOf(i);
+      if (btn.classList.contains("on") && ix === -1) routeDone.push(i);
+      else if (!btn.classList.contains("on") && ix !== -1) routeDone.splice(ix, 1);
+      sv("route", routeDone); updateRP();
+    }
+    function updateRP() { el("rProg").style.width = (routeDone.length / 9 * 100) + "%"; }
+
+    /* ── СЕКЦИИ-ЗАМКИ ── */
+    const SEC_NAMES = ["—", "Целеполагание", "Повторение", "Демонстрация", "Практика", "Оценивание", "Рефлексия"];
+    let locksState = {}; // {1:true, 2:true, ...} true = locked
+
+    function buildSecControls() {
+      el("secControls").innerHTML = [1, 2, 3, 4, 5, 6].map(i => `
+    <div class="sec-ctrl">
+      <span class="sc-name">${String(i).padStart(2, "0")} ${SEC_NAMES[i]}</span>
+      <button class="sc-btn locked" id="scBtn${i}" onclick="toggleLock(${i})">🔒 Закрыт</button>
+    </div>`).join("");
+    }
+    buildSecControls();
+
+    function toggleLock(i) {
+      const nowLocked = locksState[i] !== false; // default = locked
+      const newState = !nowLocked;
+      locksState[i] = newState;
+      if (db) { R("secLocks/" + i).set(newState); }
+      else { applyLocks(locksState); }
+    }
+
+    function applyLocks(data) {
+      locksState = data;
+      [1, 2, 3, 4, 5, 6].forEach(i => {
+        const locked = data[i] !== false; // если нет записи — заблокировано
+        const sec = el("s" + i);
+        const btn = el("scBtn" + i);
+        if (!sec) return;
+        if (locked) {
+          if (!sec.classList.contains("sec-locked")) sec.classList.add("sec-locked");
+          addLockOverlay(sec);
+          if (btn) { btn.textContent = "🔒 Закрыт"; btn.className = "sc-btn locked"; }
+        } else {
+          unlockSection(sec);
+          if (btn) { btn.textContent = "🔓 Открыт"; btn.className = "sc-btn unlocked"; }
+        }
+      });
+    }
+
+    function addLockOverlay(sec) {
+      if (sec.querySelector(".lock-overlay")) return;
+      const ov = document.createElement("div");
+      ov.className = "lock-overlay";
+      ov.innerHTML = `<div class="lock-icon">🔒</div><div class="lock-text">Раздел откроет преподаватель</div>`;
+      sec.appendChild(ov);
+    }
+
+    function unlockSection(sec) {
+      const ov = sec.querySelector(".lock-overlay");
+      if (!ov) return;
+      sec.classList.add("unlocking");
+      ov.style.animation = "unlockAnim .45s ease forwards";
+      setTimeout(() => {
+        sec.classList.remove("sec-locked", "unlocking");
+        ov.remove();
+        // Анимация появления контента
+        const body = sec.querySelector(".sec-body");
+        if (body) { body.style.animation = "fadeIn .4s ease"; }
+      }, 460);
+    }
+
+    // Инициализация — все разделы 1–6 заблокированы по умолчанию
+    if (!db) {
+      const initLocks = {};
+      [1, 2, 3, 4, 5, 6].forEach(i => { initLocks[i] = true; });
+      applyLocks(initLocks);
+    }
+
+    /* ── ГОЛОСОВАНИЕ ── */
+    let myVote = localStorage.getItem("myvote");
+    function castVote(idx) {
+      if (myVote !== null) return;
+      myVote = String(idx);
+      localStorage.setItem("myvote", myVote);
+      document.querySelectorAll(".vopt")[idx].classList.add("mv");
+      if (db) { R("votes/" + SK).set(idx); }
+      else { const lv = ld("lv", [0, 0, 0, 0]); lv[idx]++; sv("lv", lv); renderVotesArr(lv); }
+    }
+    function renderVotes(data) {
+      const c = [0, 0, 0, 0]; Object.values(data).forEach(v => { if (c[v] !== undefined) c[v]++; });
+      renderVotesArr(c);
+    }
+    function renderVotesArr(c) {
+      const t = c.reduce((a, b) => a + b, 0) || 1;
+      document.querySelectorAll(".vopt").forEach((o, i) => {
+        const p = Math.round(c[i] / t * 100);
+        o.querySelector(".vf").style.width = p + "%";
+        el("vc" + i).textContent = c[i];
+        el("vp" + i).textContent = p + "%";
+      });
+      if (myVote !== null) document.querySelectorAll(".vopt")[+myVote]?.classList.add("mv");
+    }
+    if (myVote !== null) { document.querySelectorAll(".vopt")[+myVote]?.classList.add("mv"); if (!db) renderVotesArr(ld("lv", [0, 0, 0, 0])); }
+
+    /* ── СТЕНЫ ── */
+    function submitTopic() {
+      const v = el("topicIn").value.trim(); if (!v) return;
+      const name = ld("uname", "") || SK; el("topicIn").value = "";
+      if (db) { R("topics").push({ name, text: v, votes: 0, t: Date.now() }); }
+      else { const l = ld("lt", []); l.push({ key: Date.now(), name, text: v, votes: 0 }); sv("lt", l); renderLocalWall("topicWall", l, true); }
+    }
+    function submitQ() {
+      const v = el("qIn").value.trim(); if (!v) return;
+      const name = ld("uname", "") || SK; el("qIn").value = "";
+      if (db) { R("questions").push({ name, text: v, votes: 0, t: Date.now() }); }
+      else { const l = ld("lq", []); l.push({ key: Date.now(), name, text: v, votes: 0 }); sv("lq", l); renderLocalWall("qWall", l, false); }
+    }
+    function renderWall(wid, data, canVote) {
+      const w = el(wid); const items = Object.entries(data).sort((a, b) => (b[1].votes || 0) - (a[1].votes || 0));
+      if (!items.length) { w.innerHTML = '<div style="color:var(--mu);font-size:13px">Пока нет записей…</div>'; return; }
+      w.innerHTML = items.map(([k, it]) => `
+    <div class="wmsg">
+      <span class="wauth">${it.name || "?"}</span>
+      <span class="wbody">${it.text}</span>
+      ${canVote ? `<button class="upbtn" onclick="upvote('${wid}','${k}',this)">▲ ${it.votes || 0}</button>` : ""}
+    </div>`).join("");
+    }
+    function renderLocalWall(wid, items, canVote) {
+      const w = el(wid);
+      if (!items.length) { w.innerHTML = '<div style="color:var(--mu);font-size:13px">Пока нет записей…</div>'; return; }
+      w.innerHTML = items.map(it => `
+    <div class="wmsg">
+      <span class="wauth">${it.name}</span><span class="wbody">${it.text}</span>
+      ${canVote ? `<button class="upbtn">▲ ${it.votes || 0}</button>` : ""}
+    </div>`).join("");
+    }
+    function upvote(wid, k, btn) {
+      const sk2 = "up_" + wid + "_" + k; if (localStorage.getItem(sk2)) return;
+      localStorage.setItem(sk2, "1"); btn.classList.add("up");
+      if (db) { const p = wid === "topicWall" ? "topics" : "questions"; R(p + "/" + k + "/votes").transaction(v => (v || 0) + 1); }
+    }
+    if (!db) { const lt = ld("lt", []); if (lt.length) renderLocalWall("topicWall", lt, true); const lq = ld("lq", []); if (lq.length) renderLocalWall("qWall", lq, false); }
+
+    /* ── ГОСТ МАТЧ ── */
+    const GOST = [
+      { term: "SELECT", def: "Команда SQL для выборки данных из таблицы" },
+      { term: "INSERT INTO", def: "Команда SQL для добавления новых строк в таблицу" },
+      { term: "WHERE", def: "Ключевое слово для фильтрации строк по условию" },
+      { term: "База данных", def: "Организованное хранилище структурированных данных" },
+      { term: "Первичный ключ", def: "Атрибут, однозначно идентифицирующий каждую запись" },
+      { term: "Запись", def: "Строка таблицы — данные об одном объекте предметной области" },
+    ];
+    let mSel = null, mScore = 0, mDone = [];
+    function initMatch() {
+      mSel = null; mScore = 0; mDone = [];
+      const sd = [...GOST].sort(() => Math.random() - .5);
+      el("mT").innerHTML = GOST.map((d, i) => `<div class="mi" id="mt${i}" onclick="selT(${i})"><span class="mi-kw">${d.term}</span></div>`).join("");
+      el("mD").innerHTML = sd.map(d => {
+        const oi = GOST.findIndex(x => x.def === d.def);
+        return `<div class="mi" id="md${oi}" onclick="selD(${oi})">${d.def}</div>`;
+      }).join("");
+      el("mSt").textContent = "Совпадений: 0 / 6";
+    }
+    function selT(i) { if (mDone.includes(i)) return; document.querySelectorAll("[id^=mt]").forEach(e => e.classList.remove("sel")); el("mt" + i).classList.add("sel"); mSel = i; }
+    function selD(i) {
+      if (mSel === null) return; if (mDone.includes(mSel)) { mSel = null; return; }
+      if (mSel === i) { el("mt" + i).classList.remove("sel"); el("mt" + i).classList.add("ok"); el("md" + i).classList.add("ok"); mDone.push(i); mScore++; el("mSt").textContent = "Совпадений: " + mScore + " / 6"; if (mScore === 6) confetti(); }
+      else { el("mt" + mSel).classList.add("er"); el("md" + i).classList.add("er"); setTimeout(() => { el("mt" + mSel).classList.remove("er", "sel"); el("md" + i).classList.remove("er"); }, 500); }
+      mSel = null;
+    }
+    function resetMatch() { initMatch(); }
+    initMatch();
+
+    /* ── DUOLINGO ── */
+    /* Таблица-заглушка результата для каждого упражнения */
+    const DUO_TABLES = [
+      { cols: ["ID", "ФИО пациента", "ФИО врача", "Услуга", "Цена"], rows: [["1", "Иванов П.С.", "Петрова А.И.", "Первичный приём", "800"], ["2", "Смирнова О.В.", "Сидоров В.П.", "ЭКГ", "1200"], ["...", "...", "...", "...", "..."]] },
+      { cols: ["ID", "ФИО пациента", "Цена"], rows: [["2", "Смирнова О.В.", "1200"], ["5", "Смирнова О.В.", "2500"]] },
+      { cols: ["AVG(Tsena)"], rows: [["1180.00"]] },
+    ];
+    const DUOS = [
+      { q: "Выведите все строки и столбцы из таблицы Priemy", ans: ["SELECT", "*", "FROM", "Priemy", ";"], tokens: [{ t: "SELECT", c: "kw-t" }, { t: "*", c: "fn-t" }, { t: "FROM", c: "kw-t" }, { t: "Priemy", c: "tb-t" }, { t: ";", c: "sy-t" }, { t: "WHERE", c: "kw-t" }, { t: "ORDER BY", c: "kw-t" }], ok: "SELECT * FROM Priemy ;" },
+      { q: "Найдите все приёмы, где цена больше 1000 рублей", ans: ["SELECT", "*", "FROM", "Priemy", "WHERE", "Tsena", ">", "1000", ";"], tokens: [{ t: "SELECT", c: "kw-t" }, { t: "*", c: "fn-t" }, { t: "FROM", c: "kw-t" }, { t: "Priemy", c: "tb-t" }, { t: "WHERE", c: "kw-t" }, { t: "Tsena", c: "fn-t" }, { t: ">", c: "sy-t" }, { t: "<", c: "sy-t" }, { t: "1000", c: "fn-t" }, { t: ";", c: "sy-t" }, { t: "COUNT", c: "fn-t" }], ok: "SELECT * FROM Priemy WHERE Tsena > 1000 ;" },
+      { q: "Подсчитайте среднюю стоимость услуги из таблицы Priemy", ans: ["SELECT", "AVG", "(", "Tsena", ")", "FROM", "Priemy", ";"], tokens: [{ t: "SELECT", c: "kw-t" }, { t: "AVG", c: "fn-t" }, { t: "(", c: "sy-t" }, { t: "Tsena", c: "fn-t" }, { t: ")", c: "sy-t" }, { t: "FROM", c: "kw-t" }, { t: "Priemy", c: "tb-t" }, { t: ";", c: "sy-t" }, { t: "COUNT", c: "fn-t" }, { t: "SUM", c: "fn-t" }], ok: "SELECT AVG ( Tsena ) FROM Priemy ;" },
+    ];
+    const DZ = [[], [], []];
+    function buildDuo() {
+      el("duoWrap").innerHTML = DUOS.map((d, i) => `
+    <div class="duo" id="duo${i}">
+      <div class="duo-q">📋 Задание ${i + 1}: ${d.q}</div>
+      <div class="duo-zone" id="dz${i}"><span style="color:var(--mu);font-size:12px">Нажимайте блоки снизу…</span></div>
+      <div class="duo-pool" id="dp${i}"></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-cy btn-sm" onclick="checkDuo(${i})">Проверить</button>
+        <button class="btn btn-out btn-sm" onclick="resetDuo(${i})">Сбросить</button>
+      </div>
+      <div class="duo-res" id="dr${i}"></div>
+      <div class="duo-table" id="dt${i}"></div>
+    </div>`).join("");
+      [0, 1, 2].forEach(i => initDuo(i));
+    }
+    function initDuo(i) { DZ[i] = []; const sh = [...DUOS[i].tokens].sort(() => Math.random() - .5); el("dp" + i).innerHTML = sh.map((t, ti) => `<div class="tok ${t.c}" id="tk${i}_${ti}" data-t="${t.t}" onclick="addTok(${i},${ti},'${t.t}')">${t.t}</div>`).join(""); el("dz" + i).innerHTML = '<span style="color:var(--mu);font-size:12px">Нажимайте блоки снизу…</span>'; el("dr" + i).className = "duo-res"; el("dt" + i).className = "duo-table"; }
+    function addTok(ei, ti, t) { const tk = el("tk" + ei + "_" + ti); if (tk.classList.contains("used")) return; tk.classList.add("used"); DZ[ei].push({ t, ti }); renderDZ(ei); }
+    function renderDZ(ei) { const dz = el("dz" + ei); if (!DZ[ei].length) { dz.innerHTML = '<span style="color:var(--mu);font-size:12px">Нажимайте блоки снизу…</span>'; return; } dz.innerHTML = DZ[ei].map((item, pos) => `<div class="tok placed" onclick="removeTok(${ei},${pos})">${item.t}</div>`).join(""); }
+    function removeTok(ei, pos) { const rm = DZ[ei].splice(pos, 1)[0]; el("tk" + ei + "_" + rm.ti).classList.remove("used"); renderDZ(ei); }
+    function checkDuo(i) {
+      const given = DZ[i].map(x => x.t); const r = el("dr" + i); const tbl = el("dt" + i);
+      if (JSON.stringify(given) === JSON.stringify(DUOS[i].ans)) {
+        r.className = "duo-res ok"; r.textContent = "✓ Верно: " + given.join(" ");
+        confetti();
+        const td = DUO_TABLES[i];
+        tbl.className = "duo-table show";
+        tbl.innerHTML = `<div style="font-family:var(--cond);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mu);padding:6px 10px 4px">Результат запроса (пример)</div>
+    <table><thead><tr>${td.cols.map(c => `<th>${c}</th>`).join("")}</tr></thead>
+    <tbody>${td.rows.map(r => `<tr>${r.map(v => `<td>${v}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+      } else {
+        r.className = "duo-res er"; r.textContent = "✗ Не так. Правильно: " + DUOS[i].ok; tbl.className = "duo-table";
+      }
+    }
+    function resetDuo(i) { initDuo(i); }
+    buildDuo();
+
+    /* ── INSERT ── */
+    const INS_A = ["'Нилов Андрей'", "'+79221009090'", "'Петрова А.И.'", "'Терапевт'", "'Консультация'", "700", "'101'"];
+    const INS_C = ["FIO_pacienta", "Telefon", "FIO_vracha", "Spec", "Usluga", "Tsena", "Cabinet"];
+    function checkInsert() {
+      const vals = INS_A.map((_, i) => el("i" + i).value.trim()); let ok = 0;
+      vals.forEach((v, i) => { const f = el("i" + i); const m = nrm(v) === nrm(INS_A[i]); f.className = "ins-f " + (m ? "ok" : "er"); if (m) ok++; });
+      const r = el("insRes"); r.textContent = ok + "/7 верно"; r.style.color = ok === 7 ? "var(--gr)" : "var(--re)";
+      if (ok === 7) confetti();
+      const p = el("insPrev"); p.style.display = "block";
+      p.innerHTML = `<span class="kw">INSERT INTO</span> <span class="tb">Priemy</span> (${INS_C.join(", ")})<br><span class="kw">VALUES</span> (${vals.map(v => v || "?").join(", ")});`;
+    }
+    function nrm(s) { return s.replace(/[''""]/g, "'").trim().toLowerCase(); }
+
+    /* ── SELECT ЗАДАНИЯ ── */
+    const STASKS = [
+      { id: 2, t: "Выберите все строки и столбцы таблицы", hint: "SELECT * FROM …", exp: "SELECT * FROM Priemy;" },
+      { id: 3, t: "Выведите только ФИО пациента и цену", hint: "SELECT col1, col2 FROM …", exp: "SELECT FIO_pacienta, Tsena FROM Priemy;" },
+      { id: 4, t: "Найдите приёмы дороже 1000 рублей", hint: "WHERE Tsena > 1000", exp: "SELECT * FROM Priemy WHERE Tsena > 1000;" },
+      { id: 5, t: "Отсортируйте приёмы от дорогих к дешёвым", hint: "ORDER BY Tsena DESC", exp: "SELECT * FROM Priemy ORDER BY Tsena DESC;" },
+      { id: 6, t: "Посчитайте количество всех записей", hint: "SELECT COUNT(*) FROM …", exp: "SELECT COUNT(*) FROM Priemy;" },
+      { id: 7, t: "Письменно: что такое SQL и зачем он нужен оператору ИС? (2–3 предложения)", hint: "Своими словами", exp: null, text: true },
+    ];
+    const savedAns = ld("tans", {});
+    function buildSel() {
+      el("selWrap").innerHTML = STASKS.map(t => `
+    <div class="card" style="margin-top:12px">
+      <div class="ctitle">Задание ${t.id} <span style="color:var(--or)">[+1 б.]</span> — ${t.t}</div>
+      ${!t.text
+          ? `<div class="info mb12">💡 <span style="font-family:var(--mono)">${t.hint}</span></div>
+          <textarea class="code-in" id="ta${t.id}" rows="2" oninput="saveA(${t.id},this.value)">${savedAns["t" + t.id] || ""}</textarea>`
+          : `<div class="info mb12">💡 ${t.hint}</div>
+          <textarea id="ta${t.id}" rows="3" oninput="saveA(${t.id},this.value)">${savedAns["t" + t.id] || ""}</textarea>`
+        }
+    </div>`).join("");
+    }
+    function saveA(id, v) { savedAns["t" + id] = v; sv("tans", savedAns); }
+    buildSel();
+
+    /* ── САМООЦЕНКА ── */
+    const TNAMES = ["Задание 1: INSERT — значения", "Задание 2: SELECT *", "Задание 3: два столбца", "Задание 4: WHERE", "Задание 5: ORDER BY", "Задание 6: COUNT(*)", "Задание 7: Письменный ответ"];
+    let chk = ld("assess", []);
+    function buildAssess() {
+      el("assessList").innerHTML = TNAMES.map((n, i) => {
+        const on = chk.includes(i);
+        return `<div class="chl"><div class="chb ${on ? "on" : ""}" onclick="toggleA(${i},this)">${on ? "✓" : ""}</div><span>${n}</span></div>`;
+      }).join("");
+      updateG();
+    }
+    function toggleA(i, btn) {
+      btn.classList.toggle("on"); btn.textContent = btn.classList.contains("on") ? "✓" : "";
+      const ix = chk.indexOf(i);
+      if (btn.classList.contains("on") && ix === -1) chk.push(i);
+      else if (!btn.classList.contains("on") && ix !== -1) chk.splice(ix, 1);
+      sv("assess", chk); updateG();
+      if (db) R("scores/" + SK).set({ name: ld("uname", "") || SK, score: chk.length });
+    }
+    function updateG() {
+      const s = chk.length; const g = s >= 6 ? "5" : s >= 5 ? "4" : s >= 3 ? "3" : s > 0 ? "2" : "—";
+      el("scoreN").textContent = s; el("gradeN").textContent = g;
+    }
+    buildAssess();
+
+    /* ── ТАЙМЕР ── */
+    let tSec = 45 * 60, tOn = false, tInt = null;
+    function toggleTimer() {
+      tOn = !tOn; el("timerBtn").textContent = tOn ? "⏸" : "▶";
+      if (tOn) { tInt = setInterval(() => { if (tSec <= 0) { clearInterval(tInt); tOn = false; return; } tSec--; el("timerD").textContent = pad(Math.floor(tSec / 60)) + ":" + pad(tSec % 60); }, 1000); } else clearInterval(tInt);
+    }
+    function pad(n) { return String(n).padStart(2, "0") }
+
+    /* ── КОНФЕТТИ ── */
+    function confetti() {
+      const wrap = el("confWrap"); wrap.innerHTML = "";
+      const cols = ["#0e7fc2", "#d95f0a", "#186640", "#ffd080", "#b8ddf5", "#f07830"];
+      for (let i = 0; i < 60; i++) {
+        const c = document.createElement("div");
+        c.className = "confetti-piece";
+        c.style.cssText = `left:${Math.random() * 100}%;background:${cols[i % cols.length]};width:${6 + Math.random() * 8}px;height:${6 + Math.random() * 8}px;border-radius:${Math.random() > 0.5 ? "50%" : "2px"};animation-duration:${1.2 + Math.random() * 1.5}s;animation-delay:${Math.random() * 0.4}s`;
+        wrap.appendChild(c);
+      }
+      setTimeout(() => { wrap.innerHTML = ""; }, 3000);
+    }
+
+    /* ── ПАНЕЛЬ ПРЕПОДАВАТЕЛЯ ── */
+    let tpOpen = false;
+    function toggleTeacher() {
+      if (!tpOpen) { const p = prompt("Пароль:"); if (p !== PASS) return; }
+      tpOpen = !tpOpen;
+      el("tp").classList.toggle("open", tpOpen);
+      el("tBtn").classList.toggle("on", tpOpen);
+    }
+    const VL = ["SELECT-запросы", "WHERE-фильтрация", "INSERT INTO", "COUNT/AVG/SUM"];
+    function tpV(data) { const c = [0, 0, 0, 0]; Object.values(data).forEach(v => { if (c[v] !== undefined) c[v]++; }); const t = c.reduce((a, b) => a + b, 0) || 1; el("tpV").innerHTML = VL.map((l, i) => `<div class="tp-vb"><div style="font-size:11px;color:#c8d8f0">${l}</div><div style="display:flex;align-items:center;gap:8px"><div class="tp-vf" style="width:${Math.round(c[i] / t * 100)}%;flex:1;min-height:4px"></div><span style="font-family:var(--mono);font-size:10px;color:var(--or4);white-space:nowrap">${c[i]} (${Math.round(c[i] / t * 100)}%)</span></div></div>`).join(""); }
+    function tpTopics(data) { const items = Object.values(data).sort((a, b) => (b.votes || 0) - (a.votes || 0)); el("tpT").innerHTML = items.length ? items.map(it => `<div class="tp-row"><span class="tp-au">${it.name || "?"}</span><span class="tp-bd">${it.text}</span><span style="font-family:var(--mono);font-size:10px;color:var(--or4)">▲${it.votes || 0}</span></div>`).join("") : '<div style="font-size:11px;color:#4e6890">Нет предложений</div>'; }
+    function tpQs(data) { const items = Object.values(data).sort((a, b) => (b.t || 0) - (a.t || 0)); el("tpQ").innerHTML = items.length ? items.map(it => `<div class="tp-row"><span class="tp-au">${it.name || "?"}</span><span class="tp-bd">${it.text}</span></div>`).join("") : '<div style="font-size:11px;color:#4e6890">Нет вопросов</div>'; }
+    function tpScores(data) { const items = Object.values(data).sort((a, b) => (b.score || 0) - (a.score || 0)); el("tpSc").innerHTML = items.length ? items.map(it => `<div class="tp-st"><span style="color:#c8d8f0;font-size:11px">${it.name || "?"}</span><span class="tp-nm">${it.score}/7</span></div>`).join("") : '<div style="font-size:11px;color:#4e6890">Нет данных</div>'; }
+    if (!db) { ["tpV", "tpT", "tpQ", "tpSc"].forEach(id => { el(id).innerHTML = '<div style="font-size:11px;color:#4e6890">Firebase не настроен — только локальный режим</div>'; }); }
+
+    /* ── QR-КОД ── */
+    /* Простой QR для URL через кодирование в матрицу (внешний генератор) */
+    function buildQR() {
+      const url = "https://sqliteonline.com";
+      const apiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=" + encodeURIComponent(url) + "&color=0e7fc2&bgcolor=ffffff";
+      const svg = el("qrSvg");
+      const img = document.createElement("img");
+      img.src = apiUrl; img.width = 140; img.height = 140; img.alt = "QR SQLiteOnline";
+      svg.replaceWith(img); img.id = "qrSvg"; img.className = "qr-svg";
+      el("qrLink").textContent = url;
+    }
+    buildQR();
+  </script>
+</body>
+
+</html>
