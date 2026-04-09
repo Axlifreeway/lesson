@@ -12,15 +12,10 @@
 
     :root {
       --cy: #0e7fc2;
-      /* голубой основной */
       --cy2: #1a9de0;
-      /* чуть светлее */
       --cy3: #e3f4fc;
-      /* бледно-голубой фон */
       --cy4: #b8ddf5;
-      /* голубая рамка */
       --or: #d95f0a;
-      /* оранжевый акцент */
       --or2: #f07830;
       --or3: #fff2e8;
       --or4: #e8884a;
@@ -381,24 +376,6 @@
     .card-gr {
       border-left: 3px solid var(--gr);
       background: var(--grl)
-    }
-
-    .ctitle {
-      font-family: var(--cond);
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .09em;
-      color: var(--mu);
-      margin-bottom: 12px
-    }
-
-    .ctitle-or {
-      color: var(--or)
-    }
-
-    .ctitle-cy {
-      color: var(--cy)
     }
 
     hr.rule {
@@ -826,7 +803,6 @@
       display: block
     }
 
-    /* Таблица результата Duolingo */
     .duo-table {
       margin-top: 10px;
       border: 1px solid var(--brd);
@@ -1101,13 +1077,15 @@
     .pt {
       height: 5px;
       background: var(--brd);
-      margin-top: 14px
+      margin-top: 14px;
+      border-radius: 3px;
+      overflow: hidden
     }
 
     .pf {
       height: 100%;
-      background: var(--or);
-      transition: width .35s ease
+      transition: width .35s ease, background-color .35s ease;
+      border-radius: 3px
     }
 
     /* ── ИНФОБОКСЫ ── */
@@ -1127,6 +1105,247 @@
       font-size: 13px;
       color: var(--tx2);
       margin: 10px 0
+    }
+
+    /* ── ЗАДАЧИ-МАРКЕР ── */
+    .task-return {
+      border: 1px dashed var(--or4);
+      background: var(--or3);
+      padding: 10px 15px;
+      font-size: 13px;
+      color: var(--or);
+      font-family: var(--cond);
+      font-weight: 700;
+      margin: 18px 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .task-return::before {
+      content: '🎯';
+      font-size: 16px
+    }
+
+    /* ── ПРАВИЛА СОТРУДНИЧЕСТВА ── */
+    .rule-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border: 1px solid var(--brd);
+      background: var(--sur);
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: .15s;
+      font-size: 14px
+    }
+
+    .rule-item:hover {
+      border-color: var(--cy)
+    }
+
+    .rule-item .ri-mark {
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--brd2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      transition: .15s
+    }
+
+    .rule-item.ri-yes .ri-mark {
+      border-color: var(--gr);
+      background: var(--grl);
+      color: var(--gr)
+    }
+
+    .rule-item.ri-no .ri-mark {
+      border-color: var(--re);
+      background: var(--rel);
+      color: var(--re)
+    }
+
+    /* ── СХЕМА ТАБЛИЦЫ ── */
+    .schema-tbl {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--mono);
+      font-size: 13px;
+      margin: 10px 0
+    }
+
+    .schema-tbl th {
+      background: var(--cy);
+      color: #fff;
+      padding: 8px 12px;
+      text-align: left;
+      font-size: 12px
+    }
+
+    .schema-tbl td {
+      padding: 7px 12px;
+      border-bottom: 1px solid var(--brd)
+    }
+
+    .schema-tbl .pk-row td {
+      background: var(--or3);
+      font-weight: 600
+    }
+
+    /* ── ЭТАЛОН ── */
+    .etalon-toggle {
+      cursor: pointer;
+      user-select: none;
+      font-family: var(--cond);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--cy);
+      padding: 10px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .etalon-toggle:hover {
+      color: var(--or)
+    }
+
+    .etalon-body {
+      display: none;
+      animation: fadeIn .3s ease
+    }
+
+    .etalon-body.open {
+      display: block
+    }
+
+    .etalon-row {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--brd);
+      font-size: 13px;
+      display: flex;
+      gap: 10px
+    }
+
+    .etalon-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--or);
+      font-weight: 600;
+      min-width: 24px;
+      flex-shrink: 0
+    }
+
+    .etalon-code {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--cy);
+      background: var(--cy3);
+      padding: 2px 8px
+    }
+
+    /* ── ЭПИГРАФ ── */
+
+    /* ── РЕЙТИНГ ЭТАПОВ (такси-стиль) ── */
+    .rate-cell {
+      white-space: nowrap;
+      min-width: 90px
+    }
+
+    .rate-dots {
+      display: inline-flex;
+      gap: 3px
+    }
+
+    .rdot {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--brd2);
+      background: #fff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--mu);
+      transition: .13s;
+      padding: 0
+    }
+
+    .rdot:hover {
+      border-color: var(--or);
+      color: var(--or)
+    }
+
+    .rdot.active {
+      border-color: var(--or);
+      background: var(--or);
+      color: #fff
+    }
+
+    /* ── ОЦЕНКА ЭТАПА (внутри секции) ── */
+    .sec-rate {
+      margin-top: 18px;
+      padding: 14px 18px;
+      border: 2px dashed var(--or4);
+      background: var(--or3);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap
+    }
+    .sec-rate-label {
+      font-family: var(--cond);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--or)
+    }
+    .sec-rate .rate-dots {
+      display: inline-flex;
+      gap: 4px
+    }
+    .sec-rate .rdot {
+      width: 32px;
+      height: 32px;
+      font-size: 14px
+    }
+    .epigraph {
+      text-align: right;
+      font-style: italic;
+      color: var(--mu);
+      font-size: 13px;
+      padding: 0 0 20px;
+      border-bottom: 1px solid var(--brd);
+      margin-bottom: 28px
+    }
+
+    .epigraph-author {
+      font-style: normal;
+      font-weight: 700;
+      font-size: 12px;
+      margin-top: 4px
+    }
+
+    /* ── ФИЗКУЛЬТМИНУТКА ── */
+    .fizk-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--grl);
+      border: 1px solid var(--gr);
+      color: var(--gr);
+      padding: 6px 14px;
+      font-family: var(--cond);
+      font-weight: 700;
+      font-size: 13px;
+      margin: 4px;
+      animation: fadeIn .3s ease
     }
 
     /* ── АНИМАЦИИ ПРАЗДНИКА ── */
@@ -1317,7 +1536,6 @@
       color: var(--or4)
     }
 
-    /* ── УПРАВЛЕНИЕ РАЗДЕЛАМИ (в панели) ── */
     .sec-ctrl {
       display: flex;
       align-items: center;
@@ -1410,7 +1628,7 @@
   <header class="hdr">
     <div class="hdr-in">
       <div>
-        <div class="hdr-eye">УП.02 · 09.01.03 · Комбинированный урок</div>
+        <div class="hdr-eye">ОПЦ.03 Базы данных · Комбинированный урок</div>
         <div class="hdr-ttl">Электронная тетрадь — Основы SQL</div>
       </div>
       <div class="hdr-right">
@@ -1426,29 +1644,35 @@
       <a class="sn" href="#s1">Целеполагание</a>
       <a class="sn" href="#s2">Повторение</a>
       <a class="sn" href="#s3">Демонстрация</a>
-      <a class="sn" href="#s4">Практика</a>
-      <a class="sn" href="#s5">Оценивание</a>
-      <a class="sn" href="#s6">Рефлексия</a>
+      <a class="sn" href="#s4">Физкультминутка</a>
+      <a class="sn" href="#s5">Практика</a>
+      <a class="sn" href="#s6">ДЗ</a>
+      <a class="sn" href="#s7">Рефлексия</a>
+      <a class="sn" href="#s8">Оценивание</a>
     </div>
   </nav>
 
   <!-- ══ КОНТЕНТ ══ -->
   <main class="wrap">
 
+    <!-- ЭПИГРАФ -->
+    <div class="epigraph">
+      «Искусство программирования заключается в том, чтобы организовать сложность»
+      <div class="epigraph-author">— Дональд Эрвин Кнут</div>
+    </div>
+
     <!-- HERO: ввод имени -->
     <div class="name-hero">
       <div class="name-hero-title">Представьтесь, чтобы начать</div>
-      <div class="name-row">
-        <div class="name-field">
-          <label>Фамилия Имя Отчество</label>
-          <input class="name-in" id="nameIn" placeholder="Иванов Иван Иванович" maxlength="60"
-            oninput="setName(this.value)">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div>
+          <label style="display:block;font-family:var(--cond);font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#b8ddf5;margin-bottom:5px">Фамилия Имя Отчество</label>
+          <input class="name-in" id="nameIn" placeholder="Иванов Иван Иванович" maxlength="60" oninput="setName(this.value)">
           <span class="name-confirm" id="nameConfirm"></span>
         </div>
-        <div class="name-field" style="max-width:200px">
-          <label>Группа</label>
-          <input class="name-in" id="grpIn" placeholder="ИТ-241" maxlength="20" oninput="setGrp(this.value)"
-            style="font-size:15px;font-weight:400">
+        <div>
+          <label style="display:block;font-family:var(--cond);font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#b8ddf5;margin-bottom:5px">Группа</label>
+          <input class="name-in" id="grpIn" placeholder="ИТ-241" maxlength="20" oninput="setGrp(this.value)">
         </div>
       </div>
     </div>
@@ -1464,82 +1688,30 @@
         <table class="rtbl" id="rtbl">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Этап</th>
-              <th>Содержание</th>
-              <th>Мин.</th>
-              <th>✓</th>
+              <th>#</th><th>Этап</th><th>Содержание</th><th>Мин.</th><th>Оценка</th><th>✓</th>
             </tr>
           </thead>
           <tbody>
-            <tr id="rr0">
-              <td>1</td>
-              <td>Подготовка</td>
-              <td>Приветствие, знакомство, ТБ, рабочее место</td>
-              <td class="tm">3</td>
-              <td><button class="chb" onclick="toggleRoute(0,this)"></button></td>
-            </tr>
-            <tr id="rr1">
-              <td>2</td>
-              <td>Целеполагание</td>
-              <td>Брейншторм — тема и цель занятия</td>
-              <td class="tm">5</td>
-              <td><button class="chb" onclick="toggleRoute(1,this)"></button></td>
-            </tr>
-            <tr id="rr2">
-              <td>3</td>
-              <td>Повторение</td>
-              <td>ГОСТ-термины + SQL Duolingo</td>
-              <td class="tm">10</td>
-              <td><button class="chb" onclick="toggleRoute(2,this)"></button></td>
-            </tr>
-            <tr id="rr3">
-              <td>4</td>
-              <td>Демонстрация</td>
-              <td>Мастер-класс: SELECT-запросы в SQLiteOnline</td>
-              <td class="tm">6</td>
-              <td><button class="chb" onclick="toggleRoute(3,this)"></button></td>
-            </tr>
-            <tr id="rr4">
-              <td>5</td>
-              <td>Физкульт</td>
-              <td>«Три SQL-слова» — называем по кругу</td>
-              <td class="tm">2</td>
-              <td><button class="chb" onclick="toggleRoute(4,this)"></button></td>
-            </tr>
-            <tr id="rr5">
-              <td>6</td>
-              <td>Практика</td>
-              <td>INSERT-пазл + 6 SELECT-заданий</td>
-              <td class="tm">15</td>
-              <td><button class="chb" onclick="toggleRoute(5,this)"></button></td>
-            </tr>
-            <tr id="rr6">
-              <td>7</td>
-              <td>Оценивание</td>
-              <td>Сверка с эталоном, самооценка</td>
-              <td class="tm">5</td>
-              <td><button class="chb" onclick="toggleRoute(6,this)"></button></td>
-            </tr>
-            <tr id="rr7">
-              <td>8</td>
-              <td>ДЗ</td>
-              <td>Домашнее задание по SQL</td>
-              <td class="tm">2</td>
-              <td><button class="chb" onclick="toggleRoute(7,this)"></button></td>
-            </tr>
-            <tr id="rr8">
-              <td>9</td>
-              <td>Рефлексия</td>
-              <td>П-О-П-С эссе</td>
-              <td class="tm">3</td>
-              <td><button class="chb" onclick="toggleRoute(8,this)"></button></td>
-            </tr>
+            <tr id="rr0"><td>1</td><td>Подготовка</td><td>Приветствие, знакомство, ТБ, правила сотрудничества</td><td class="tm">2</td><td class="rate-cell" id="rc0"></td><td><button class="chb" onclick="toggleRoute(0,this)"></button></td></tr>
+            <tr id="rr1"><td>2</td><td>Целеполагание</td><td>AHA-момент, тема, цель, задачи</td><td class="tm">4</td><td class="rate-cell" id="rc1"></td><td><button class="chb" onclick="toggleRoute(1,this)"></button></td></tr>
+            <tr id="rr2"><td>3</td><td>Актуализация</td><td>ГОСТ-термины, SQL-конструктор, «объясни соседу»</td><td class="tm">8</td><td class="rate-cell" id="rc2"></td><td><button class="chb" onclick="toggleRoute(2,this)"></button></td></tr>
+            <tr id="rr3"><td>4</td><td>Демонстрация</td><td>Схема таблицы, мастер-класс SELECT в SQLiteOnline</td><td class="tm">7</td><td class="rate-cell" id="rc3"></td><td><button class="chb" onclick="toggleRoute(3,this)"></button></td></tr>
+            <tr id="rr4"><td>5</td><td>Физкультминутка</td><td>«Три SQL-слова» — называем стоя по кругу</td><td class="tm">1</td><td class="rate-cell" id="rc4"></td><td><button class="chb" onclick="toggleRoute(4,this)"></button></td></tr>
+            <tr id="rr5"><td>6</td><td>Практика</td><td>INSERT-пазл + 5 SELECT-заданий + письменный ответ</td><td class="tm">15</td><td class="rate-cell" id="rc5"></td><td><button class="chb" onclick="toggleRoute(5,this)"></button></td></tr>
+            <tr id="rr6"><td>7</td><td>ДЗ</td><td>Домашнее задание по SQL (QR-код)</td><td class="tm">1</td><td class="rate-cell" id="rc6"></td><td><button class="chb" onclick="toggleRoute(6,this)"></button></td></tr>
+            <tr id="rr7"><td>8</td><td>Рефлексия</td><td>П-О-П-С эссе</td><td class="tm">3</td><td class="rate-cell" id="rc7"></td><td><button class="chb" onclick="toggleRoute(7,this)"></button></td></tr>
+            <tr id="rr8"><td>9</td><td>Итоги</td><td>Самооценка по эталону, подведение итогов</td><td class="tm">4</td><td class="rate-cell" id="rc8"></td><td><button class="chb" onclick="toggleRoute(8,this)"></button></td></tr>
           </tbody>
         </table>
-        <div class="pt">
-          <div class="pf" id="rProg" style="width:0%"></div>
-        </div>
+        <div class="pt"><div class="pf" id="rProg" style="width:0%"></div></div>
+      </div>
+
+      <!-- Правила сотрудничества -->
+      <div class="card mt12">
+        <div class="ctitle ctitle-or">Правила сотрудничества — какие из фраз верные?</div>
+        <p style="font-size:13px;color:var(--tx2);margin-bottom:12px">Нажмите на каждую фразу, чтобы отметить — это правило сотрудничества или нет?</p>
+        <div id="rulesBox"></div>
+        <div id="rulesSt" style="font-size:12px;color:var(--mu);margin-top:8px"></div>
       </div>
     </section>
     <hr class="rule">
@@ -1549,11 +1721,11 @@
       <div class="sec-hd">
         <span class="sec-tag">01</span>
         <span class="sec-name">Целеполагание</span>
-        <span class="sec-min">5 мин</span>
+        <span class="sec-min">4 мин</span>
       </div>
       <div class="sec-body">
 
-        <!-- Мотивирующий вопрос без таблицы аномалий -->
+        <!-- AHA-момент -->
         <div class="card card-cy">
           <div class="ctitle ctitle-cy">AHA-момент — что общего у этих систем?</div>
           <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
@@ -1565,15 +1737,9 @@
               </p>
             </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap">
-              <div
-                style="background:var(--cy);color:#fff;padding:10px 16px;font-family:var(--cond);font-size:13px;font-weight:700;text-align:center;min-width:80px">
-                ВКонтакте<br><span style="font-size:10px;opacity:.7">~100 млн записей</span></div>
-              <div
-                style="background:var(--or);color:#fff;padding:10px 16px;font-family:var(--cond);font-size:13px;font-weight:700;text-align:center;min-width:80px">
-                Сбербанк<br><span style="font-size:10px;opacity:.7">~180 млн клиентов</span></div>
-              <div
-                style="background:#186640;color:#fff;padding:10px 16px;font-family:var(--cond);font-size:13px;font-weight:700;text-align:center;min-width:80px">
-                Поликлиника<br><span style="font-size:10px;opacity:.7">база пациентов</span></div>
+              <div style="background:var(--cy);color:#fff;padding:10px 16px;font-family:var(--cond);font-size:13px;font-weight:700;text-align:center;min-width:80px">ВКонтакте<br><span style="font-size:10px;opacity:.7">~100 млн записей</span></div>
+              <div style="background:var(--or);color:#fff;padding:10px 16px;font-family:var(--cond);font-size:13px;font-weight:700;text-align:center;min-width:80px">Сбербанк<br><span style="font-size:10px;opacity:.7">~180 млн клиентов</span></div>
+              <div style="background:#186640;color:#fff;padding:10px 16px;font-family:var(--cond);font-size:13px;font-weight:700;text-align:center;min-width:80px">Поликлиника<br><span style="font-size:10px;opacity:.7">база пациентов</span></div>
             </div>
           </div>
           <textarea id="ahaA" placeholder="Что их объединяет? Напишите свою версию…" style="margin-top:4px"></textarea>
@@ -1582,14 +1748,10 @@
         <!-- Брейншторм темы -->
         <div class="card">
           <div class="ctitle">Предложите формулировку темы занятия</div>
-          <p style="font-size:13px;color:var(--tx2);margin-bottom:11px">Как называется язык, с помощью которого
-            программы обращаются к базам данных? Что мы сегодня изучаем? Напишите вариант — и проголосуйте за чужие.</p>
-          <div class="wall" id="topicWall">
-            <div style="color:var(--mu);font-size:13px">Пока нет предложений — будьте первым…</div>
-          </div>
+          <p style="font-size:13px;color:var(--tx2);margin-bottom:11px">Как называется язык, с помощью которого программы обращаются к базам данных? Напишите вариант — и проголосуйте за чужие.</p>
+          <div class="wall" id="topicWall"><div style="color:var(--mu);font-size:13px">Пока нет предложений — будьте первым…</div></div>
           <div style="display:flex;gap:8px">
-            <input type="text" id="topicIn" placeholder="Ваш вариант темы…" style="flex:1"
-              onkeydown="if(event.key==='Enter')submitTopic()">
+            <input type="text" id="topicIn" placeholder="Ваш вариант темы…" style="flex:1" onkeydown="if(event.key==='Enter')submitTopic()">
             <button class="btn btn-or" onclick="submitTopic()">Отправить</button>
           </div>
         </div>
@@ -1598,25 +1760,11 @@
         <div class="card">
           <div class="ctitle">Что важнее освоить сегодня? — проголосуйте</div>
           <div id="voteBox">
-            <div class="vopt" onclick="castVote(0)">
-              <div class="vf" style="width:0%"></div><span class="vt">Писать SELECT-запросы и получать нужные
-                данные</span><span class="vc" id="vc0">0</span><span class="vp" id="vp0">0%</span>
-            </div>
-            <div class="vopt" onclick="castVote(1)">
-              <div class="vf" style="width:0%"></div><span class="vt">Фильтровать данные через WHERE</span><span
-                class="vc" id="vc1">0</span><span class="vp" id="vp1">0%</span>
-            </div>
-            <div class="vopt" onclick="castVote(2)">
-              <div class="vf" style="width:0%"></div><span class="vt">Добавлять данные в базу через INSERT
-                INTO</span><span class="vc" id="vc2">0</span><span class="vp" id="vp2">0%</span>
-            </div>
-            <div class="vopt" onclick="castVote(3)">
-              <div class="vf" style="width:0%"></div><span class="vt">Считать итоги: COUNT, AVG, SUM, GROUP
-                BY</span><span class="vc" id="vc3">0</span><span class="vp" id="vp3">0%</span>
-            </div>
+            <div class="vopt" onclick="castVote(0)"><div class="vf" style="width:0%"></div><span class="vt">Писать SELECT-запросы и получать нужные данные</span><span class="vc" id="vc0">0</span><span class="vp" id="vp0">0%</span></div>
+            <div class="vopt" onclick="castVote(1)"><div class="vf" style="width:0%"></div><span class="vt">Фильтровать данные через WHERE</span><span class="vc" id="vc1">0</span><span class="vp" id="vp1">0%</span></div>
+            <div class="vopt" onclick="castVote(2)"><div class="vf" style="width:0%"></div><span class="vt">Добавлять данные в базу через INSERT INTO</span><span class="vc" id="vc2">0</span><span class="vp" id="vp2">0%</span></div>
+            <div class="vopt" onclick="castVote(3)"><div class="vf" style="width:0%"></div><span class="vt">Считать итоги: COUNT, AVG, SUM, GROUP BY</span><span class="vc" id="vc3">0</span><span class="vp" id="vp3">0%</span></div>
           </div>
-          <p style="font-size:12px;color:var(--mu);margin-top:8px">Голоса отображаются в панели преподавателя в реальном
-            времени.</p>
         </div>
 
         <!-- Итог -->
@@ -1629,53 +1777,55 @@
           <label class="lbl">Задачи (не менее 3)</label>
           <textarea id="fTasks" placeholder="1. …&#10;2. …&#10;3. …"></textarea>
         </div>
-      </div><!-- /sec-body -->
+
+        <div class="task-return">Вернёмся к задачам: мы определили тему, цель и задачи урока. Переходим к повторению.</div>
+        <div class="sec-rate"><span class="sec-rate-label">Оцените этап:</span><div class="rate-dots" id="sr1"></div></div>
+      </div>
     </section>
     <hr class="rule">
 
-    <!-- ── 02 ПОВТОРЕНИЕ ── -->
+    <!-- ── 02 ПОВТОРЕНИЕ / АКТУАЛИЗАЦИЯ ── -->
     <section class="sec sec-locked" id="s2" data-sec="2">
       <div class="sec-hd">
         <span class="sec-tag">02</span>
-        <span class="sec-name">Повторение</span>
-        <span class="sec-min">10 мин</span>
+        <span class="sec-name">Актуализация опорных знаний</span>
+        <span class="sec-min">8 мин</span>
       </div>
       <div class="sec-body">
 
         <div class="card">
           <div class="ctitle ctitle-or">Термины и определения — нажмите термин, затем его определение</div>
-          <p style="font-size:13px;color:var(--tx2);margin-bottom:13px">После — обсудим: зачем знать эталонные
-            определения, а не просто «своими словами»?</p>
+          <p style="font-size:13px;color:var(--tx2);margin-bottom:13px">Определения взяты из ГОСТ 33707–2016 и ISO/IEC 9075. После сопоставления — сравните с тем, как определяет эти термины нейросеть.</p>
           <div class="mc">
-            <div>
-              <div class="mch">Термин</div>
-              <div id="mT"></div>
-            </div>
-            <div>
-              <div class="mch">Определение</div>
-              <div id="mD"></div>
-            </div>
+            <div><div class="mch">Термин</div><div id="mT"></div></div>
+            <div><div class="mch">Определение (ГОСТ / ISO)</div><div id="mD"></div></div>
           </div>
-          <div style="margin-top:12px;display:flex;gap:10px;align-items:center">
+          <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
             <button class="btn btn-out btn-sm" onclick="resetMatch()">↺ Сбросить</button>
             <span id="mSt" style="font-size:13px;color:var(--mu)">Совпадений: 0 / 6</span>
+          </div>
+          <div class="warn mt12">
+            <strong>Сравните с нейросетью:</strong> спросите
+            <a href="https://ya.ru/ai/alice" target="_blank" style="color:var(--cy)">Алису</a> или
+            <a href="https://gigachat.ru" target="_blank" style="color:var(--cy)">GigaChat</a>:
+            «Что такое база данных? Что такое первичный ключ?» — и сравните ответ с ГОСТом. Совпадает ли?
           </div>
         </div>
 
         <div class="card">
           <div class="ctitle ctitle-or">SQL-конструктор — соберите запрос из блоков</div>
-          <p style="font-size:13px;color:var(--tx2);margin-bottom:13px">Нажимайте блоки в правильном порядке. Лишние —
-            для запутывания. После проверки увидите «результат» запроса.</p>
+          <p style="font-size:13px;color:var(--tx2);margin-bottom:13px">Нажимайте блоки в правильном порядке. Лишние — для запутывания. После проверки увидите «результат» запроса.</p>
           <div id="duoWrap"></div>
         </div>
 
         <div class="card">
           <div class="ctitle">Объясни соседу устно — потом запиши главное</div>
-          <p style="font-size:14px;color:var(--tx2);margin-bottom:8px">Чем <strong>SELECT</strong> отличается от
-            <strong>INSERT</strong>?
-          </p>
+          <p style="font-size:14px;color:var(--tx2);margin-bottom:8px">Чем <strong>SELECT</strong> отличается от <strong>INSERT</strong>?</p>
           <textarea id="explainN" placeholder="SELECT — это…, а INSERT — это… Главное отличие…"></textarea>
         </div>
+
+        <div class="task-return">Вернёмся к задачам: мы повторили синтаксис SQL и понятийный аппарат. Задачи «сформировать понятийный аппарат» и «объяснить синтаксис» — в процессе выполнения.</div>
+        <div class="sec-rate"><span class="sec-rate-label">Оцените этап:</span><div class="rate-dots" id="sr2"></div></div>
       </div>
     </section>
     <hr class="rule">
@@ -1685,23 +1835,38 @@
       <div class="sec-hd">
         <span class="sec-tag">03</span>
         <span class="sec-name">Демонстрация — мастер-класс</span>
-        <span class="sec-min">6 мин</span>
+        <span class="sec-min">7 мин</span>
       </div>
       <div class="sec-body">
 
         <div class="card card-cy">
           <div class="ctitle ctitle-cy">Инструмент занятия — SQLiteOnline</div>
-          <p style="font-size:14px;color:var(--tx2);margin-bottom:14px">
-            Преподаватель показывает работу в браузере. Откройте на своём компьютере и следите вместе:
-          </p>
+          <p style="font-size:14px;color:var(--tx2);margin-bottom:14px">Преподаватель показывает работу в браузере. Откройте на своём компьютере и следите вместе:</p>
           <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
             <a href="https://sqliteonline.com" target="_blank" class="btn btn-cy">Открыть SQLiteOnline →</a>
             <span style="font-size:13px;color:var(--mu)">Нажмите кнопку — откроется в новой вкладке</span>
           </div>
-          <div class="info mt12">
-            <strong>Как загрузить файл:</strong> SQLiteOnline → File → Open DB → выбрать <code
-              style="font-family:var(--mono)">priemy.db</code>
-          </div>
+          <div class="info mt12"><strong>Как загрузить файл:</strong> SQLiteOnline → File → Open DB → выбрать <code style="font-family:var(--mono)">priemy.db</code></div>
+        </div>
+
+        <!-- Схема таблицы -->
+        <div class="card">
+          <div class="ctitle ctitle-or">Структура таблицы «Приёмы» (Priemy)</div>
+          <p style="font-size:13px;color:var(--tx2);margin-bottom:10px">Преподаватель рисует на доске — зарисуйте и вы. Ниже — справочная схема.</p>
+          <table class="schema-tbl">
+            <thead><tr><th>Поле</th><th>Тип данных</th><th>Описание</th><th>Ключ</th></tr></thead>
+            <tbody>
+              <tr class="pk-row"><td>ID</td><td>INTEGER</td><td>Уникальный номер записи</td><td style="color:var(--or)">🔑 PK</td></tr>
+              <tr><td>FIO_pacienta</td><td>TEXT</td><td>ФИО пациента</td><td></td></tr>
+              <tr><td>Telefon</td><td>TEXT</td><td>Телефон пациента</td><td></td></tr>
+              <tr><td>FIO_vracha</td><td>TEXT</td><td>ФИО врача</td><td></td></tr>
+              <tr><td>Spec</td><td>TEXT</td><td>Специальность врача</td><td></td></tr>
+              <tr><td>Usluga</td><td>TEXT</td><td>Вид услуги</td><td></td></tr>
+              <tr><td>Tsena</td><td>INTEGER</td><td>Цена услуги (руб.)</td><td></td></tr>
+              <tr><td>Cabinet</td><td>TEXT</td><td>Номер кабинета</td><td></td></tr>
+            </tbody>
+          </table>
+          <div class="info mt8"><strong>Вопрос:</strong> Почему ID — первичный ключ, а не FIO_pacienta? Потому что ФИО может повторяться, а ID — уникален.</div>
         </div>
 
         <div class="card">
@@ -1710,33 +1875,27 @@
             <span class="kw">SELECT</span> <span class="cm">-- что выбрать: конкретные столбцы или * (все)</span>
             <span class="kw">FROM</span> <span class="cm">-- откуда: имя таблицы</span>
             <span class="kw">WHERE</span> <span class="cm">-- условие фильтрации (необязательно)</span>
-            <span class="kw">ORDER BY</span> <span class="cm">-- сортировка ASC / DESC (необязательно)</span><span
-              class="cm">;</span>
+            <span class="kw">ORDER BY</span> <span class="cm">-- сортировка ASC / DESC (необязательно)</span><span class="cm">;</span>
           </div>
           <label class="lbl mt12">Ваши заметки с демонстрации</label>
-          <textarea id="demoNotes"
-            placeholder="Что показывал преподаватель? Что было неожиданным? Что запомнилось?"></textarea>
+          <textarea id="demoNotes" placeholder="Что показывал преподаватель? Что было неожиданным? Что запомнилось?"></textarea>
         </div>
 
         <!-- Угадай результат -->
         <div class="card">
           <div class="ctitle ctitle-or">Угадайте результат — запишите прогноз ДО показа</div>
           <div class="mb12">
-            <div class="code"><span class="kw">SELECT</span> <span class="fn">COUNT</span>(*) <span
-                class="kw">FROM</span> <span class="tb">Priemy</span>;</div>
+            <div class="code"><span class="kw">SELECT</span> <span class="fn">COUNT</span>(*) <span class="kw">FROM</span> <span class="tb">Priemy</span>;</div>
             <label class="lbl mt8">Прогноз</label>
             <input type="text" id="g1" placeholder="Этот запрос вернёт…">
           </div>
           <div class="mb12">
-            <div class="code"><span class="kw">SELECT DISTINCT</span> FIO_vracha <span class="kw">FROM</span> <span
-                class="tb">Priemy</span>;</div>
+            <div class="code"><span class="kw">SELECT DISTINCT</span> FIO_vracha <span class="kw">FROM</span> <span class="tb">Priemy</span>;</div>
             <label class="lbl mt8">Прогноз</label>
             <input type="text" id="g2" placeholder="Этот запрос вернёт…">
           </div>
           <div>
-            <div class="code"><span class="kw">SELECT</span> * <span class="kw">FROM</span> <span
-                class="tb">Priemy</span> <span class="kw">WHERE</span> Tsena &gt; <span class="nm">1000</span> <span
-                class="kw">ORDER BY</span> Tsena <span class="kw">DESC</span>;</div>
+            <div class="code"><span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tb">Priemy</span> <span class="kw">WHERE</span> Tsena &gt; <span class="nm">1000</span> <span class="kw">ORDER BY</span> Tsena <span class="kw">DESC</span>;</div>
             <label class="lbl mt8">Прогноз</label>
             <input type="text" id="g3" placeholder="Этот запрос вернёт…">
           </div>
@@ -1745,57 +1904,97 @@
         <!-- Вопросы -->
         <div class="card">
           <div class="ctitle">Вопросы преподавателю</div>
-          <div class="wall" id="qWall">
-            <div style="color:var(--mu);font-size:13px">Вопросов пока нет…</div>
-          </div>
+          <div class="wall" id="qWall"><div style="color:var(--mu);font-size:13px">Вопросов пока нет…</div></div>
           <div style="display:flex;gap:8px">
-            <input type="text" id="qIn" placeholder="Что непонятно?" style="flex:1"
-              onkeydown="if(event.key==='Enter')submitQ()">
+            <input type="text" id="qIn" placeholder="Что непонятно?" style="flex:1" onkeydown="if(event.key==='Enter')submitQ()">
             <button class="btn btn-cy" onclick="submitQ()">Задать</button>
           </div>
         </div>
+
+        <div class="task-return">Вернёмся к задачам: «Научить составлять SELECT-запросы с WHERE, ORDER BY, COUNT, AVG» — мы это продемонстрировали. Теперь ваша очередь.</div>
+        <div class="sec-rate"><span class="sec-rate-label">Оцените этап:</span><div class="rate-dots" id="sr3"></div></div>
       </div>
     </section>
     <hr class="rule">
 
-    <!-- ── 04 ПРАКТИКА ── -->
+    <!-- ── 04 ФИЗКУЛЬТМИНУТКА ── -->
     <section class="sec sec-locked" id="s4" data-sec="4">
       <div class="sec-hd">
         <span class="sec-tag">04</span>
+        <span class="sec-name">Физкультминутка</span>
+        <span class="sec-min">1 мин</span>
+      </div>
+      <div class="sec-body">
+        <div class="card card-gr">
+          <div class="ctitle" style="color:var(--gr)">SQL-разминка: «Встань, если…»</div>
+          <p style="font-size:14px;color:var(--tx2);line-height:1.7;margin-bottom:14px">
+            Преподаватель читает утверждения. <strong>Если утверждение верное — встаньте. Если ложное — останьтесь сидеть.</strong> Кто ошибся — объясняет почему.
+          </p>
+          <div id="fizkStatements">
+            <div class="fizk-stmt" onclick="toggleFizk(this)" style="padding:10px 14px;border:1px solid var(--brd);background:var(--sur);margin-bottom:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:10px;transition:.15s">
+              <span class="fizk-mark" style="min-width:24px;text-align:center;font-size:16px">❓</span>
+              <span>SELECT используется для добавления данных</span>
+              <span class="fizk-ans" style="display:none;margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--re)">ЛОЖЬ — SELECT для выборки</span>
+            </div>
+            <div class="fizk-stmt" onclick="toggleFizk(this)" style="padding:10px 14px;border:1px solid var(--brd);background:var(--sur);margin-bottom:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:10px;transition:.15s">
+              <span class="fizk-mark" style="min-width:24px;text-align:center;font-size:16px">❓</span>
+              <span>WHERE фильтрует строки по условию</span>
+              <span class="fizk-ans" style="display:none;margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--gr)">ИСТИНА ✓</span>
+            </div>
+            <div class="fizk-stmt" onclick="toggleFizk(this)" style="padding:10px 14px;border:1px solid var(--brd);background:var(--sur);margin-bottom:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:10px;transition:.15s">
+              <span class="fizk-mark" style="min-width:24px;text-align:center;font-size:16px">❓</span>
+              <span>INSERT INTO добавляет новую строку в таблицу</span>
+              <span class="fizk-ans" style="display:none;margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--gr)">ИСТИНА ✓</span>
+            </div>
+            <div class="fizk-stmt" onclick="toggleFizk(this)" style="padding:10px 14px;border:1px solid var(--brd);background:var(--sur);margin-bottom:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:10px;transition:.15s">
+              <span class="fizk-mark" style="min-width:24px;text-align:center;font-size:16px">❓</span>
+              <span>ORDER BY удаляет дубликаты</span>
+              <span class="fizk-ans" style="display:none;margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--re)">ЛОЖЬ — ORDER BY сортирует, дубликаты убирает DISTINCT</span>
+            </div>
+            <div class="fizk-stmt" onclick="toggleFizk(this)" style="padding:10px 14px;border:1px solid var(--brd);background:var(--sur);margin-bottom:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:10px;transition:.15s">
+              <span class="fizk-mark" style="min-width:24px;text-align:center;font-size:16px">❓</span>
+              <span>COUNT(*) считает количество строк в таблице</span>
+              <span class="fizk-ans" style="display:none;margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--gr)">ИСТИНА ✓</span>
+            </div>
+            <div class="fizk-stmt" onclick="toggleFizk(this)" style="padding:10px 14px;border:1px solid var(--brd);background:var(--sur);margin-bottom:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:10px;transition:.15s">
+              <span class="fizk-mark" style="min-width:24px;text-align:center;font-size:16px">❓</span>
+              <span>Текстовые значения в SQL пишутся без кавычек</span>
+              <span class="fizk-ans" style="display:none;margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--re)">ЛОЖЬ — текст всегда в одинарных кавычках</span>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--mu);margin-top:10px">Преподаватель раскрывает ответы по очереди нажатием.</p>
+        </div>
+        <div class="sec-rate"><span class="sec-rate-label">Оцените этап:</span><div class="rate-dots" id="sr4"></div></div>
+      </div>
+    </section>
+    <hr class="rule">
+
+    <!-- ── 05 ПРАКТИКА ── -->
+    <section class="sec sec-locked" id="s5" data-sec="5">
+      <div class="sec-hd">
+        <span class="sec-tag">05</span>
         <span class="sec-name">Практическая работа</span>
         <span class="sec-min">15 мин</span>
       </div>
       <div class="sec-body">
-        <div class="info">Используйте <strong>sqliteonline.com</strong> и файл <strong>priemy.db</strong>. Выполняйте
-          задания по порядку.</div>
+        <div class="info">Используйте <strong>sqliteonline.com</strong> и файл <strong>priemy.db</strong>. Выполняйте задания по порядку.</div>
 
         <!-- INSERT пазл -->
         <div class="card mt12">
-          <div class="ctitle">Задание 1 <span style="color:var(--or)">[+1 б.]</span> — INSERT INTO: заполните значения
-          </div>
-          <p style="font-size:13px;color:var(--tx2);margin-bottom:13px">Нужно добавить нового пациента. Впишите
-            правильные значения в каждое поле.<br>
-            Данные: <strong>Нилов Андрей · +79221009090 · Петрова А.И. · Терапевт · Консультация · 700 · кабинет
-              101</strong></p>
+          <div class="ctitle">Задание 1 <span style="color:var(--or)">[+1 б.]</span> — INSERT INTO: заполните значения</div>
+          <p style="font-size:13px;color:var(--tx2);margin-bottom:13px">Нужно добавить нового пациента. Впишите правильные значения в каждое поле.<br>
+            Данные: <strong>Нилов Андрей · +79221009090 · Петрова А.И. · Терапевт · Консультация · 700 · кабинет 101</strong></p>
           <div class="code mb12">
-            <span class="kw">INSERT INTO</span> <span class="tb">Priemy</span> (FIO_pacienta, Telefon, FIO_vracha, Spec,
-            Usluga, Tsena, Cabinet)<br>
-            <span class="kw">VALUES</span> (<span class="st">'?'</span>, <span class="st">'?'</span>, <span
-              class="st">'?'</span>, <span class="st">'?'</span>, <span class="st">'?'</span>, <span
-              class="nm">?</span>, <span class="st">'?'</span>);
+            <span class="kw">INSERT INTO</span> <span class="tb">Priemy</span> (FIO_pacienta, Telefon, FIO_vracha, Spec, Usluga, Tsena, Cabinet)<br>
+            <span class="kw">VALUES</span> (<span class="st">'?'</span>, <span class="st">'?'</span>, <span class="st">'?'</span>, <span class="st">'?'</span>, <span class="st">'?'</span>, <span class="nm">?</span>, <span class="st">'?'</span>);
           </div>
           <div class="ins-grid">
-            <div><label class="lbl">FIO_pacienta (текст — в кавычках)</label><input class="ins-f" id="i0"
-                placeholder="'Нилов Андрей'"></div>
-            <div><label class="lbl">Telefon (текст)</label><input class="ins-f" id="i1" placeholder="'+79221009090'">
-            </div>
-            <div><label class="lbl">FIO_vracha (текст)</label><input class="ins-f" id="i2" placeholder="'Петрова А.И.'">
-            </div>
+            <div><label class="lbl">FIO_pacienta (текст — в кавычках)</label><input class="ins-f" id="i0" placeholder="'Нилов Андрей'"></div>
+            <div><label class="lbl">Telefon (текст)</label><input class="ins-f" id="i1" placeholder="'+79221009090'"></div>
+            <div><label class="lbl">FIO_vracha (текст)</label><input class="ins-f" id="i2" placeholder="'Петрова А.И.'"></div>
             <div><label class="lbl">Spec (текст)</label><input class="ins-f" id="i3" placeholder="'Терапевт'"></div>
-            <div><label class="lbl">Usluga (текст)</label><input class="ins-f" id="i4" placeholder="'Консультация'">
-            </div>
-            <div><label class="lbl">Tsena (число, без кавычек)</label><input class="ins-f" id="i5" placeholder="700">
-            </div>
+            <div><label class="lbl">Usluga (текст)</label><input class="ins-f" id="i4" placeholder="'Консультация'"></div>
+            <div><label class="lbl">Tsena (число, без кавычек)</label><input class="ins-f" id="i5" placeholder="700"></div>
             <div><label class="lbl">Cabinet (текст)</label><input class="ins-f" id="i6" placeholder="'101'"></div>
           </div>
           <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
@@ -1806,94 +2005,30 @@
         </div>
 
         <div id="selWrap"></div>
+
+        <div class="warn mt12">
+          <strong>Можно проверить через нейросеть:</strong> скопируйте свой SQL-запрос и спросите
+          <a href="https://ya.ru/ai/alice" target="_blank" style="color:var(--cy)">Алису</a> или
+          <a href="https://gigachat.ru" target="_blank" style="color:var(--cy)">GigaChat</a>
+          — верный ли запрос и что он вернёт.
+        </div>
+
+        <div class="task-return">Вернёмся к задачам: «Научить составлять SELECT-запросы» и «Сформировать умение добавлять данные через INSERT INTO» — этой практикой мы их выполнили.</div>
+        <div class="sec-rate"><span class="sec-rate-label">Оцените этап:</span><div class="rate-dots" id="sr5"></div></div>
       </div>
     </section>
     <hr class="rule">
 
-    <!-- ── 05 ОЦЕНИВАНИЕ ── -->
-    <section class="sec sec-locked" id="s5" data-sec="5">
-      <div class="sec-hd">
-        <span class="sec-tag">05</span>
-        <span class="sec-name">Формирующее оценивание</span>
-        <span class="sec-min">5 мин</span>
-      </div>
-      <div class="sec-body">
-        <div class="card">
-          <div class="ctitle">Сверьтесь с эталоном — отметьте выполненное</div>
-          <p style="font-size:13px;color:var(--mu);margin-bottom:13px">Эталон на экране преподавателя. 1 задание = 1
-            балл.</p>
-          <div id="assessList"></div>
-          <div class="gbox-row">
-            <div class="gbox">
-              <div class="gnum" id="scoreN">0</div>
-              <div class="glbl">баллов из 7</div>
-            </div>
-            <div class="gbox hl">
-              <div class="gnum" id="gradeN">—</div>
-              <div class="glbl">оценка</div>
-            </div>
-          </div>
-          <div class="info mt12"><strong>Шкала:</strong> 7–6 б. → «5» &nbsp;|&nbsp; 5 б. → «4» &nbsp;|&nbsp; 4–3 б. →
-            «3» &nbsp;|&nbsp; &lt;3 б. → «2»</div>
-        </div>
-        <div class="card">
-          <div class="ctitle">Рефлексия на занятие</div>
-          <div class="g2">
-            <div><label class="lbl">Что было труднее всего?</label><textarea id="hard"
-                placeholder="Труднее всего мне дался…"></textarea></div>
-            <div><label class="lbl">Что пригодится в профессии?</label><textarea id="take"
-                placeholder="В работе оператора ИС пригодится…"></textarea></div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <hr class="rule">
-
-    <!-- ── 06 РЕФЛЕКСИЯ ── -->
+    <!-- ── 06 ДОМАШНЕЕ ЗАДАНИЕ ── -->
     <section class="sec sec-locked" id="s6" data-sec="6">
       <div class="sec-hd">
         <span class="sec-tag">06</span>
-        <span class="sec-name">Рефлексия — П-О-П-С</span>
-        <span class="sec-min">3 мин</span>
+        <span class="sec-name">Домашнее задание</span>
+        <span class="sec-min">1 мин</span>
       </div>
       <div class="sec-body">
         <div class="card">
-          <div class="ctitle">Тема эссе: «SQL нужен оператору ИС, потому что…»</div>
-          <p style="font-size:13px;color:var(--mu);margin-bottom:15px">Минимум одно предложение в каждом поле. После —
-            проверьте через Алису или GigaChat.</p>
-          <div class="pg">
-            <div class="pc">
-              <div class="pb">П</div>
-              <div class="pl">П — Позиция: «Я полагаю, что…»</div><textarea id="pP"
-                placeholder="Я полагаю, что SQL необходим специалисту…"></textarea>
-            </div>
-            <div class="pc">
-              <div class="pb">О</div>
-              <div class="pl">О — Обоснование: «Потому что…»</div><textarea id="pO"
-                placeholder="Потому что без SQL невозможно…"></textarea>
-            </div>
-            <div class="pc">
-              <div class="pb">П</div>
-              <div class="pl">П — Пример: «Например…»</div><textarea id="pPr"
-                placeholder="Например, когда регистратор ищет данные пациента…"></textarea>
-            </div>
-            <div class="pc">
-              <div class="pb">С</div>
-              <div class="pl">С — Следствие: «Таким образом…»</div><textarea id="pS"
-                placeholder="Таким образом, владение SQL позволяет…"></textarea>
-            </div>
-          </div>
-          <div class="warn mt16">
-            <strong>Проверьте через нейросеть:</strong> скопируйте эссе и попросите
-            <a href="https://ya.ru/ai/alice" target="_blank" style="color:var(--cy)">Алису</a> или
-            <a href="https://gigachat.ru" target="_blank" style="color:var(--cy)">GigaChat</a>
-            оценить его по формуле ПОПС и дать обратную связь.
-          </div>
-        </div>
-
-        <!-- ДЗ с QR -->
-        <div class="card">
-          <div class="ctitle ctitle-or">Домашнее задание</div>
+          <div class="ctitle ctitle-or">Домашнее задание по SQL</div>
           <p style="font-size:14px;color:var(--tx2);line-height:1.7;margin-bottom:16px">
             Зайдите на <strong>sqliteonline.com</strong>. Используйте ту же базу <strong>priemy.db</strong>.<br>
             Выполните <strong>5 заданий по SQL</strong>: напишите запросы и сохраните результаты скриншотами.
@@ -1918,6 +2053,93 @@
             </div>
           </div>
         </div>
+        <div class="task-return">ДЗ продолжает нашу задачу — применение SQL в самостоятельной работе.</div>
+        <div class="sec-rate"><span class="sec-rate-label">Оцените этап:</span><div class="rate-dots" id="sr6"></div></div>
+      </div>
+    </section>
+    <hr class="rule">
+
+    <!-- ── 07 РЕФЛЕКСИЯ ── -->
+    <section class="sec sec-locked" id="s7" data-sec="7">
+      <div class="sec-hd">
+        <span class="sec-tag">07</span>
+        <span class="sec-name">Рефлексия — П-О-П-С</span>
+        <span class="sec-min">3 мин</span>
+      </div>
+      <div class="sec-body">
+        <div class="card">
+          <div class="ctitle">Тема эссе: «SQL нужен оператору ИС, потому что…»</div>
+          <p style="font-size:13px;color:var(--mu);margin-bottom:15px">Минимум одно предложение в каждом поле. После — проверьте через Алису или GigaChat.</p>
+          <div class="pg">
+            <div class="pc"><div class="pb">П</div><div class="pl">П — Позиция: «Я полагаю, что…»</div><textarea id="pP" placeholder="Я полагаю, что SQL необходим специалисту…"></textarea></div>
+            <div class="pc"><div class="pb">О</div><div class="pl">О — Обоснование: «Потому что…»</div><textarea id="pO" placeholder="Потому что без SQL невозможно…"></textarea></div>
+            <div class="pc"><div class="pb">П</div><div class="pl">П — Пример: «Например…»</div><textarea id="pPr" placeholder="Например, когда регистратор ищет данные пациента…"></textarea></div>
+            <div class="pc"><div class="pb">С</div><div class="pl">С — Следствие: «Таким образом…»</div><textarea id="pS" placeholder="Таким образом, владение SQL позволяет…"></textarea></div>
+          </div>
+          <div class="warn mt16">
+            <strong>Проверьте через нейросеть:</strong> скопируйте эссе и попросите
+            <a href="https://ya.ru/ai/alice" target="_blank" style="color:var(--cy)">Алису</a> или
+            <a href="https://gigachat.ru" target="_blank" style="color:var(--cy)">GigaChat</a>
+            оценить его по формуле ПОПС и дать обратную связь.
+          </div>
+        </div>
+        <div class="sec-rate"><span class="sec-rate-label">Оцените этап:</span><div class="rate-dots" id="sr7"></div></div>
+      </div>
+    </section>
+    <hr class="rule">
+
+    <!-- ── 08 ОЦЕНИВАНИЕ ── -->
+    <section class="sec sec-locked" id="s8" data-sec="8">
+      <div class="sec-hd">
+        <span class="sec-tag">08</span>
+        <span class="sec-name">Подведение итогов, оценивание</span>
+        <span class="sec-min">4 мин</span>
+      </div>
+      <div class="sec-body">
+        <div class="card">
+          <div class="ctitle">Эталон ответов</div>
+          <div id="etLocked" style="padding:12px;text-align:center;color:var(--mu);font-family:var(--cond);font-size:14px">🔒 Эталон откроет преподаватель после сверки</div>
+          <div class="etalon-body" id="etBody">
+            <div class="etalon-row"><span class="etalon-num">1</span><span>INSERT: <span class="etalon-code">'Нилов Андрей', '+79221009090', 'Петрова А.И.', 'Терапевт', 'Консультация', 700, '101'</span></span></div>
+            <div class="etalon-row"><span class="etalon-num">2</span><span><span class="etalon-code">SELECT * FROM Priemy;</span></span></div>
+            <div class="etalon-row"><span class="etalon-num">3</span><span><span class="etalon-code">SELECT FIO_pacienta, Tsena FROM Priemy;</span></span></div>
+            <div class="etalon-row"><span class="etalon-num">4</span><span><span class="etalon-code">SELECT * FROM Priemy WHERE Tsena > 1000;</span></span></div>
+            <div class="etalon-row"><span class="etalon-num">5</span><span><span class="etalon-code">SELECT * FROM Priemy ORDER BY Tsena DESC;</span></span></div>
+            <div class="etalon-row"><span class="etalon-num">6</span><span><span class="etalon-code">SELECT COUNT(*) FROM Priemy;</span></span></div>
+            <div class="etalon-row"><span class="etalon-num">7</span><span>Письменный ответ: SQL — это язык запросов к БД. Нужен оператору ИС для выборки, фильтрации и добавления данных.</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="ctitle">Сверьтесь с эталоном — отметьте выполненное</div>
+          <p style="font-size:13px;color:var(--mu);margin-bottom:13px">1 задание = 1 балл.</p>
+          <div id="assessList"></div>
+          <div class="gbox-row">
+            <div class="gbox"><div class="gnum" id="scoreN">0</div><div class="glbl">баллов из 7</div></div>
+            <div class="gbox hl"><div class="gnum" id="gradeN">—</div><div class="glbl">оценка</div></div>
+          </div>
+          <div class="info mt12"><strong>Шкала:</strong> 7–6 б. → «5» &nbsp;|&nbsp; 5 б. → «4» &nbsp;|&nbsp; 4–3 б. → «3» &nbsp;|&nbsp; &lt;3 б. → «2»</div>
+        </div>
+
+        <div class="card">
+          <div class="ctitle">Рефлексия на занятие</div>
+          <div class="g2">
+            <div><label class="lbl">Что было труднее всего?</label><textarea id="hard" placeholder="Труднее всего мне дался…"></textarea></div>
+            <div><label class="lbl">Что пригодится в профессии?</label><textarea id="take" placeholder="В работе оператора ИС пригодится…"></textarea></div>
+          </div>
+        </div>
+
+        <div class="card card-cy" style="margin-top:16px">
+          <div class="ctitle ctitle-cy">Финальный итог</div>
+          <p style="font-size:14px;color:var(--tx2);line-height:1.8">
+            <strong>Цель</strong> — научиться составлять SQL-запросы. Каждый из вас написал минимум 6 запросов за урок, плюс INSERT. <strong>Цель достигнута.</strong><br><br>
+            <strong>Задачи:</strong><br>
+            ✓ Сформировать понятийный аппарат — через ГОСТ-конструктор<br>
+            ✓ Объяснить синтаксис — через Duolingo-конструктор и демонстрацию<br>
+            ✓ Научить составлять SELECT и INSERT — на практике<br><br>
+            <strong>Все задачи закрыты. Спасибо за работу!</strong>
+          </p>
+        </div>
       </div>
     </section>
 
@@ -1939,10 +2161,17 @@
       <button class="tp-x" onclick="toggleTeacher()">✕</button>
     </div>
 
-    <!-- Управление разделами -->
     <div class="tp-sec">
       <div class="tp-stl">Управление разделами</div>
       <div id="secControls"></div>
+    </div>
+
+    <div class="tp-sec">
+      <div class="tp-stl">Эталон ответов</div>
+      <div class="sec-ctrl">
+        <span class="sc-name">Показать эталон студентам</span>
+        <button class="sc-btn locked" id="etTeacherBtn" onclick="toggleEtalonTeacher()">🔒 Скрыт</button>
+      </div>
     </div>
 
     <div class="tp-sec">
@@ -1974,9 +2203,6 @@
 
   <!-- ══ СКРИПТЫ ══ -->
   <script>
-    /* ── FIREBASE CONFIG ─────────────────────────────────────
-       Замените YOUR_... на данные из console.firebase.google.com
-       → Настройки проекта → Ваши приложения → Web               */
     const FB = {
       apiKey: "AIzaSyBQD-mSquCzINoLZmGtnNZof-IAZB4VtQ4",
       authDomain: "realtime-database-a08f7.firebaseapp.com",
@@ -1987,17 +2213,19 @@
       measurementId: "G-RQ3223NZMN"
     };
 
-
-    const PASS = "sql2025";          /* пароль панели — измените */
+    const PASS = "sql2025";
     const SESSION = "lesson_" + new Date().toISOString().slice(0, 10);
-    /* ─────────────────────────────────────────────────────── */
+
+    // Секции: ключи 1..8 (новая нумерация)
+    const SEC_IDS = [1, 2, 3, 4, 5, 6, 7, 8];
+    const SEC_NAMES = ["—", "Целеполагание", "Актуализация", "Демонстрация", "Физкультминутка", "Практика", "ДЗ", "Рефлексия", "Оценивание"];
 
     let db = null;
     let SK = localStorage.getItem("sk") || ("s" + Math.random().toString(36).slice(2, 9));
     localStorage.setItem("sk", SK);
 
     try { firebase.initializeApp(FB); db = firebase.database(); initFB(); }
-    catch (e) { /* работаем локально */ }
+    catch (e) { /* локальный режим */ }
 
     function R(p) { return db ? db.ref(SESSION + "/" + p) : null; }
     function el(id) { return document.getElementById(id); }
@@ -2019,7 +2247,13 @@
         el("tpNamed").textContent = ks.filter(k => d[k].name).length;
       });
       R("scores").on("value", s => { tpScores(s.val() || {}); });
-      R("secLocks").on("value", s => { applyLocks(s.val() || {}); });
+      // КЛЮЧЕВОЙ FIX: слушаем secLocks и при подключении/обновлении получаем текущее состояние
+      R("secLocks").on("value", s => {
+        const d = s.val() || {};
+        applyLocks(d);
+        // Сохраняем в localStorage как кэш на случай потери связи
+        sv("secLocksCache", d);
+      });
     }
 
     /* ── ИМЯ ── */
@@ -2042,6 +2276,7 @@
     }
 
     /* ── МАРШРУТ ── */
+    const ROUTE_COUNT = 9;
     let routeDone = ld("route", []);
     routeDone.forEach(i => {
       const b = document.querySelector("#rr" + i + " .chb");
@@ -2057,14 +2292,74 @@
       else if (!btn.classList.contains("on") && ix !== -1) routeDone.splice(ix, 1);
       sv("route", routeDone); updateRP();
     }
-    function updateRP() { el("rProg").style.width = (routeDone.length / 9 * 100) + "%"; }
+    function updateRP() {
+      const pct = routeDone.length / ROUTE_COUNT * 100;
+      const bar = el("rProg");
+      bar.style.width = pct + "%";
+      // red(0%) → orange(33%) → yellow(66%) → green(100%)
+      const r = pct < 50 ? 220 : Math.round(220 - (pct - 50) * 4.0);
+      const g = pct < 50 ? Math.round(60 + pct * 2.8) : 180;
+      const b = pct < 50 ? 20 : Math.round(20 + (pct - 50) * 0.8);
+      bar.style.backgroundColor = `rgb(${Math.max(0,Math.min(255,r))},${Math.max(0,Math.min(255,g))},${Math.max(0,Math.min(255,b))})`;
+    }
 
-    /* ── СЕКЦИИ-ЗАМКИ ── */
-    const SEC_NAMES = ["—", "Целеполагание", "Повторение", "Демонстрация", "Практика", "Оценивание", "Рефлексия"];
-    let locksState = {}; // {1:true, 2:true, ...} true = locked
+    /* ── РЕЙТИНГ ЭТАПОВ (1-5 как в такси) ── */
+    let stageRatings = ld("stageRatings", {});
+    // Mapping: section id → route row index
+    // sr1→rr1 (row 1), sr2→rr2 (row 2), ..., sr7→rr7 (row 7)
+    // Route row 0 (Подготовка) and row 8 (Итоги) have no section rating widget
+
+    function renderRatingDots(containerId, rowIdx, size) {
+      const container = el(containerId);
+      if (!container) return;
+      let html = '';
+      for (let s = 1; s <= 5; s++) {
+        const active = stageRatings[rowIdx] >= s ? " active" : "";
+        html += `<button class="rdot${active}" onclick="setRating(${rowIdx},'${containerId}')" data-score="${s}" title="${s}">${s}</button>`;
+      }
+      container.innerHTML = html;
+    }
+
+    function buildAllRatings() {
+      // Route table cells (all rows 0-8)
+      for (let r = 0; r < ROUTE_COUNT; r++) {
+        renderRatingDots("rc" + r, r);
+      }
+      // Section-embedded ratings (rows 1-7)
+      for (let r = 1; r <= 7; r++) {
+        renderRatingDots("sr" + r, r);
+      }
+    }
+
+    function setRating(row, sourceId) {
+      // Find clicked button score via event
+      const score = parseInt(event.target.dataset.score);
+      if (!score) return;
+      // Toggle off if same
+      if (stageRatings[row] === score) {
+        delete stageRatings[row];
+      } else {
+        stageRatings[row] = score;
+      }
+      sv("stageRatings", stageRatings);
+      // Re-render both route table cell AND section widget for this row
+      renderRatingDots("rc" + row, row);
+      if (row >= 1 && row <= 7) renderRatingDots("sr" + row, row);
+      // Firebase
+      if (db) {
+        R("ratings/" + SK).set({
+          name: ld("uname", "") || SK,
+          ratings: stageRatings
+        });
+      }
+    }
+    buildAllRatings();
+
+    /* ── СЕКЦИИ-ЗАМКИ (ИСПРАВЛЕННАЯ ЛОГИКА) ── */
+    let locksState = {};
 
     function buildSecControls() {
-      el("secControls").innerHTML = [1, 2, 3, 4, 5, 6].map(i => `
+      el("secControls").innerHTML = SEC_IDS.map(i => `
     <div class="sec-ctrl">
       <span class="sc-name">${String(i).padStart(2, "0")} ${SEC_NAMES[i]}</span>
       <button class="sc-btn locked" id="scBtn${i}" onclick="toggleLock(${i})">🔒 Закрыт</button>
@@ -2073,17 +2368,21 @@
     buildSecControls();
 
     function toggleLock(i) {
-      const nowLocked = locksState[i] !== false; // default = locked
-      const newState = !nowLocked;
+      const nowLocked = locksState[i] !== false;
+      const newState = !nowLocked; // если было locked → станет false (unlocked)
       locksState[i] = newState;
-      if (db) { R("secLocks/" + i).set(newState); }
-      else { applyLocks(locksState); }
+      if (db) {
+        R("secLocks/" + i).set(newState);
+      } else {
+        sv("secLocksCache", locksState);
+        applyLocks(locksState);
+      }
     }
 
     function applyLocks(data) {
       locksState = data;
-      [1, 2, 3, 4, 5, 6].forEach(i => {
-        const locked = data[i] !== false; // если нет записи — заблокировано
+      SEC_IDS.forEach(i => {
+        const locked = data[i] !== false; // если нет записи или true — заблокировано
         const sec = el("s" + i);
         const btn = el("scBtn" + i);
         if (!sec) return;
@@ -2102,30 +2401,83 @@
       if (sec.querySelector(".lock-overlay")) return;
       const ov = document.createElement("div");
       ov.className = "lock-overlay";
-      ov.innerHTML = `<div class="lock-icon">🔒</div><div class="lock-text">Раздел откроет преподаватель</div>`;
+      ov.innerHTML = '<div class="lock-icon">🔒</div><div class="lock-text">Раздел откроет преподаватель</div>';
       sec.appendChild(ov);
     }
 
     function unlockSection(sec) {
       const ov = sec.querySelector(".lock-overlay");
-      if (!ov) return;
-      sec.classList.add("unlocking");
-      ov.style.animation = "unlockAnim .45s ease forwards";
-      setTimeout(() => {
-        sec.classList.remove("sec-locked", "unlocking");
-        ov.remove();
-        // Анимация появления контента
-        const body = sec.querySelector(".sec-body");
-        if (body) { body.style.animation = "fadeIn .4s ease"; }
-      }, 460);
+      if (!sec.classList.contains("sec-locked") && !ov) return; // уже открыт
+      if (ov) {
+        sec.classList.add("unlocking");
+        ov.style.animation = "unlockAnim .45s ease forwards";
+        setTimeout(() => {
+          sec.classList.remove("sec-locked", "unlocking");
+          ov.remove();
+          const body = sec.querySelector(".sec-body");
+          if (body) { body.style.animation = "fadeIn .4s ease"; }
+        }, 460);
+      } else {
+        sec.classList.remove("sec-locked");
+      }
     }
 
-    // Инициализация — все разделы 1–6 заблокированы по умолчанию
+    // Инициализация: если Firebase подключён — ждём данные из on("value"),
+    // если нет — берём кэш из localStorage, а если и кэша нет — всё закрыто
     if (!db) {
-      const initLocks = {};
-      [1, 2, 3, 4, 5, 6].forEach(i => { initLocks[i] = true; });
-      applyLocks(initLocks);
+      const cached = ld("secLocksCache", null);
+      if (cached) {
+        applyLocks(cached);
+      } else {
+        const initLocks = {};
+        SEC_IDS.forEach(i => { initLocks[i] = true; });
+        applyLocks(initLocks);
+      }
     }
+
+    /* ── ПРАВИЛА СОТРУДНИЧЕСТВА ── */
+    const RULES = [
+      { text: "Слушаем друг друга, не перебиваем", correct: true },
+      { text: "Кто громче кричит — тот и прав", correct: false },
+      { text: "Поднимаем руку, если хотим ответить", correct: true },
+      { text: "Можно пользоваться телефоном в любое время", correct: false },
+      { text: "Уважаем чужое мнение, даже если не согласны", correct: true },
+      { text: "Если задание сложное — можно не делать", correct: false },
+    ];
+    let rulesRevealed = ld("rulesRevealed", []);
+
+    function buildRules() {
+      el("rulesBox").innerHTML = RULES.map((r, i) => {
+        const rev = rulesRevealed.includes(i);
+        let cls = "rule-item";
+        if (rev) cls += r.correct ? " ri-yes" : " ri-no";
+        return `<div class="${cls}" id="ri${i}" onclick="revealRule(${i})">
+          <div class="ri-mark">${rev ? (r.correct ? "✓" : "✗") : "?"}</div>
+          <span>${r.text}</span>
+        </div>`;
+      }).join("");
+      updateRulesSt();
+    }
+
+    function revealRule(i) {
+      if (rulesRevealed.includes(i)) return;
+      rulesRevealed.push(i);
+      sv("rulesRevealed", rulesRevealed);
+      const item = el("ri" + i);
+      const r = RULES[i];
+      item.classList.add(r.correct ? "ri-yes" : "ri-no");
+      item.querySelector(".ri-mark").textContent = r.correct ? "✓" : "✗";
+      updateRulesSt();
+      if (rulesRevealed.length === RULES.length) confetti();
+    }
+
+    function updateRulesSt() {
+      const correct = rulesRevealed.filter(i => RULES[i].correct).length;
+      el("rulesSt").textContent = rulesRevealed.length > 0
+        ? `Раскрыто: ${rulesRevealed.length} / ${RULES.length}. Верных правил: ${correct}`
+        : "";
+    }
+    buildRules();
 
     /* ── ГОЛОСОВАНИЕ ── */
     let myVote = localStorage.getItem("myvote");
@@ -2194,12 +2546,12 @@
 
     /* ── ГОСТ МАТЧ ── */
     const GOST = [
-      { term: "SELECT", def: "Команда SQL для выборки данных из таблицы" },
-      { term: "INSERT INTO", def: "Команда SQL для добавления новых строк в таблицу" },
-      { term: "WHERE", def: "Ключевое слово для фильтрации строк по условию" },
-      { term: "База данных", def: "Организованное хранилище структурированных данных" },
-      { term: "Первичный ключ", def: "Атрибут, однозначно идентифицирующий каждую запись" },
-      { term: "Запись", def: "Строка таблицы — данные об одном объекте предметной области" },
+      { term: "SELECT", def: "Оператор языка SQL для выборки данных из одной или нескольких таблиц (ISO/IEC 9075)" },
+      { term: "INSERT INTO", def: "Оператор языка SQL для добавления новых строк в таблицу (ISO/IEC 9075)" },
+      { term: "WHERE", def: "Предложение оператора SQL, задающее условие отбора строк результата (ISO/IEC 9075)" },
+      { term: "База данных", def: "Совокупность данных, организованных в соответствии с концептуальной структурой (ГОСТ 33707–2016, ст. 2.2.1)" },
+      { term: "Первичный ключ", def: "Ключ отношения, выбранный для уникальной идентификации каждого кортежа (ГОСТ 33707–2016, ст. 2.6.19)" },
+      { term: "Запись", def: "Совокупность связанных элементов данных, рассматриваемая как единое целое (ГОСТ 33707–2016, ст. 2.6.14)" },
     ];
     let mSel = null, mScore = 0, mDone = [];
     function initMatch() {
@@ -2223,7 +2575,6 @@
     initMatch();
 
     /* ── DUOLINGO ── */
-    /* Таблица-заглушка результата для каждого упражнения */
     const DUO_TABLES = [
       { cols: ["ID", "ФИО пациента", "ФИО врача", "Услуга", "Цена"], rows: [["1", "Иванов П.С.", "Петрова А.И.", "Первичный приём", "800"], ["2", "Смирнова О.В.", "Сидоров В.П.", "ЭКГ", "1200"], ["...", "...", "...", "...", "..."]] },
       { cols: ["ID", "ФИО пациента", "Цена"], rows: [["2", "Смирнова О.В.", "1200"], ["5", "Смирнова О.В.", "2500"]] },
@@ -2286,12 +2637,12 @@
 
     /* ── SELECT ЗАДАНИЯ ── */
     const STASKS = [
-      { id: 2, t: "Выберите все строки и столбцы таблицы", hint: "SELECT * FROM …", exp: "SELECT * FROM Priemy;" },
-      { id: 3, t: "Выведите только ФИО пациента и цену", hint: "SELECT col1, col2 FROM …", exp: "SELECT FIO_pacienta, Tsena FROM Priemy;" },
-      { id: 4, t: "Найдите приёмы дороже 1000 рублей", hint: "WHERE Tsena > 1000", exp: "SELECT * FROM Priemy WHERE Tsena > 1000;" },
-      { id: 5, t: "Отсортируйте приёмы от дорогих к дешёвым", hint: "ORDER BY Tsena DESC", exp: "SELECT * FROM Priemy ORDER BY Tsena DESC;" },
-      { id: 6, t: "Посчитайте количество всех записей", hint: "SELECT COUNT(*) FROM …", exp: "SELECT COUNT(*) FROM Priemy;" },
-      { id: 7, t: "Письменно: что такое SQL и зачем он нужен оператору ИС? (2–3 предложения)", hint: "Своими словами", exp: null, text: true },
+      { id: 2, t: "Выберите все строки и столбцы таблицы", hint: null, exp: "SELECT * FROM Priemy;" },
+      { id: 3, t: "Выведите только ФИО пациента и цену", hint: null, exp: "SELECT FIO_pacienta, Tsena FROM Priemy;" },
+      { id: 4, t: "Найдите приёмы дороже 1000 рублей", hint: null, exp: "SELECT * FROM Priemy WHERE Tsena > 1000;" },
+      { id: 5, t: "Отсортируйте приёмы от дорогих к дешёвым", hint: null, exp: "SELECT * FROM Priemy ORDER BY Tsena DESC;" },
+      { id: 6, t: "Посчитайте количество всех записей", hint: null, exp: "SELECT COUNT(*) FROM Priemy;" },
+      { id: 7, t: "Письменно: что такое SQL и зачем он нужен оператору ИС? (2–3 предложения)", hint: null, exp: null, text: true },
     ];
     const savedAns = ld("tans", {});
     function buildSel() {
@@ -2299,15 +2650,47 @@
     <div class="card" style="margin-top:12px">
       <div class="ctitle">Задание ${t.id} <span style="color:var(--or)">[+1 б.]</span> — ${t.t}</div>
       ${!t.text
-          ? `<div class="info mb12">💡 <span style="font-family:var(--mono)">${t.hint}</span></div>
-          <textarea class="code-in" id="ta${t.id}" rows="2" oninput="saveA(${t.id},this.value)">${savedAns["t" + t.id] || ""}</textarea>`
-          : `<div class="info mb12">💡 ${t.hint}</div>
-          <textarea id="ta${t.id}" rows="3" oninput="saveA(${t.id},this.value)">${savedAns["t" + t.id] || ""}</textarea>`
+          ? `<textarea class="code-in" id="ta${t.id}" rows="2" oninput="saveA(${t.id},this.value)">${savedAns["t" + t.id] || ""}</textarea>`
+          : `<textarea id="ta${t.id}" rows="3" oninput="saveA(${t.id},this.value)">${savedAns["t" + t.id] || ""}</textarea>`
         }
     </div>`).join("");
     }
     function saveA(id, v) { savedAns["t" + id] = v; sv("tans", savedAns); }
     buildSel();
+
+    /* ── ФИЗКУЛЬТМИНУТКА «Встань, если…» ── */
+    function toggleFizk(elem) {
+      const ans = elem.querySelector('.fizk-ans');
+      const mark = elem.querySelector('.fizk-mark');
+      if (ans.style.display === 'none') {
+        ans.style.display = 'inline';
+        const isTrue = ans.textContent.includes('ИСТИНА');
+        mark.textContent = isTrue ? '✅' : '❌';
+        elem.style.borderColor = isTrue ? 'var(--gr)' : 'var(--re)';
+        elem.style.background = isTrue ? 'var(--grl)' : 'var(--rel)';
+      }
+    }
+
+    /* ── ЭТАЛОН (управляется преподавателем) ── */
+    let etalonOpen = false;
+    function applyEtalon(open) {
+      etalonOpen = open;
+      el("etBody").classList.toggle("open", open);
+      el("etLocked").style.display = open ? "none" : "block";
+      const btn = el("etTeacherBtn");
+      if (btn) {
+        btn.textContent = open ? "🔓 Виден" : "🔒 Скрыт";
+        btn.className = open ? "sc-btn unlocked" : "sc-btn locked";
+      }
+    }
+    if (db) {
+      R("etalonOpen").on("value", s => { applyEtalon(s.val() === true); });
+    }
+    function toggleEtalonTeacher() {
+      etalonOpen = !etalonOpen;
+      if (db) { R("etalonOpen").set(etalonOpen); }
+      else { applyEtalon(etalonOpen); }
+    }
 
     /* ── САМООЦЕНКА ── */
     const TNAMES = ["Задание 1: INSERT — значения", "Задание 2: SELECT *", "Задание 3: два столбца", "Задание 4: WHERE", "Задание 5: ORDER BY", "Задание 6: COUNT(*)", "Задание 7: Письменный ответ"];
@@ -2370,7 +2753,6 @@
     if (!db) { ["tpV", "tpT", "tpQ", "tpSc"].forEach(id => { el(id).innerHTML = '<div style="font-size:11px;color:#4e6890">Firebase не настроен — только локальный режим</div>'; }); }
 
     /* ── QR-КОД ── */
-    /* Простой QR для URL через кодирование в матрицу (внешний генератор) */
     function buildQR() {
       const url = "https://sqliteonline.com";
       const apiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=" + encodeURIComponent(url) + "&color=0e7fc2&bgcolor=ffffff";
