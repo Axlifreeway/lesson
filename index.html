@@ -7,8 +7,6 @@
   <title>Электронная тетрадь — Базы данных</title>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=PT+Sans:wght@400;700&family=PT+Sans+Narrow:wght@400;700&display=swap');
 
@@ -37,1595 +35,345 @@
       --cond: 'PT Sans Narrow', sans-serif;
     }
 
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+    html { scroll-behavior: smooth }
+    body { font-family: var(--sans); background: var(--bg); color: var(--tx); font-size: 15px; line-height: 1.6 }
 
-    html {
-      scroll-behavior: smooth
-    }
-
-    body {
-      font-family: var(--sans);
-      background: var(--bg);
-      color: var(--tx);
-      font-size: 15px;
-      line-height: 1.6
+    @media print {
+      .hdr, .sub, .timer, #tp, .confetti-wrap, .tbtn, .btn, .sec-rate, .lock-overlay,
+      .task-return, .hdr-right, #timerOverlay { display: none !important; }
+      .sec-locked .sec-body { opacity: 1 !important; pointer-events: auto !important; filter: none !important; }
+      .sec-locked { position: static !important; }
+      body { font-size: 12px; background: #fff; }
+      .wrap { max-width: 100%; padding: 10px; }
+      .card { break-inside: avoid; page-break-inside: avoid; }
+      .sec { break-before: auto; }
     }
 
     /* ── ШАПКА ── */
-    .hdr {
-      background: var(--cy);
-      border-bottom: 3px solid var(--or);
-      position: sticky;
-      top: 0;
-      z-index: 300
-    }
-
-    .hdr-in {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 11px 24px;
-      display: flex;
-      align-items: center;
-      gap: 16px
-    }
-
-    .hdr-eye {
-      font-family: var(--cond);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: .14em;
-      color: #b8ddf5
-    }
-
-    .hdr-ttl {
-      font-family: var(--cond);
-      font-size: 19px;
-      font-weight: 700;
-      color: #fff;
-      line-height: 1.2
-    }
-
-    .hdr-right {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 10px
-    }
-
-    .tbtn {
-      font-family: var(--cond);
-      font-size: 12px;
-      font-weight: 700;
-      padding: 5px 13px;
-      border: 1px solid var(--or4);
-      color: var(--or4);
-      background: none;
-      cursor: pointer;
-      transition: .15s;
-      letter-spacing: .04em
-    }
-
-    .tbtn:hover,
-    .tbtn.on {
-      background: var(--or);
-      border-color: var(--or);
-      color: #fff
-    }
+    .hdr { background: var(--cy); border-bottom: 3px solid var(--or); position: sticky; top: 0; z-index: 300 }
+    .hdr-in { max-width: 900px; margin: 0 auto; padding: 11px 24px; display: flex; align-items: center; gap: 16px }
+    .hdr-eye { font-family: var(--cond); font-size: 10px; text-transform: uppercase; letter-spacing: .14em; color: #b8ddf5 }
+    .hdr-ttl { font-family: var(--cond); font-size: 19px; font-weight: 700; color: #fff; line-height: 1.2 }
+    .hdr-right { margin-left: auto; display: flex; align-items: center; gap: 10px }
+    .tbtn { font-family: var(--cond); font-size: 12px; font-weight: 700; padding: 5px 13px; border: 1px solid var(--or4); color: var(--or4); background: none; cursor: pointer; transition: .15s; letter-spacing: .04em }
+    .tbtn:hover, .tbtn.on { background: var(--or); border-color: var(--or); color: #fff }
 
     /* ── СУББАР ── */
-    .sub {
-      background: var(--sur);
-      border-bottom: 1px solid var(--brd);
-      position: sticky;
-      top: 58px;
-      z-index: 200
-    }
-
-    .sub-in {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 24px;
-      display: flex;
-      overflow-x: auto;
-      gap: 0
-    }
-
-    .sub-in::-webkit-scrollbar {
-      height: 0
-    }
-
-    .sn {
-      font-family: var(--cond);
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--mu);
-      padding: 9px 14px;
-      white-space: nowrap;
-      border-bottom: 2px solid transparent;
-      text-decoration: none;
-      transition: .15s
-    }
-
-    .sn:hover {
-      color: var(--tx);
-      border-bottom-color: var(--brd2)
-    }
-
-    .sn.done {
-      color: var(--gr)
-    }
-
-    .sn.done::before {
-      content: '✓ '
-    }
+    .sub { background: var(--sur); border-bottom: 1px solid var(--brd); position: sticky; top: 58px; z-index: 200 }
+    .sub-in { max-width: 900px; margin: 0 auto; padding: 0 24px; display: flex; overflow-x: auto; gap: 0 }
+    .sub-in::-webkit-scrollbar { height: 0 }
+    .sn { font-family: var(--cond); font-size: 13px; font-weight: 700; color: var(--mu); padding: 9px 14px; white-space: nowrap; border-bottom: 2px solid transparent; text-decoration: none; transition: .15s }
+    .sn:hover { color: var(--tx); border-bottom-color: var(--brd2) }
+    .sn.done { color: var(--gr) }
+    .sn.done::before { content: '✓ ' }
 
     /* ── WRAP ── */
-    .wrap {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 32px 24px 80px
-    }
-
-    .sec {
-      margin-bottom: 52px
-    }
+    .wrap { max-width: 900px; margin: 0 auto; padding: 32px 24px 80px }
+    .sec { margin-bottom: 52px }
 
     /* ── HERO ВВОДА ИМЕНИ ── */
-    .name-hero {
-      background: var(--cy);
-      color: #fff;
-      padding: 28px 32px;
-      margin-bottom: 28px
-    }
-
-    .name-hero-title {
-      font-family: var(--cond);
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      color: #b8ddf5;
-      margin-bottom: 12px
-    }
-
-    .name-row {
-      display: flex;
-      gap: 14px;
-      align-items: flex-end;
-      flex-wrap: wrap
-    }
-
-    .name-field {
-      flex: 1;
-      min-width: 200px
-    }
-
-    .name-field label {
-      display: block;
-      font-family: var(--cond);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .09em;
-      color: #b8ddf5;
-      margin-bottom: 5px
-    }
-
-    .name-in {
-      width: 100%;
-      padding: 10px 14px;
-      background: rgba(255, 255, 255, .15);
-      border: 1px solid rgba(255, 255, 255, .3);
-      color: #fff;
-      font-family: var(--sans);
-      font-size: 16px;
-      font-weight: 700;
-      outline: none;
-      transition: border-color .15s
-    }
-
-    .name-in::placeholder {
-      color: rgba(255, 255, 255, .45);
-      font-weight: 400
-    }
-
-    .name-in:focus {
-      border-color: #fff
-    }
-
-    .name-confirm {
-      display: block;
-      font-family: var(--cond);
-      font-size: 11px;
-      color: #b8ddf5;
-      margin-top: 5px;
-      min-height: 16px
-    }
+    .name-hero { background: var(--cy); color: #fff; padding: 28px 32px; margin-bottom: 28px }
+    .name-hero-title { font-family: var(--cond); font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #b8ddf5; margin-bottom: 12px }
+    .name-in { width: 100%; padding: 10px 14px; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); color: #fff; font-family: var(--sans); font-size: 16px; font-weight: 700; outline: none; transition: border-color .15s }
+    .name-in::placeholder { color: rgba(255,255,255,.45); font-weight: 400 }
+    .name-in:focus { border-color: #fff }
+    .name-confirm { display: block; font-family: var(--cond); font-size: 11px; color: #b8ddf5; margin-top: 5px; min-height: 16px }
 
     /* ── ЗАГОЛОВКИ СЕКЦИЙ ── */
-    .sec-hd {
-      display: flex;
-      align-items: baseline;
-      gap: 14px;
-      border-bottom: 2px solid var(--cy);
-      padding-bottom: 9px;
-      margin-bottom: 20px
-    }
-
-    .sec-tag {
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 600;
-      border: 1px solid var(--or4);
-      color: var(--or);
-      padding: 1px 8px;
-      flex-shrink: 0
-    }
-
-    .sec-name {
-      font-family: var(--cond);
-      font-size: 21px;
-      font-weight: 700;
-      color: var(--cy)
-    }
-
-    .sec-min {
-      margin-left: auto;
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--mu);
-      flex-shrink: 0
-    }
+    .sec-hd { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--cy); padding-bottom: 9px; margin-bottom: 20px }
+    .sec-tag { font-family: var(--mono); font-size: 10px; font-weight: 600; border: 1px solid var(--or4); color: var(--or); padding: 1px 8px; flex-shrink: 0 }
+    .sec-name { font-family: var(--cond); font-size: 21px; font-weight: 700; color: var(--cy) }
+    .sec-min { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--mu); flex-shrink: 0 }
 
     /* ── ЛОКИ СЕКЦИЙ ── */
-    .sec-body {
-      transition: opacity .3s
-    }
-
-    .sec-locked {
-      position: relative
-    }
-
-    .sec-locked .sec-body {
-      opacity: 0;
-      pointer-events: none;
-      user-select: none;
-      filter: blur(3px)
-    }
-
-    .lock-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: rgba(243, 246, 251, .88);
-      z-index: 10;
-      gap: 10px;
-      animation: fadeIn .3s ease
-    }
-
-    .lock-icon {
-      font-size: 36px;
-      color: var(--mu)
-    }
-
-    .lock-text {
-      font-family: var(--cond);
-      font-size: 14px;
-      color: var(--mu);
-      font-weight: 700
-    }
-
-    .unlocking .lock-overlay {
-      animation: unlockAnim .5s ease forwards
-    }
-
-    @keyframes unlockAnim {
-      0% {
-        opacity: 1;
-        transform: scale(1)
-      }
-
-      100% {
-        opacity: 0;
-        transform: scale(.95)
-      }
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0
-      }
-
-      to {
-        opacity: 1
-      }
-    }
+    .sec-body { transition: opacity .3s }
+    .sec-locked { position: relative }
+    .sec-locked .sec-body { opacity: 0; pointer-events: none; user-select: none; filter: blur(3px) }
+    .lock-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(243,246,251,.88); z-index: 10; gap: 10px; animation: fadeIn .3s ease }
+    .lock-icon { font-size: 36px; color: var(--mu) }
+    .lock-text { font-family: var(--cond); font-size: 14px; color: var(--mu); font-weight: 700 }
+    .unlocking .lock-overlay { animation: unlockAnim .5s ease forwards }
+    @keyframes unlockAnim { 0% { opacity: 1; transform: scale(1) } 100% { opacity: 0; transform: scale(.95) } }
+    @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
 
     /* ── КАРТОЧКИ ── */
-    .card {
-      background: var(--sur);
-      border: 1px solid var(--brd);
-      padding: 20px 24px;
-      margin-bottom: 14px
-    }
-
-    .card-cy {
-      border-left: 3px solid var(--cy);
-      background: var(--cy3)
-    }
-
-    .card-or {
-      border-left: 3px solid var(--or);
-      background: var(--or3)
-    }
-
-    .card-nv {
-      background: var(--cy);
-      border: none;
-      color: #c8dcf0
-    }
-
-    .card-gr {
-      border-left: 3px solid var(--gr);
-      background: var(--grl)
-    }
-
-    hr.rule {
-      border: none;
-      border-top: 1px solid var(--brd);
-      margin: 28px 0
-    }
+    .card { background: var(--sur); border: 1px solid var(--brd); padding: 20px 24px; margin-bottom: 14px }
+    .card-cy { border-left: 3px solid var(--cy); background: var(--cy3) }
+    .card-or { border-left: 3px solid var(--or); background: var(--or3) }
+    .card-gr { border-left: 3px solid var(--gr); background: var(--grl) }
+    hr.rule { border: none; border-top: 1px solid var(--brd); margin: 28px 0 }
 
     /* ── ТАБЛИЦА ДАННЫХ ── */
-    .dtbl-wrap {
-      overflow-x: auto
-    }
-
-    .dtbl {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: var(--mono);
-      font-size: 12px
-    }
-
-    .dtbl th {
-      background: var(--cy);
-      color: #c8dcf0;
-      padding: 7px 11px;
-      text-align: left;
-      font-weight: 600;
-      white-space: nowrap
-    }
-
-    .dtbl td {
-      padding: 6px 11px;
-      border-bottom: 1px solid var(--brd);
-      color: var(--tx2)
-    }
-
-    .dtbl tr:hover td {
-      background: var(--cy3)
-    }
-
-    .pk {
-      color: var(--or);
-      font-weight: 600
-    }
-
-    .dup {
-      color: var(--re);
-      font-weight: 600
-    }
+    .dtbl-wrap { overflow-x: auto }
+    .dtbl { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px }
+    .dtbl th { background: var(--cy); color: #c8dcf0; padding: 7px 11px; text-align: left; font-weight: 600; white-space: nowrap }
+    .dtbl td { padding: 6px 11px; border-bottom: 1px solid var(--brd); color: var(--tx2) }
+    .dtbl tr:hover td { background: var(--cy3) }
+    .pk { color: var(--or); font-weight: 600 }
 
     /* ── КОД ── */
-    .code {
-      background: #182035;
-      color: #c8d8f0;
-      font-family: var(--mono);
-      font-size: 13px;
-      line-height: 1.85;
-      padding: 15px 18px;
-      overflow-x: auto
-    }
-
-    .kw {
-      color: #7fbbff;
-      font-weight: 600
-    }
-
-    .fn {
-      color: #ffd080
-    }
-
-    .st {
-      color: #9ee89e
-    }
-
-    .nm {
-      color: #ffad7a
-    }
-
-    .cm {
-      color: #4e6890;
-      font-style: italic
-    }
-
-    .tb {
-      color: #ddbbff
-    }
-
-    .code-in {
-      width: 100%;
-      font-family: var(--mono);
-      font-size: 13px;
-      color: var(--tx);
-      background: #f8faff;
-      border: 1px solid var(--brd);
-      border-left: 3px solid var(--cy);
-      padding: 12px 14px;
-      outline: none;
-      resize: vertical;
-      min-height: 52px;
-      transition: border-left-color .15s
-    }
-
-    .code-in:focus {
-      border-left-color: var(--or)
-    }
+    .code { background: #182035; color: #c8d8f0; font-family: var(--mono); font-size: 13px; line-height: 1.85; padding: 15px 18px; overflow-x: auto }
+    .kw { color: #7fbbff; font-weight: 600 }
+    .fn { color: #ffd080 }
+    .st { color: #9ee89e }
+    .nm { color: #ffad7a }
+    .cm { color: #4e6890; font-style: italic }
+    .tb { color: #ddbbff }
+    .code-in { width: 100%; font-family: var(--mono); font-size: 13px; color: var(--tx); background: #f8faff; border: 1px solid var(--brd); border-left: 3px solid var(--cy); padding: 12px 14px; outline: none; resize: vertical; min-height: 52px; transition: border-left-color .15s }
+    .code-in:focus { border-left-color: var(--or) }
 
     /* ── ПОЛЯ ── */
-    textarea,
-    input[type=text] {
-      font-family: var(--sans);
-      font-size: 14px;
-      color: var(--tx);
-      background: #fff;
-      border: 1px solid var(--brd);
-      padding: 9px 12px;
-      outline: none;
-      width: 100%;
-      transition: border-color .15s
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 78px
-    }
-
-    textarea:focus,
-    input[type=text]:focus {
-      border-color: var(--cy)
-    }
-
-    label.lbl {
-      display: block;
-      font-family: var(--cond);
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .07em;
-      color: var(--mu);
-      margin-bottom: 5px
-    }
+    textarea, input[type=text] { font-family: var(--sans); font-size: 14px; color: var(--tx); background: #fff; border: 1px solid var(--brd); padding: 9px 12px; outline: none; width: 100%; transition: border-color .15s }
+    textarea { resize: vertical; min-height: 78px }
+    textarea:focus, input[type=text]:focus { border-color: var(--cy) }
+    label.lbl { display: block; font-family: var(--cond); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--mu); margin-bottom: 5px }
 
     /* ── КНОПКИ ── */
-    .btn {
-      font-family: var(--cond);
-      font-weight: 700;
-      font-size: 14px;
-      padding: 8px 18px;
-      border: none;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: .15s
-    }
-
-    .btn-cy {
-      background: var(--cy);
-      color: #fff
-    }
-
-    .btn-cy:hover {
-      background: var(--cy2)
-    }
-
-    .btn-or {
-      background: var(--or);
-      color: #fff
-    }
-
-    .btn-or:hover {
-      opacity: .86
-    }
-
-    .btn-out {
-      background: none;
-      border: 1px solid var(--brd2);
-      color: var(--tx2)
-    }
-
-    .btn-out:hover {
-      border-color: var(--cy);
-      color: var(--cy)
-    }
-
-    .btn-sm {
-      padding: 5px 11px;
-      font-size: 12px
-    }
+    .btn { font-family: var(--cond); font-weight: 700; font-size: 14px; padding: 8px 18px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: .15s }
+    .btn-cy { background: var(--cy); color: #fff }
+    .btn-cy:hover { background: var(--cy2) }
+    .btn-or { background: var(--or); color: #fff }
+    .btn-or:hover { opacity: .86 }
+    .btn-out { background: none; border: 1px solid var(--brd2); color: var(--tx2) }
+    .btn-out:hover { border-color: var(--cy); color: var(--cy) }
+    .btn-sm { padding: 5px 11px; font-size: 12px }
 
     /* ── ГОЛОСОВАНИЕ ── */
-    .vopt {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 11px 14px;
-      border: 1px solid var(--brd);
-      background: var(--sur);
-      margin-bottom: 8px;
-      cursor: pointer;
-      transition: border-color .15s;
-      position: relative;
-      overflow: hidden
-    }
-
-    .vopt:hover {
-      border-color: var(--cy2)
-    }
-
-    .vopt.mv {
-      border-color: var(--or);
-      border-left-width: 3px
-    }
-
-    .vopt .vf {
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      background: var(--cy3);
-      transition: width .4s ease;
-      pointer-events: none
-    }
-
-    .vopt .vt {
-      flex: 1;
-      font-size: 14px;
-      z-index: 1
-    }
-
-    .vopt .vc {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--mu);
-      z-index: 1;
-      min-width: 44px;
-      text-align: right
-    }
-
-    .vopt .vp {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--or);
-      z-index: 1;
-      min-width: 34px;
-      text-align: right
-    }
+    .vopt { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border: 1px solid var(--brd); background: var(--sur); margin-bottom: 8px; cursor: pointer; transition: border-color .15s; position: relative; overflow: hidden }
+    .vopt:hover { border-color: var(--cy2) }
+    .vopt.mv { border-color: var(--or); border-left-width: 3px }
+    .vopt .vf { position: absolute; left: 0; top: 0; bottom: 0; background: var(--cy3); transition: width .4s ease; pointer-events: none }
+    .vopt .vt { flex: 1; font-size: 14px; z-index: 1 }
+    .vopt .vc { font-family: var(--mono); font-size: 11px; color: var(--mu); z-index: 1; min-width: 44px; text-align: right }
+    .vopt .vp { font-family: var(--mono); font-size: 11px; color: var(--or); z-index: 1; min-width: 34px; text-align: right }
 
     /* ── СТЕНА ── */
-    .wall {
-      min-height: 72px;
-      max-height: 280px;
-      overflow-y: auto;
-      border: 1px solid var(--brd);
-      background: var(--bg);
-      padding: 10px;
-      margin-bottom: 11px;
-      display: flex;
-      flex-direction: column;
-      gap: 7px
-    }
-
-    .wmsg {
-      background: var(--sur);
-      border: 1px solid var(--brd);
-      padding: 8px 11px;
-      font-size: 13px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 8px;
-      animation: slideUp .22s ease
-    }
-
-    .wauth {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--or);
-      white-space: nowrap;
-      flex-shrink: 0
-    }
-
-    .wbody {
-      flex: 1;
-      line-height: 1.4
-    }
-
-    .upbtn {
-      background: none;
-      border: 1px solid var(--brd);
-      cursor: pointer;
-      font-size: 12px;
-      padding: 2px 8px;
-      color: var(--mu);
-      transition: .15s;
-      white-space: nowrap
-    }
-
-    .upbtn:hover {
-      border-color: var(--or);
-      color: var(--or)
-    }
-
-    .upbtn.up {
-      background: var(--or3);
-      border-color: var(--or);
-      color: var(--or)
-    }
-
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(-5px)
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0)
-      }
-    }
+    .wall { min-height: 72px; max-height: 280px; overflow-y: auto; border: 1px solid var(--brd); background: var(--bg); padding: 10px; margin-bottom: 11px; display: flex; flex-direction: column; gap: 7px }
+    .wmsg { background: var(--sur); border: 1px solid var(--brd); padding: 8px 11px; font-size: 13px; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; animation: slideUp .22s ease }
+    .wauth { font-family: var(--mono); font-size: 10px; color: var(--or); white-space: nowrap; flex-shrink: 0 }
+    .wbody { flex: 1; line-height: 1.4 }
+    .upbtn { background: none; border: 1px solid var(--brd); cursor: pointer; font-size: 12px; padding: 2px 8px; color: var(--mu); transition: .15s; white-space: nowrap }
+    .upbtn:hover { border-color: var(--or); color: var(--or) }
+    .upbtn.up { background: var(--or3); border-color: var(--or); color: var(--or) }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(-5px) } to { opacity: 1; transform: translateY(0) } }
 
     /* ── DUOLINGO ── */
-    .duo {
-      border: 1px solid var(--brd);
-      background: var(--sur);
-      padding: 18px 20px;
-      margin-bottom: 14px
-    }
+    .duo { border: 1px solid var(--brd); background: var(--sur); padding: 18px 20px; margin-bottom: 14px }
+    .duo-q { font-size: 14px; color: var(--tx2); margin-bottom: 14px; padding: 10px 14px; background: var(--cy3); border-left: 3px solid var(--cy) }
+    .duo-zone { min-height: 46px; border: 2px dashed var(--brd2); background: #f8faff; padding: 7px 10px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; transition: border-color .2s }
+    .duo-pool { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px }
+    .tok { font-family: var(--mono); font-size: 13px; font-weight: 600; padding: 4px 11px; border: 1px solid var(--brd2); background: var(--sur); cursor: pointer; user-select: none; transition: .12s }
+    .tok:hover { background: var(--cy3); border-color: var(--cy) }
+    .tok.used { opacity: .3; pointer-events: none }
+    .tok.placed { background: var(--cy); color: #fff; border-color: var(--cy); cursor: pointer }
+    .tok.placed:hover { background: var(--cy2) }
+    .tok.kw-t { border-color: #7aacee }
+    .tok.fn-t { border-color: #e8a830 }
+    .tok.tb-t { border-color: #bb88ee }
+    .tok.sy-t { border-color: #60a878 }
+    .duo-res { font-family: var(--mono); font-size: 12px; padding: 8px 12px; margin-top: 8px; display: none }
+    .duo-res.ok { background: var(--grl); border-left: 3px solid var(--gr); color: var(--gr); display: block }
+    .duo-res.er { background: var(--rel); border-left: 3px solid var(--re); color: var(--re); display: block }
+    .duo-table { margin-top: 10px; border: 1px solid var(--brd); display: none }
+    .duo-table.show { display: block; animation: slideUp .3s ease }
+    .duo-table table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11px }
+    .duo-table th { background: var(--cy); color: #c8dcf0; padding: 5px 10px; text-align: left }
+    .duo-table td { padding: 5px 10px; border-bottom: 1px solid var(--brd); color: var(--tx2) }
 
-    .duo-q {
-      font-size: 14px;
-      color: var(--tx2);
-      margin-bottom: 14px;
-      padding: 10px 14px;
-      background: var(--cy3);
-      border-left: 3px solid var(--cy)
-    }
-
-    .duo-zone {
-      min-height: 46px;
-      border: 2px dashed var(--brd2);
-      background: #f8faff;
-      padding: 7px 10px;
-      margin-bottom: 12px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
-      transition: border-color .2s
-    }
-
-    .duo-pool {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 12px
-    }
-
-    .tok {
-      font-family: var(--mono);
-      font-size: 13px;
-      font-weight: 600;
-      padding: 4px 11px;
-      border: 1px solid var(--brd2);
-      background: var(--sur);
-      cursor: pointer;
-      user-select: none;
-      transition: .12s
-    }
-
-    .tok:hover {
-      background: var(--cy3);
-      border-color: var(--cy)
-    }
-
-    .tok.used {
-      opacity: .3;
-      pointer-events: none
-    }
-
-    .tok.placed {
-      background: var(--cy);
-      color: #fff;
-      border-color: var(--cy);
-      cursor: pointer
-    }
-
-    .tok.placed:hover {
-      background: var(--cy2)
-    }
-
-    .tok.kw-t {
-      border-color: #7aacee
-    }
-
-    .tok.fn-t {
-      border-color: #e8a830
-    }
-
-    .tok.tb-t {
-      border-color: #bb88ee
-    }
-
-    .tok.sy-t {
-      border-color: #60a878
-    }
-
-    .duo-res {
-      font-family: var(--mono);
-      font-size: 12px;
-      padding: 8px 12px;
-      margin-top: 8px;
-      display: none
-    }
-
-    .duo-res.ok {
-      background: var(--grl);
-      border-left: 3px solid var(--gr);
-      color: var(--gr);
-      display: block
-    }
-
-    .duo-res.er {
-      background: var(--rel);
-      border-left: 3px solid var(--re);
-      color: var(--re);
-      display: block
-    }
-
-    .duo-table {
-      margin-top: 10px;
-      border: 1px solid var(--brd);
-      display: none
-    }
-
-    .duo-table.show {
-      display: block;
-      animation: slideUp .3s ease
-    }
-
-    .duo-table table {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: var(--mono);
-      font-size: 11px
-    }
-
-    .duo-table th {
-      background: var(--cy);
-      color: #c8dcf0;
-      padding: 5px 10px;
-      text-align: left
-    }
-
-    .duo-table td {
-      padding: 5px 10px;
-      border-bottom: 1px solid var(--brd);
-      color: var(--tx2)
-    }
-
-    /* ── ГОСТ МАТЧ ── */
-    .mc {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 12px;
-    }
-
-    .mch {
-      font-family: var(--mono);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      color: var(--mu);
-      padding: 3px 0 8px
-    }
-
-    .mi {
-      padding: 10px 13px;
-      border: 1px solid var(--brd);
-      background: var(--sur);
-      cursor: pointer;
-      font-size: 13px;
-      line-height: 1.4;
-      transition: .13s;
-      margin-bottom: 7px
-    }
-
-    .mi:hover {
-      border-color: var(--cy);
-      background: var(--cy3)
-    }
-
-    .mi.sel {
-      border-color: var(--or);
-      background: var(--or3)
-    }
-
-    .mi.ok {
-      border-color: var(--gr);
-      background: var(--grl);
-      cursor: default
-    }
-
-    .mi.er {
-      border-color: var(--re);
-      background: var(--rel);
-      animation: shake .3s
-    }
-
-    .mi-kw {
-      font-family: var(--mono);
-      font-weight: 600;
-      color: var(--cy)
-    }
-
-    @keyframes shake {
-
-      0%,
-      100% {
-        transform: translateX(0)
-      }
-
-      25% {
-        transform: translateX(-5px)
-      }
-
-      75% {
-        transform: translateX(5px)
-      }
-    }
+    /* ── ГОСТ МАТЧ (новый — равные блоки, drag & drop) ── */
+    .match-board { display: flex; flex-direction: column; gap: 8px; }
+    .match-slot { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: stretch; }
+    .match-term { padding: 14px 16px; background: var(--cy); color: #fff; font-family: var(--mono); font-size: 13px; font-weight: 600; display: flex; align-items: center; min-height: 70px; }
+    .match-def-slot { min-height: 70px; border: 2px dashed var(--brd2); background: #f8faff; display: flex; align-items: center; justify-content: center; padding: 8px; transition: .2s; }
+    .match-def-slot.drag-over { border-color: var(--or); background: var(--or3); }
+    .match-def-slot.filled { border-style: solid; border-color: var(--brd); background: var(--sur); }
+    .match-def-slot.correct { border-color: var(--gr); background: var(--grl); }
+    .match-def-slot.incorrect { border-color: var(--re); background: var(--rel); }
+    .match-def-item { font-size: 12px; line-height: 1.4; color: var(--tx2); cursor: grab; padding: 10px 14px; background: var(--sur); border: 1px solid var(--brd); width: 100%; min-height: 54px; display: flex; align-items: center; user-select: none; }
+    .match-def-item:active { cursor: grabbing; }
+    .match-pool { display: flex; flex-direction: column; gap: 6px; padding: 14px; border: 1px solid var(--brd); background: var(--bg); margin-top: 12px; }
+    .match-pool-title { font-family: var(--cond); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--mu); margin-bottom: 6px; }
 
     /* ── INSERT ПАЗЛ ── */
-    .ins-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 12px
-    }
-
-    .ins-f {
-      width: 100%;
-      font-family: var(--mono);
-      font-size: 13px;
-      color: var(--tx);
-      padding: 7px 10px;
-      border: 1px solid var(--brd);
-      border-bottom: 2px solid var(--or4);
-      background: var(--or3);
-      outline: none;
-      transition: border-bottom-color .15s
-    }
-
-    .ins-f:focus {
-      border-bottom-color: var(--cy)
-    }
-
-    .ins-f.ok {
-      border-bottom-color: var(--gr);
-      background: var(--grl)
-    }
-
-    .ins-f.er {
-      border-bottom-color: var(--re);
-      background: var(--rel)
-    }
+    .ins-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px }
+    .ins-f { width: 100%; font-family: var(--mono); font-size: 13px; color: var(--tx); padding: 7px 10px; border: 1px solid var(--brd); border-bottom: 2px solid var(--or4); background: var(--or3); outline: none; transition: border-bottom-color .15s }
+    .ins-f:focus { border-bottom-color: var(--cy) }
+    .ins-f.ok { border-bottom-color: var(--gr); background: var(--grl) }
+    .ins-f.er { border-bottom-color: var(--re); background: var(--rel) }
 
     /* ── САМООЦЕНКА ── */
-    .chl {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 9px 13px;
-      border-bottom: 1px solid var(--brd);
-      font-size: 14px
-    }
-
-    .chb {
-      width: 20px;
-      height: 20px;
-      flex-shrink: 0;
-      border: 2px solid var(--brd2);
-      background: #fff;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      transition: .13s
-    }
-
-    .chb.on {
-      border-color: var(--gr);
-      background: var(--gr);
-      color: #fff
-    }
-
-    .gbox-row {
-      display: flex;
-      gap: 12px;
-      margin-top: 16px;
-      flex-wrap: wrap
-    }
-
-    .gbox {
-      border: 1px solid var(--brd);
-      padding: 12px 20px;
-      text-align: center;
-      min-width: 80px
-    }
-
-    .gnum {
-      font-family: var(--mono);
-      font-size: 28px;
-      font-weight: 600;
-      color: var(--tx)
-    }
-
-    .glbl {
-      font-size: 11px;
-      color: var(--mu)
-    }
-
-    .gbox.hl {
-      border: 2px solid var(--or)
-    }
-
-    .gbox.hl .gnum {
-      color: var(--or)
-    }
+    .chl { display: flex; align-items: center; gap: 12px; padding: 9px 13px; border-bottom: 1px solid var(--brd); font-size: 14px }
+    .chb { width: 20px; height: 20px; flex-shrink: 0; border: 2px solid var(--brd2); background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; transition: .13s; padding: 0 }
+    .chb.on { border-color: var(--gr); background: var(--gr); color: #fff }
+    .gbox-row { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap }
+    .gbox { border: 1px solid var(--brd); padding: 12px 20px; text-align: center; min-width: 80px }
+    .gnum { font-family: var(--mono); font-size: 28px; font-weight: 600; color: var(--tx) }
+    .glbl { font-size: 11px; color: var(--mu) }
+    .gbox.hl { border: 2px solid var(--or) }
+    .gbox.hl .gnum { color: var(--or) }
 
     /* ── ПОПС ── */
-    .pg {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px
-    }
-
-    .pc {
-      position: relative
-    }
-
-    .pb {
-      position: absolute;
-      top: 6px;
-      right: 10px;
-      font-family: var(--mono);
-      font-size: 38px;
-      font-weight: 600;
-      color: var(--cy);
-      opacity: .07;
-      pointer-events: none;
-      line-height: 1
-    }
-
-    .pl {
-      font-family: var(--cond);
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .07em;
-      color: var(--or);
-      margin-bottom: 5px
-    }
+    .pg { display: grid; grid-template-columns: 1fr 1fr; gap: 14px }
+    .pc { position: relative }
+    .pb { position: absolute; top: 6px; right: 10px; font-family: var(--mono); font-size: 38px; font-weight: 600; color: var(--cy); opacity: .07; pointer-events: none; line-height: 1 }
+    .pl { font-family: var(--cond); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--or); margin-bottom: 5px }
 
     /* ── МАРШРУТ ── */
-    .rtbl {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px
-    }
-
-    .rtbl th {
-      background: var(--cy);
-      color: #c8dcf0;
-      padding: 7px 12px;
-      text-align: left;
-      font-family: var(--cond);
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .05em
-    }
-
-    .rtbl td {
-      padding: 8px 12px;
-      border-bottom: 1px solid var(--brd);
-      vertical-align: top
-    }
-
-    .rtbl tr.dn td {
-      opacity: .5;
-      text-decoration: line-through
-    }
-
-    .tm {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--mu)
-    }
-
-    .pt {
-      height: 5px;
-      background: var(--brd);
-      margin-top: 14px;
-      border-radius: 3px;
-      overflow: hidden
-    }
-
-    .pf {
-      height: 100%;
-      transition: width .35s ease, background-color .35s ease;
-      border-radius: 3px
-    }
+    .rtbl { width: 100%; border-collapse: collapse; font-size: 13px }
+    .rtbl th { background: var(--cy); color: #c8dcf0; padding: 7px 12px; text-align: left; font-family: var(--cond); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em }
+    .rtbl td { padding: 8px 12px; border-bottom: 1px solid var(--brd); vertical-align: top }
+    .rtbl tr.dn td { opacity: .5; text-decoration: line-through }
+    .tm { font-family: var(--mono); font-size: 11px; color: var(--mu) }
+    .pt { height: 5px; background: var(--brd); margin-top: 14px; border-radius: 3px; overflow: hidden }
+    .pf { height: 100%; transition: width .35s ease, background-color .35s ease; border-radius: 3px }
 
     /* ── ИНФОБОКСЫ ── */
-    .info {
-      border-left: 3px solid var(--cy);
-      background: var(--cy3);
-      padding: 11px 15px;
-      font-size: 13px;
-      color: var(--tx2);
-      margin: 10px 0
-    }
-
-    .warn {
-      border-left: 3px solid var(--or);
-      background: var(--or3);
-      padding: 11px 15px;
-      font-size: 13px;
-      color: var(--tx2);
-      margin: 10px 0
-    }
+    .info { border-left: 3px solid var(--cy); background: var(--cy3); padding: 11px 15px; font-size: 13px; color: var(--tx2); margin: 10px 0 }
+    .warn { border-left: 3px solid var(--or); background: var(--or3); padding: 11px 15px; font-size: 13px; color: var(--tx2); margin: 10px 0 }
 
     /* ── ЗАДАЧИ-МАРКЕР ── */
-    .task-return {
-      border: 1px dashed var(--or4);
-      background: var(--or3);
-      padding: 10px 15px;
-      font-size: 13px;
-      color: var(--or);
-      font-family: var(--cond);
-      font-weight: 700;
-      margin: 18px 0 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px
-    }
-
-    .task-return::before {
-      content: '🎯';
-      font-size: 16px
-    }
-
-    /* ── ПРАВИЛА СОТРУДНИЧЕСТВА ── */
-    .rule-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      border: 1px solid var(--brd);
-      background: var(--sur);
-      margin-bottom: 6px;
-      cursor: pointer;
-      transition: .15s;
-      font-size: 14px
-    }
-
-    .rule-item:hover {
-      border-color: var(--cy)
-    }
-
-    .rule-item .ri-mark {
-      width: 24px;
-      height: 24px;
-      border: 2px solid var(--brd2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      flex-shrink: 0;
-      transition: .15s
-    }
-
-    .rule-item.ri-yes .ri-mark {
-      border-color: var(--gr);
-      background: var(--grl);
-      color: var(--gr)
-    }
-
-    .rule-item.ri-no .ri-mark {
-      border-color: var(--re);
-      background: var(--rel);
-      color: var(--re)
-    }
+    .task-return { border: 1px dashed var(--or4); background: var(--or3); padding: 10px 15px; font-size: 13px; color: var(--or); font-family: var(--cond); font-weight: 700; margin: 18px 0 8px; display: flex; align-items: center; gap: 8px }
+    .task-return::before { content: '🎯'; font-size: 16px }
 
     /* ── СХЕМА ТАБЛИЦЫ ── */
-    .schema-tbl {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: var(--mono);
-      font-size: 13px;
-      margin: 10px 0
-    }
-
-    .schema-tbl th {
-      background: var(--cy);
-      color: #fff;
-      padding: 8px 12px;
-      text-align: left;
-      font-size: 12px
-    }
-
-    .schema-tbl td {
-      padding: 7px 12px;
-      border-bottom: 1px solid var(--brd)
-    }
-
-    .schema-tbl .pk-row td {
-      background: var(--or3);
-      font-weight: 600
-    }
+    .schema-tbl { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 13px; margin: 10px 0 }
+    .schema-tbl th { background: var(--cy); color: #fff; padding: 8px 12px; text-align: left; font-size: 12px }
+    .schema-tbl td { padding: 7px 12px; border-bottom: 1px solid var(--brd) }
+    .schema-tbl .pk-row td { background: var(--or3); font-weight: 600 }
 
     /* ── ЭТАЛОН ── */
-    .etalon-toggle {
-      cursor: pointer;
-      user-select: none;
-      font-family: var(--cond);
-      font-weight: 700;
-      font-size: 14px;
-      color: var(--cy);
-      padding: 10px 0;
-      display: flex;
-      align-items: center;
-      gap: 8px
-    }
-
-    .etalon-toggle:hover {
-      color: var(--or)
-    }
-
-    .etalon-body {
-      display: none;
-      animation: fadeIn .3s ease
-    }
-
-    .etalon-body.open {
-      display: block
-    }
-
-    .etalon-row {
-      padding: 8px 12px;
-      border-bottom: 1px solid var(--brd);
-      font-size: 13px;
-      display: flex;
-      gap: 10px
-    }
-
-    .etalon-num {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--or);
-      font-weight: 600;
-      min-width: 24px;
-      flex-shrink: 0
-    }
-
-    .etalon-code {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--cy);
-      background: var(--cy3);
-      padding: 2px 8px
-    }
+    .etalon-body { display: none; animation: fadeIn .3s ease }
+    .etalon-body.open { display: block }
+    .etalon-row { padding: 8px 12px; border-bottom: 1px solid var(--brd); font-size: 13px; display: flex; gap: 10px }
+    .etalon-num { font-family: var(--mono); font-size: 11px; color: var(--or); font-weight: 600; min-width: 24px; flex-shrink: 0 }
+    .etalon-code { font-family: var(--mono); font-size: 12px; color: var(--cy); background: var(--cy3); padding: 2px 8px }
 
     /* ── ЭПИГРАФ ── */
+    .epigraph { text-align: right; font-style: italic; color: var(--mu); font-size: 13px; padding: 0 0 20px; border-bottom: 1px solid var(--brd); margin-bottom: 28px }
+    .epigraph-author { font-style: normal; font-weight: 700; font-size: 12px; margin-top: 4px }
 
-    /* ── РЕЙТИНГ ЭТАПОВ (такси-стиль) ── */
-    .rate-cell {
-      white-space: nowrap;
-      min-width: 90px
-    }
+    /* ── РЕЙТИНГ ЭТАПОВ ── */
+    .rate-cell { white-space: nowrap; min-width: 90px }
+    .rate-dots { display: inline-flex; gap: 3px }
+    .rdot { width: 22px; height: 22px; border: 2px solid var(--brd2); background: #fff; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--mu); transition: .13s; padding: 0 }
+    .rdot:hover { border-color: var(--or); color: var(--or) }
+    .rdot.active { border-color: var(--or); background: var(--or); color: #fff }
+    .sec-rate { margin-top: 18px; padding: 14px 18px; border: 2px dashed var(--or4); background: var(--or3); display: flex; align-items: center; gap: 14px; flex-wrap: wrap }
+    .sec-rate-label { font-family: var(--cond); font-weight: 700; font-size: 14px; color: var(--or) }
+    .sec-rate .rate-dots { display: inline-flex; gap: 4px }
+    .sec-rate .rdot { width: 32px; height: 32px; font-size: 14px }
 
-    .rate-dots {
-      display: inline-flex;
-      gap: 3px
-    }
-
-    .rdot {
-      width: 22px;
-      height: 22px;
-      border: 2px solid var(--brd2);
-      background: #fff;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--mono);
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--mu);
-      transition: .13s;
-      padding: 0
-    }
-
-    .rdot:hover {
-      border-color: var(--or);
-      color: var(--or)
-    }
-
-    .rdot.active {
-      border-color: var(--or);
-      background: var(--or);
-      color: #fff
-    }
-
-    /* ── ОЦЕНКА ЭТАПА (внутри секции) ── */
-    .sec-rate {
-      margin-top: 18px;
-      padding: 14px 18px;
-      border: 2px dashed var(--or4);
-      background: var(--or3);
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap
-    }
-    .sec-rate-label {
-      font-family: var(--cond);
-      font-weight: 700;
-      font-size: 14px;
-      color: var(--or)
-    }
-    .sec-rate .rate-dots {
-      display: inline-flex;
-      gap: 4px
-    }
-    .sec-rate .rdot {
-      width: 32px;
-      height: 32px;
-      font-size: 14px
-    }
-    .epigraph {
-      text-align: right;
-      font-style: italic;
-      color: var(--mu);
-      font-size: 13px;
-      padding: 0 0 20px;
-      border-bottom: 1px solid var(--brd);
-      margin-bottom: 28px
-    }
-
-    .epigraph-author {
-      font-style: normal;
-      font-weight: 700;
-      font-size: 12px;
-      margin-top: 4px
-    }
-
-    /* ── ФИЗКУЛЬТМИНУТКА ── */
-    .fizk-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--grl);
-      border: 1px solid var(--gr);
-      color: var(--gr);
-      padding: 6px 14px;
-      font-family: var(--cond);
-      font-weight: 700;
-      font-size: 13px;
-      margin: 4px;
-      animation: fadeIn .3s ease
-    }
-
-    /* ── АНИМАЦИИ ПРАЗДНИКА ── */
-    .confetti-wrap {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      pointer-events: none;
-      z-index: 9999;
-      overflow: hidden
-    }
-
-    .confetti-piece {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      top: -10px;
-      border-radius: 2px;
-      animation: confFall linear forwards
-    }
-
-    @keyframes confFall {
-      to {
-        transform: translateY(110vh) rotate(720deg);
-        opacity: 0
-      }
-    }
-
-    /* ── QR ── */
-    .qr-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 12px
-    }
-
-    .qr-svg {
-      border: 2px solid var(--cy);
-      padding: 8px;
-      background: #fff;
-      display: block
-    }
-
-    .qr-link {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--cy);
-      text-decoration: none;
-      word-break: break-all
-    }
-
-    .qr-link:hover {
-      text-decoration: underline
-    }
+    /* ── КОНФЕТТИ ── */
+    .confetti-wrap { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 9999; overflow: hidden }
+    .confetti-piece { position: absolute; width: 10px; height: 10px; top: -10px; border-radius: 2px; animation: confFall linear forwards }
+    @keyframes confFall { to { transform: translateY(110vh) rotate(720deg); opacity: 0 } }
 
     /* ── ТАЙМЕР ── */
-    .timer {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--cy);
-      color: #fff;
-      border-bottom: 3px solid var(--or);
-      padding: 9px 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      z-index: 400;
-      font-family: var(--mono);
-      font-size: 16px;
-      font-weight: 600;
-      box-shadow: 0 4px 16px rgba(14, 127, 194, .3)
-    }
+    .timer { position: fixed; bottom: 20px; right: 20px; background: var(--cy); color: #fff; border-bottom: 3px solid var(--or); padding: 9px 16px; display: flex; align-items: center; gap: 10px; z-index: 400; font-family: var(--mono); font-size: 16px; font-weight: 600; box-shadow: 0 4px 16px rgba(14,127,194,.3) }
+    .timer.urgent { animation: timerPulse 1s ease infinite; }
+    @keyframes timerPulse { 0%,100% { box-shadow: 0 4px 16px rgba(14,127,194,.3); } 50% { box-shadow: 0 4px 24px rgba(217,95,10,.6); background: var(--or); } }
+    .tbtn2 { background: none; border: none; color: var(--or4); cursor: pointer; font-size: 13px; padding: 0 }
 
-    .tbtn2 {
-      background: none;
-      border: none;
-      color: var(--or4);
-      cursor: pointer;
-      font-size: 13px;
-      padding: 0
-    }
+    /* ── ТАЙМЕР ОВЕРЛЕЙ ФИНИШ ── */
+    #timerOverlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10000; pointer-events: none; display: none; }
+    #timerOverlay.active { display: block; }
+    .shockwave { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0); width: 200vmax; height: 200vmax; border-radius: 50%; border: 4px solid var(--or); opacity: 1; animation: shockwaveAnim 1.5s ease-out forwards; }
+    .shockwave:nth-child(2) { animation-delay: .2s; border-color: var(--cy); }
+    .shockwave:nth-child(3) { animation-delay: .4s; border-color: var(--or); border-width: 2px; }
+    @keyframes shockwaveAnim { 0% { transform: translate(-50%,-50%) scale(0); opacity: .8; } 100% { transform: translate(-50%,-50%) scale(1); opacity: 0; } }
+    .time-up-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0); font-family: var(--cond); font-size: 72px; font-weight: 700; color: var(--or); opacity: 0; animation: timeUpText 2s ease forwards; text-shadow: 0 4px 20px rgba(217,95,10,.3); }
+    @keyframes timeUpText { 0% { transform: translate(-50%,-50%) scale(0); opacity: 0; } 30% { transform: translate(-50%,-50%) scale(1.1); opacity: 1; } 50% { transform: translate(-50%,-50%) scale(1); opacity: 1; } 100% { transform: translate(-50%,-50%) scale(.9); opacity: 0; } }
 
     /* ── ПАНЕЛЬ ПРЕПОДАВАТЕЛЯ ── */
-    #tp {
-      display: none;
-      position: fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      width: 360px;
-      background: #0d1e38;
-      color: #fff;
-      z-index: 500;
-      overflow-y: auto;
-      border-left: 3px solid var(--or);
-      padding: 20px
-    }
+    #tp { display: none; position: fixed; top: 0; right: 0; bottom: 0; width: 360px; background: #0d1e38; color: #fff; z-index: 500; overflow-y: auto; border-left: 3px solid var(--or); padding: 20px }
+    #tp.open { display: block }
+    .tp-ttl { font-family: var(--cond); font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,.12); display: flex; justify-content: space-between; align-items: center }
+    .tp-x { background: none; border: none; color: #7a9acc; cursor: pointer; font-size: 17px }
+    .tp-sec { margin-bottom: 18px }
+    .tp-stl { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--or4); margin-bottom: 9px }
+    .tp-row { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.09); padding: 7px 11px; margin-bottom: 5px; font-size: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px }
+    .tp-au { color: var(--or4); font-family: var(--mono); font-size: 10px; flex-shrink: 0 }
+    .tp-bd { color: #c8d8f0; line-height: 1.35 }
+    .tp-vb { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.09); padding: 9px 11px; margin-bottom: 5px }
+    .tp-vf { height: 4px; background: var(--or); margin-top: 4px; transition: width .4s }
+    .tp-st { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,.06) }
+    .tp-nm { font-family: var(--mono); color: var(--or4) }
+    .sec-ctrl { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border: 1px solid rgba(255,255,255,.1); margin-bottom: 6px; background: rgba(255,255,255,.04) }
+    .sc-name { font-size: 12px; color: #c8d8f0 }
+    .sc-btn { font-family: var(--cond); font-size: 11px; font-weight: 700; padding: 4px 12px; border: none; cursor: pointer; transition: .15s }
+    .sc-btn.locked { background: rgba(255,255,255,.1); color: #7a9acc }
+    .sc-btn.unlocked { background: var(--cy); color: #fff }
+    .sc-btn:hover { opacity: .8 }
 
-    #tp.open {
-      display: block
-    }
+    /* ── БЛОКНОТ-НАПОМИНАНИЕ ── */
+    .notebook-reminder { border: 1px solid var(--or4); background: linear-gradient(135deg, #fff9f0, #fff2e8); padding: 12px 16px; margin: 12px 0; display: flex; align-items: flex-start; gap: 10px; font-size: 13px; }
+    .notebook-reminder::before { content: '📝'; font-size: 18px; flex-shrink: 0; }
+    .notebook-reminder strong { color: var(--or); font-family: var(--cond); }
+    .nb-cmd { font-family: var(--mono); font-size: 12px; background: #fff; border: 1px solid var(--brd); padding: 2px 7px; color: var(--cy); font-weight: 600; }
 
-    .tp-ttl {
-      font-family: var(--cond);
-      font-size: 15px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 16px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid rgba(255, 255, 255, .12);
-      display: flex;
-      justify-content: space-between;
-      align-items: center
-    }
-
-    .tp-x {
-      background: none;
-      border: none;
-      color: #7a9acc;
-      cursor: pointer;
-      font-size: 17px
-    }
-
-    .tp-sec {
-      margin-bottom: 18px
-    }
-
-    .tp-stl {
-      font-family: var(--mono);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: .1em;
-      color: var(--or4);
-      margin-bottom: 9px
-    }
-
-    .tp-row {
-      background: rgba(255, 255, 255, .05);
-      border: 1px solid rgba(255, 255, 255, .09);
-      padding: 7px 11px;
-      margin-bottom: 5px;
-      font-size: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 8px
-    }
-
-    .tp-au {
-      color: var(--or4);
-      font-family: var(--mono);
-      font-size: 10px;
-      flex-shrink: 0
-    }
-
-    .tp-bd {
-      color: #c8d8f0;
-      line-height: 1.35
-    }
-
-    .tp-vb {
-      background: rgba(255, 255, 255, .05);
-      border: 1px solid rgba(255, 255, 255, .09);
-      padding: 9px 11px;
-      margin-bottom: 5px
-    }
-
-    .tp-vf {
-      height: 4px;
-      background: var(--or);
-      margin-top: 4px;
-      transition: width .4s
-    }
-
-    .tp-st {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      padding: 3px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, .06)
-    }
-
-    .tp-nm {
-      font-family: var(--mono);
-      color: var(--or4)
-    }
-
-    .sec-ctrl {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px;
-      border: 1px solid rgba(255, 255, 255, .1);
-      margin-bottom: 6px;
-      background: rgba(255, 255, 255, .04)
-    }
-
-    .sc-name {
-      font-size: 12px;
-      color: #c8d8f0
-    }
-
-    .sc-btn {
-      font-family: var(--cond);
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 12px;
-      border: none;
-      cursor: pointer;
-      transition: .15s
-    }
-
-    .sc-btn.locked {
-      background: rgba(255, 255, 255, .1);
-      color: #7a9acc
-    }
-
-    .sc-btn.unlocked {
-      background: var(--cy);
-      color: #fff
-    }
-
-    .sc-btn:hover {
-      opacity: .8
-    }
+    /* ── SQL ИСПОЛНИТЕЛЬ (встроенный) ── */
+    .sql-executor { background: #182035; border: 1px solid #2a3a58; padding: 0; margin: 12px 0; overflow: hidden; }
+    .sql-exec-header { background: #111b2e; padding: 8px 14px; font-family: var(--mono); font-size: 11px; color: #7fbbff; display: flex; justify-content: space-between; align-items: center; }
+    .sql-exec-input { width: 100%; background: #182035; color: #c8d8f0; border: none; font-family: var(--mono); font-size: 13px; padding: 14px 18px; outline: none; resize: vertical; min-height: 60px; }
+    .sql-exec-input::placeholder { color: #4e6890; }
+    .sql-exec-bar { display: flex; gap: 8px; padding: 8px 14px; background: #111b2e; align-items: center; }
+    .sql-exec-run { font-family: var(--cond); font-weight: 700; font-size: 12px; padding: 5px 14px; background: var(--gr); color: #fff; border: none; cursor: pointer; transition: .15s; }
+    .sql-exec-run:hover { opacity: .85; }
+    .sql-exec-clear { font-family: var(--cond); font-weight: 700; font-size: 12px; padding: 5px 14px; background: rgba(255,255,255,.08); color: #7a9acc; border: none; cursor: pointer; }
+    .sql-result { padding: 0; max-height: 300px; overflow: auto; }
+    .sql-result table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11px; }
+    .sql-result th { background: #1a2d4a; color: #7fbbff; padding: 6px 10px; text-align: left; position: sticky; top: 0; }
+    .sql-result td { padding: 5px 10px; border-bottom: 1px solid #2a3a58; color: #c8d8f0; }
+    .sql-result-msg { padding: 10px 14px; font-family: var(--mono); font-size: 12px; }
+    .sql-result-msg.ok { color: #9ee89e; }
+    .sql-result-msg.err { color: #ff8888; }
 
     /* ── СЕТКИ ── */
-    .g2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px
-    }
+    .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px }
+    .mt8 { margin-top: 8px }
+    .mt12 { margin-top: 12px }
+    .mt16 { margin-top: 16px }
+    .mb12 { margin-bottom: 12px }
 
-    .mt8 {
-      margin-top: 8px
-    }
+    /* ── АВТОРИЗАЦИЯ ПО КОДУ ── */
+    .auth-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--cy); z-index: 9000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; }
+    .auth-box { text-align: center; max-width: 400px; width: 90%; }
+    .auth-title { font-family: var(--cond); font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .auth-sub { font-size: 14px; color: #b8ddf5; margin-bottom: 24px; }
+    .auth-input { width: 100%; padding: 14px 18px; font-family: var(--mono); font-size: 24px; text-align: center; letter-spacing: .15em; background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.3); color: #fff; outline: none; }
+    .auth-input::placeholder { color: rgba(255,255,255,.35); font-size: 16px; letter-spacing: .05em; }
+    .auth-input:focus { border-color: #fff; }
+    .auth-enter { margin-top: 16px; font-family: var(--cond); font-weight: 700; font-size: 16px; padding: 12px 36px; background: var(--or); color: #fff; border: none; cursor: pointer; }
+    .auth-code-display { margin-top: 24px; font-family: var(--mono); font-size: 12px; color: #b8ddf5; }
+    .auth-code-display strong { color: #fff; font-size: 14px; }
+    .auth-or { font-size: 12px; color: #b8ddf5; margin: 16px 0; }
 
-    .mt12 {
-      margin-top: 12px
-    }
-
-    .mt16 {
-      margin-top: 16px
-    }
-
-    .mb12 {
-      margin-bottom: 12px
-    }
+    /* ── Print button ── */
+    .print-btn { font-family: var(--cond); font-size: 11px; font-weight: 700; padding: 4px 10px; background: none; border: 1px solid rgba(255,255,255,.3); color: #b8ddf5; cursor: pointer; }
+    .print-btn:hover { background: rgba(255,255,255,.1); }
 
     @media(max-width:640px) {
-
-      .g2,
-      .pg,
-      .mc,
-      .ins-grid {
-        grid-template-columns: 1fr
-      }
-
-      .wrap {
-        padding: 20px 14px 80px
-      }
-
-      #tp {
-        width: 100%
-      }
-
-      .name-row {
-        flex-direction: column
-      }
+      .g2, .pg, .ins-grid, .match-slot { grid-template-columns: 1fr }
+      .wrap { padding: 20px 14px 80px }
+      #tp { width: 100% }
     }
   </style>
 </head>
 
 <body>
+
+  <!-- ══ АВТОРИЗАЦИЯ ══ -->
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-box">
+      <div class="auth-title">Электронная тетрадь</div>
+      <div class="auth-sub">ОПЦ.03 Базы данных · Комбинированный урок</div>
+      <input class="auth-input" id="authCode" placeholder="Код доступа" maxlength="10" onkeydown="if(event.key==='Enter')tryAuth()">
+      <br>
+      <button class="auth-enter" onclick="tryAuth()">Войти</button>
+      <div class="auth-code-display" id="authHint"></div>
+    </div>
+  </div>
 
   <!-- ══ ШАПКА ══ -->
   <header class="hdr">
@@ -1635,7 +383,7 @@
         <div class="hdr-ttl">Электронная тетрадь — Базы данных</div>
       </div>
       <div class="hdr-right">
-        <button class="tbtn" onclick="window.print()">🖨 Сохранить в PDF</button>
+        <button class="print-btn" onclick="window.print()">🖨 Печать</button>
         <button class="tbtn" id="tBtn" onclick="toggleTeacher()">⚙ Преподаватель</button>
       </div>
     </div>
@@ -1690,25 +438,21 @@
       <div class="card">
         <table class="rtbl" id="rtbl">
           <thead>
-            <tr>
-              <th>#</th><th>Этап</th><th>Содержание</th><th>Мин.</th><th>Оценка</th><th>✓</th>
-            </tr>
+            <tr><th>#</th><th>Этап</th><th>Содержание</th><th>Мин.</th><th>Оценка</th><th>✓</th></tr>
           </thead>
           <tbody>
             <tr id="rr0"><td>1</td><td>Подготовка</td><td>Приветствие, знакомство, ТБ</td><td class="tm">2</td><td class="rate-cell" id="rc0"></td><td><button class="chb" onclick="toggleRoute(0,this)"></button></td></tr>
             <tr id="rr1"><td>2</td><td>Целеполагание</td><td>AHA-момент, тема, цель, задачи</td><td class="tm">4</td><td class="rate-cell" id="rc1"></td><td><button class="chb" onclick="toggleRoute(1,this)"></button></td></tr>
             <tr id="rr2"><td>3</td><td>Актуализация</td><td>ГОСТ-термины, SQL-конструктор, «объясни соседу»</td><td class="tm">8</td><td class="rate-cell" id="rc2"></td><td><button class="chb" onclick="toggleRoute(2,this)"></button></td></tr>
-            <tr id="rr3"><td>4</td><td>Демонстрация</td><td>Схема таблицы, мастер-класс SELECT</td><td class="tm">7</td><td class="rate-cell" id="rc3"></td><td><button class="chb" onclick="toggleRoute(3,this)"></button></td></tr>
-            <tr id="rr5"><td>5</td><td>Практика</td><td>INSERT-пазл + 5 SELECT-заданий + письменный ответ</td><td class="tm">15</td><td class="rate-cell" id="rc5"></td><td><button class="chb" onclick="toggleRoute(5,this)"></button></td></tr>
-            <tr id="rr6"><td>6</td><td>ДЗ</td><td>Домашнее задание по SQL</td><td class="tm">1</td><td class="rate-cell" id="rc6"></td><td><button class="chb" onclick="toggleRoute(6,this)"></button></td></tr>
-            <tr id="rr7"><td>7</td><td>Рефлексия</td><td>П-О-П-С эссе</td><td class="tm">3</td><td class="rate-cell" id="rc7"></td><td><button class="chb" onclick="toggleRoute(7,this)"></button></td></tr>
-            <tr id="rr8"><td>8</td><td>Итоги</td><td>Самооценка по эталону, подведение итогов</td><td class="tm">4</td><td class="rate-cell" id="rc8"></td><td><button class="chb" onclick="toggleRoute(8,this)"></button></td></tr>
+            <tr id="rr3"><td>4</td><td>Демонстрация</td><td>Схема таблицы, мастер-класс SELECT</td><td class="tm">8</td><td class="rate-cell" id="rc3"></td><td><button class="chb" onclick="toggleRoute(3,this)"></button></td></tr>
+            <tr id="rr4"><td>5</td><td>Практика</td><td>INSERT-пазл + 5 SELECT-заданий + письменный ответ</td><td class="tm">15</td><td class="rate-cell" id="rc4"></td><td><button class="chb" onclick="toggleRoute(4,this)"></button></td></tr>
+            <tr id="rr5"><td>6</td><td>ДЗ</td><td>Домашнее задание по SQL</td><td class="tm">1</td><td class="rate-cell" id="rc5"></td><td><button class="chb" onclick="toggleRoute(5,this)"></button></td></tr>
+            <tr id="rr6"><td>7</td><td>Рефлексия</td><td>П-О-П-С эссе</td><td class="tm">3</td><td class="rate-cell" id="rc6"></td><td><button class="chb" onclick="toggleRoute(6,this)"></button></td></tr>
+            <tr id="rr7"><td>8</td><td>Итоги</td><td>Самооценка по эталону, подведение итогов</td><td class="tm">4</td><td class="rate-cell" id="rc7"></td><td><button class="chb" onclick="toggleRoute(7,this)"></button></td></tr>
           </tbody>
         </table>
         <div class="pt"><div class="pf" id="rProg" style="width:0%"></div></div>
       </div>
-
-
     </section>
     <hr class="rule">
 
@@ -1721,13 +465,12 @@
       </div>
       <div class="sec-body">
 
-        <!-- AHA-момент -->
         <div class="card card-cy">
-          <div class="ctitle ctitle-cy">AHA-момент — что общего у этих систем?</div>
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--cy);margin-bottom:10px">AHA-момент — что общего у этих систем?</div>
           <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
             <div style="flex:1;min-width:200px">
               <p style="font-size:14px;color:var(--tx2);line-height:1.7">
-                Банковское приложение, ВКонтакте, система записи в поликлинику, интернет-магазин —<br>
+                Банковское приложение, ВКонтакте, система записи в поликлинику, интернет-магазин —
                 все они хранят данные и позволяют быстро их найти.<br><br>
                 <strong>Как именно они это делают? Каким языком «разговаривают» с базой данных?</strong>
               </p>
@@ -1741,9 +484,8 @@
           <textarea id="ahaA" placeholder="Что их объединяет? Напишите свою версию…" style="margin-top:4px"></textarea>
         </div>
 
-        <!-- Брейншторм темы -->
         <div class="card">
-          <div class="ctitle">Предложите формулировку темы занятия</div>
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--tx);margin-bottom:8px">Предложите формулировку темы занятия</div>
           <p style="font-size:13px;color:var(--tx2);margin-bottom:11px">Как называется язык, с помощью которого программы обращаются к базам данных? Напишите вариант — и проголосуйте за чужие.</p>
           <div class="wall" id="topicWall"><div style="color:var(--mu);font-size:13px">Пока нет предложений — будьте первым…</div></div>
           <div style="display:flex;gap:8px">
@@ -1752,9 +494,8 @@
           </div>
         </div>
 
-        <!-- Голосование -->
         <div class="card">
-          <div class="ctitle">Что важнее освоить сегодня? — проголосуйте</div>
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--tx);margin-bottom:8px">Что важнее освоить сегодня? — проголосуйте</div>
           <div id="voteBox">
             <div class="vopt" onclick="castVote(0)"><div class="vf" style="width:0%"></div><span class="vt">Писать SELECT-запросы и получать нужные данные</span><span class="vc" id="vc0">0</span><span class="vp" id="vp0">0%</span></div>
             <div class="vopt" onclick="castVote(1)"><div class="vf" style="width:0%"></div><span class="vt">Фильтровать данные через WHERE</span><span class="vc" id="vc1">0</span><span class="vp" id="vp1">0%</span></div>
@@ -1763,9 +504,8 @@
           </div>
         </div>
 
-        <!-- Итог -->
         <div class="card">
-          <div class="ctitle">Запишите итоговые формулировки</div>
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--tx);margin-bottom:8px">Запишите итоговые формулировки</div>
           <div class="g2 mb12">
             <div><label class="lbl">Тема</label><input type="text" id="fTop" placeholder="Базы данных: …"></div>
             <div><label class="lbl">Цель</label><input type="text" id="fGoal" placeholder="Сформировать умение…"></div>
@@ -1790,32 +530,42 @@
       <div class="sec-body">
 
         <div class="card">
-          <div class="ctitle ctitle-or">Термины и определения — перетащите определения к нужным терминам</div>
-          <p style="font-size:13px;color:var(--tx2);margin-bottom:13px">Определения взяты из ГОСТ 33707–2016 и ISO/IEC 9075. Перетащите блок из правого столбца так, чтобы он встал напротив правильного термина.</p>
-          <div class="mc">
-            <div><div class="mch">Термин</div><div id="mT"></div></div>
-            <div><div class="mch">Определение (ГОСТ / ISO)</div><div id="mD"></div></div>
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--or);margin-bottom:8px">Термины и определения — расставьте определения напротив терминов</div>
+          <p style="font-size:13px;color:var(--tx2);margin-bottom:13px">Перетащите определения из пула в ячейки напротив терминов. Результат покажет преподаватель.</p>
+          <div class="match-board" id="matchBoard"></div>
+          <div class="match-pool" id="matchPool">
+            <div class="match-pool-title">Определения (перетащите в ячейки выше)</div>
           </div>
           <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-            <button class="btn btn-cy btn-sm" id="lockMatchBtn" onclick="lockMatch()">🔒 Зафиксировать</button>
-            <span id="mSt" style="font-size:13px;color:var(--mu)"></span>
+            <button class="btn btn-out btn-sm" onclick="resetMatch()">↺ Сбросить</button>
+            <button class="btn btn-cy btn-sm" onclick="fixMatch()">Зафиксировать ответ</button>
+            <span id="mSt" style="font-size:13px;color:var(--mu)">Расставлено: 0 / 6</span>
           </div>
-
+          <div id="matchResult" style="margin-top:12px;display:none"></div>
         </div>
 
         <div class="card">
-          <div class="ctitle ctitle-or">SQL-конструктор — соберите запрос из блоков</div>
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--or);margin-bottom:8px">SQL-конструктор — соберите запрос из блоков</div>
           <p style="font-size:13px;color:var(--tx2);margin-bottom:13px">Нажимайте блоки в правильном порядке. Лишние — для запутывания. После проверки увидите «результат» запроса.</p>
+
+          <div class="notebook-reminder">
+            <div><strong>Запиши в блокнот!</strong> Новые команды SQL:<br>
+            <span class="nb-cmd">SELECT</span> — выбрать данные &nbsp;
+            <span class="nb-cmd">FROM</span> — из какой таблицы &nbsp;
+            <span class="nb-cmd">WHERE</span> — условие фильтрации &nbsp;
+            <span class="nb-cmd">AVG()</span> — среднее значение</div>
+          </div>
+
           <div id="duoWrap"></div>
         </div>
 
         <div class="card">
-          <div class="ctitle">Объясни соседу устно — потом запиши главное</div>
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--tx);margin-bottom:8px">Объясни соседу устно — потом запиши главное</div>
           <p style="font-size:14px;color:var(--tx2);margin-bottom:8px">Чем <strong>SELECT</strong> отличается от <strong>INSERT</strong>?</p>
           <textarea id="explainN" placeholder="SELECT — это…, а INSERT — это… Главное отличие…"></textarea>
         </div>
 
-        <div class="task-return">Вернёмся к задачам: мы повторили синтаксис SQL и понятийный аппарат. Задачи «сформировать понятийный аппарат» и «объяснить синтаксис» — в процессе выполнения.</div>
+        <div class="task-return">Вернёмся к задачам: мы повторили синтаксис SQL и понятийный аппарат.</div>
         <div class="sec-rate"><span class="sec-rate-label">Оцените этап:</span><div class="rate-dots" id="sr2"></div></div>
       </div>
     </section>
@@ -1826,27 +576,28 @@
       <div class="sec-hd">
         <span class="sec-tag">03</span>
         <span class="sec-name">Демонстрация — мастер-класс</span>
-        <span class="sec-min">7 мин</span>
+        <span class="sec-min">8 мин</span>
       </div>
       <div class="sec-body">
 
         <div class="card card-cy">
-          <div class="ctitle ctitle-cy">Интерактивный SQL терминал (БД Priemy)</div>
-          <p style="font-size:14px;color:var(--tx2);margin-bottom:14px">Теперь вам не нужно никуда переходить. БД загружена прямо в тетрадь!</p>
-          <div class="code">
-            <span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tb">Priemy</span>;
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--cy);margin-bottom:10px">SQL-песочница</div>
+          <p style="font-size:14px;color:var(--tx2);margin-bottom:14px">Пишите SQL-запросы прямо здесь — база данных «Приёмы» уже загружена. Попробуйте повторить запросы, которые показывает преподаватель.</p>
+          <div class="sql-executor" id="demoSql">
+            <div class="sql-exec-header"><span>SQL-песочница · Priemy</span><span style="color:#4e6890">SQLite</span></div>
+            <textarea class="sql-exec-input" id="demoSqlIn" placeholder="SELECT * FROM Priemy;" rows="3"></textarea>
+            <div class="sql-exec-bar">
+              <button class="sql-exec-run" onclick="runSQL('demoSqlIn','demoSqlRes')">▶ Выполнить</button>
+              <button class="sql-exec-clear" onclick="el('demoSqlIn').value='';el('demoSqlRes').innerHTML=''">Очистить</button>
+            </div>
+            <div class="sql-result" id="demoSqlRes"></div>
           </div>
-          <textarea id="sqlDemoConsole" class="code-in mt12" placeholder="Напишите вариант SELECT запроса..." rows="2"></textarea>
-          <div style="margin-top:8px">
-             <button class="btn btn-cy" onclick="runInBrowserSQL('sqlDemoConsole', 'demoSqlRes')">▶ Выполнить запрос</button>
-          </div>
-          <div id="demoSqlRes" class="dtbl-wrap mt12"></div>
         </div>
 
         <!-- Схема таблицы -->
         <div class="card">
-          <div class="ctitle ctitle-or">Структура таблицы «Приёмы» (Priemy)</div>
-          <p style="font-size:13px;color:var(--tx2);margin-bottom:10px">Преподаватель рисует на доске — зарисуйте и вы. Ниже — справочная схема.</p>
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--or);margin-bottom:8px">Структура таблицы «Приёмы» (Priemy)</div>
+          <p style="font-size:13px;color:var(--tx2);margin-bottom:10px">Зарисуйте схему в блокнот. Ниже — справочная таблица.</p>
           <table class="schema-tbl">
             <thead><tr><th>Поле</th><th>Тип данных</th><th>Описание</th><th>Ключ</th></tr></thead>
             <tbody>
@@ -1861,14 +612,21 @@
             </tbody>
           </table>
           <div class="info mt8"><strong>Вопрос:</strong> Почему ID — первичный ключ, а не FIO_pacienta? Потому что ФИО может повторяться, а ID — уникален.</div>
+
+          <div class="notebook-reminder">
+            <div><strong>Запиши в блокнот!</strong><br>
+            <span class="nb-cmd">PRIMARY KEY (PK)</span> — уникальный идентификатор каждой строки &nbsp;
+            <span class="nb-cmd">INTEGER</span> — целое число &nbsp;
+            <span class="nb-cmd">TEXT</span> — текстовая строка</div>
+          </div>
         </div>
 
         <div class="card">
-          <div class="ctitle">Синтаксис SELECT — запишите схему</div>
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--tx);margin-bottom:8px">Синтаксис SELECT — запишите схему</div>
           <div class="code">
-            <span class="kw">SELECT</span> <span class="cm">-- что выбрать: конкретные столбцы или * (все)</span>
-            <span class="kw">FROM</span> <span class="cm">-- откуда: имя таблицы</span>
-            <span class="kw">WHERE</span> <span class="cm">-- условие фильтрации (необязательно)</span>
+            <span class="kw">SELECT</span> <span class="cm">-- что выбрать: конкретные столбцы или * (все)</span><br>
+            <span class="kw">FROM</span> <span class="cm">-- откуда: имя таблицы</span><br>
+            <span class="kw">WHERE</span> <span class="cm">-- условие фильтрации (необязательно)</span><br>
             <span class="kw">ORDER BY</span> <span class="cm">-- сортировка ASC / DESC (необязательно)</span><span class="cm">;</span>
           </div>
           <label class="lbl mt12">Ваши заметки с демонстрации</label>
@@ -1877,7 +635,8 @@
 
         <!-- Угадай результат -->
         <div class="card">
-          <div class="ctitle ctitle-or">Угадайте результат — запишите прогноз ДО показа</div>
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--or);margin-bottom:8px">Угадайте результат — запишите прогноз ДО выполнения</div>
+          <p style="font-size:13px;color:var(--tx2);margin-bottom:12px">Сначала напишите прогноз, потом проверьте в SQL-песочнице выше.</p>
           <div class="mb12">
             <div class="code"><span class="kw">SELECT</span> <span class="fn">COUNT</span>(*) <span class="kw">FROM</span> <span class="tb">Priemy</span>;</div>
             <label class="lbl mt8">Прогноз</label>
@@ -1893,11 +652,18 @@
             <label class="lbl mt8">Прогноз</label>
             <input type="text" id="g3" placeholder="Этот запрос вернёт…">
           </div>
+
+          <div class="notebook-reminder mt12">
+            <div><strong>Запиши в блокнот!</strong><br>
+            <span class="nb-cmd">COUNT(*)</span> — посчитать строки &nbsp;
+            <span class="nb-cmd">DISTINCT</span> — только уникальные &nbsp;
+            <span class="nb-cmd">ORDER BY ... DESC</span> — сортировка по убыванию</div>
+          </div>
         </div>
 
         <!-- Вопросы -->
         <div class="card">
-          <div class="ctitle">Вопросы преподавателю</div>
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--tx);margin-bottom:8px">Вопросы преподавателю</div>
           <div class="wall" id="qWall"><div style="color:var(--mu);font-size:13px">Вопросов пока нет…</div></div>
           <div style="display:flex;gap:8px">
             <input type="text" id="qIn" placeholder="Что непонятно?" style="flex:1" onkeydown="if(event.key==='Enter')submitQ()">
@@ -1905,40 +671,8 @@
           </div>
         </div>
 
-        <div class="task-return">Вернёмся к задачам: «Научить составлять SELECT-запросы с WHERE, ORDER BY, COUNT, AVG» — мы это продемонстрировали. Теперь ваша очередь.</div>
+        <div class="task-return">Вернёмся к задачам: «Научить составлять SELECT-запросы» — мы это продемонстрировали. Теперь ваша очередь.</div>
         <div class="sec-rate"><span class="sec-rate-label">Оцените этап:</span><div class="rate-dots" id="sr3"></div></div>
-      </div>
-    </section>
-    <hr class="rule">
-
-    <!-- ── 04 ФИЗКУЛЬТМИНУТКА ── -->
-    <section class="sec sec-locked" id="s4" data-sec="4">
-      <div class="sec-hd">
-        <span class="sec-tag">04</span>
-        <span class="sec-name">Физкультминутка</span>
-        <span class="sec-min">1 мин</span>
-      </div>
-      <div class="sec-body">
-        <div class="card card-gr">
-          <div class="ctitle" style="color:var(--gr)">Разминка за рабочим местом</div>
-          <p style="font-size:14px;color:var(--tx2);line-height:1.7;margin-bottom:14px">
-            Во время работы за ПК затекает шея и устают глаза. Давайте разомнёмся, не вставая со стула:
-          </p>
-          <ul style="font-size:14px;color:var(--tx2);line-height:1.7;margin-left:20px;margin-bottom:14px">
-            <li>Бросьте бумажку поглубже под стол и достаньте ее.</li>
-            <li>Поставьте локоть на стол, лбом упритесь в ладонь, сильно давите на нее в течение 7 секунд. Затем запрокиньте голову назад на 10-12 секунд. Повторите с другой рукой.</li>
-            <li>Сделайте несколько поворотных скруток, обнимая обеими руками спинку стула.</li>
-            <li>В течение 7 секунд тяните на себя сиденье стула, взявшись за его передний край. Затем прогнитесь в спине на 5 секунд, разведя локти и положив пальцы в замок на затылке.</li>
-          </ul>
-          <div class="ctitle" style="color:var(--gr);font-size:15px;margin-top:16px">Для глаз:</div>
-          <ul style="font-size:14px;color:var(--tx2);line-height:1.7;margin-left:20px;margin-bottom:8px">
-            <li>Быстро моргните 10-14 раз.</li>
-            <li>Закройте глаза и прикройте их ладонями на 5 секунд, чтобы согреть.</li>
-            <li>Рисуйте взглядом вертикально и горизонтально расположенные знаки бесконечности (10-15 сек).</li>
-            <li>Мягко сфокусируйтесь на самой дальней точке в кабинете (или за окном), а затем переведите взгляд на кончик носа.</li>
-          </ul>
-        </div>
-        <div class="sec-rate"><span class="sec-rate-label">Оцените этап:</span><div class="rate-dots" id="sr4"></div></div>
       </div>
     </section>
     <hr class="rule">
@@ -1946,22 +680,43 @@
     <!-- ── 05 ПРАКТИКА ── -->
     <section class="sec sec-locked" id="s5" data-sec="5">
       <div class="sec-hd">
-        <span class="sec-tag">05</span>
+        <span class="sec-tag">04</span>
         <span class="sec-name">Практическая работа</span>
         <span class="sec-min">15 мин</span>
       </div>
       <div class="sec-body">
-        <div class="info">Вам доступен терминал SQL. База данных <strong>Priemy</strong> инициализирована.</div>
+        <div class="info">Выполняйте задания по порядку. Используйте <strong>SQL-песочницу</strong> ниже для проверки запросов.</div>
+
+        <!-- SQL Песочница для практики -->
+        <div class="card mt12">
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--cy);margin-bottom:10px">SQL-песочница для практики</div>
+          <div class="sql-executor">
+            <div class="sql-exec-header"><span>SQL-песочница · Priemy</span><span style="color:#4e6890">SQLite</span></div>
+            <textarea class="sql-exec-input" id="pracSqlIn" placeholder="Пишите SQL-запросы здесь…" rows="3"></textarea>
+            <div class="sql-exec-bar">
+              <button class="sql-exec-run" onclick="runSQL('pracSqlIn','pracSqlRes')">▶ Выполнить</button>
+              <button class="sql-exec-clear" onclick="el('pracSqlIn').value='';el('pracSqlRes').innerHTML=''">Очистить</button>
+            </div>
+            <div class="sql-result" id="pracSqlRes"></div>
+          </div>
+        </div>
 
         <!-- INSERT пазл -->
         <div class="card mt12">
-          <div class="ctitle">Задание 1 <span style="color:var(--or)">[+1 б.]</span> — INSERT INTO: заполните значения</div>
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--tx);margin-bottom:8px">Задание 1 <span style="color:var(--or)">[+1 б.]</span> — INSERT INTO: заполните значения</div>
           <p style="font-size:13px;color:var(--tx2);margin-bottom:13px">Нужно добавить нового пациента. Впишите правильные значения в каждое поле.<br>
             Данные: <strong>Нилов Андрей · +79221009090 · Петрова А.И. · Терапевт · Консультация · 700 · кабинет 101</strong></p>
           <div class="code mb12">
             <span class="kw">INSERT INTO</span> <span class="tb">Priemy</span> (FIO_pacienta, Telefon, FIO_vracha, Spec, Usluga, Tsena, Cabinet)<br>
             <span class="kw">VALUES</span> (<span class="st">'?'</span>, <span class="st">'?'</span>, <span class="st">'?'</span>, <span class="st">'?'</span>, <span class="st">'?'</span>, <span class="nm">?</span>, <span class="st">'?'</span>);
           </div>
+
+          <div class="notebook-reminder">
+            <div><strong>Запиши в блокнот!</strong><br>
+            <span class="nb-cmd">INSERT INTO</span> <em>таблица</em> <span class="nb-cmd">(столбцы)</span> <span class="nb-cmd">VALUES</span> <span class="nb-cmd">(значения)</span><br>
+            Текст — в одинарных кавычках: <span class="nb-cmd">'Текст'</span> &nbsp; Числа — без кавычек: <span class="nb-cmd">700</span></div>
+          </div>
+
           <div class="ins-grid">
             <div><label class="lbl">FIO_pacienta (текст — в кавычках)</label><input class="ins-f" id="i0" placeholder="'Нилов Андрей'"></div>
             <div><label class="lbl">Telefon (текст)</label><input class="ins-f" id="i1" placeholder="'+79221009090'"></div>
@@ -1980,10 +735,8 @@
 
         <div id="selWrap"></div>
 
-
-
         <div class="task-return">Вернёмся к задачам: «Научить составлять SELECT-запросы» и «Сформировать умение добавлять данные через INSERT INTO» — этой практикой мы их выполнили.</div>
-        <div class="sec-rate"><span class="sec-rate-label">Оцените этап:</span><div class="rate-dots" id="sr5"></div></div>
+        <div class="sec-rate"><span class="sec-rate-label">Оцените этап:</span><div class="rate-dots" id="sr4"></div></div>
       </div>
     </section>
     <hr class="rule">
@@ -1991,35 +744,34 @@
     <!-- ── 06 ДОМАШНЕЕ ЗАДАНИЕ ── -->
     <section class="sec sec-locked" id="s6" data-sec="6">
       <div class="sec-hd">
-        <span class="sec-tag">06</span>
+        <span class="sec-tag">05</span>
         <span class="sec-name">Домашнее задание</span>
         <span class="sec-min">1 мин</span>
       </div>
       <div class="sec-body">
         <div class="card">
-          <div class="ctitle ctitle-or">Домашнее задание по SQL</div>
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--or);margin-bottom:8px">Домашнее задание по SQL</div>
           <p style="font-size:14px;color:var(--tx2);line-height:1.7;margin-bottom:16px">
-            Выполните <strong>5 заданий по SQL</strong> прямо здесь, в интерактивной тетради, и сохраните результаты запросов.
+            Откройте эту тетрадь дома (по тому же коду доступа) и используйте SQL-песочницу.<br>
+            Выполните <strong>5 заданий по SQL</strong>: напишите запросы и сохраните результаты скриншотами.
           </p>
-          <div class="g2" style="gap:20px;align-items:start">
-            <div>
-              <ol style="font-size:14px;color:var(--tx2);line-height:2;padding-left:20px">
-                <li>Выведите всех пациентов, которых принял врач <em>Сидоров В.П.</em></li>
-                <li>Найдите все услуги дешевле 1000 рублей, отсортируйте по цене</li>
-                <li>Подсчитайте, сколько раз каждый пациент приходил на приём (GROUP BY)</li>
-                <li>Найдите самую дорогую услугу (MAX)</li>
-                <li>Выведите уникальные специальности врачей (DISTINCT)</li>
-              </ol>
-            </div>
+          <ol style="font-size:14px;color:var(--tx2);line-height:2;padding-left:20px">
+            <li>Выведите всех пациентов, которых принял врач <em>Сидоров В.П.</em></li>
+            <li>Найдите все услуги дешевле 1000 рублей, отсортируйте по цене</li>
+            <li>Подсчитайте, сколько раз каждый пациент приходил на приём (GROUP BY)</li>
+            <li>Найдите самую дорогую услугу (MAX)</li>
+            <li>Выведите уникальные специальности врачей (DISTINCT)</li>
+          </ol>
+
+          <div class="notebook-reminder mt12">
+            <div><strong>Запиши в блокнот!</strong><br>
+            <span class="nb-cmd">GROUP BY</span> — группировка по столбцу &nbsp;
+            <span class="nb-cmd">MAX()</span> — максимальное значение &nbsp;
+            <span class="nb-cmd">MIN()</span> — минимальное значение</div>
           </div>
-          <textarea id="hwConsole" class="code-in mt12" placeholder="Напишите запросы сюда... Сначала выполните задание №1, затем №2 и так далее." rows="5"></textarea>
-          <div style="margin-top:8px">
-             <button class="btn btn-cy" onclick="runInBrowserSQL('hwConsole', 'hwRes')">▶ Выполнить запрос</button>
-          </div>
-          <div id="hwRes" class="dtbl-wrap mt12"></div>
         </div>
         <div class="task-return">ДЗ продолжает нашу задачу — применение SQL в самостоятельной работе.</div>
-        <div class="sec-rate"><span class="sec-rate-label">Оцените этап:</span><div class="rate-dots" id="sr6"></div></div>
+        <div class="sec-rate"><span class="sec-rate-label">Оцените этап:</span><div class="rate-dots" id="sr5"></div></div>
       </div>
     </section>
     <hr class="rule">
@@ -2027,23 +779,22 @@
     <!-- ── 07 РЕФЛЕКСИЯ ── -->
     <section class="sec sec-locked" id="s7" data-sec="7">
       <div class="sec-hd">
-        <span class="sec-tag">07</span>
+        <span class="sec-tag">06</span>
         <span class="sec-name">Рефлексия — П-О-П-С</span>
         <span class="sec-min">3 мин</span>
       </div>
       <div class="sec-body">
         <div class="card">
-          <div class="ctitle">Тема эссе: «SQL нужен оператору ИС, потому что…»</div>
-          <p style="font-size:13px;color:var(--mu);margin-bottom:15px">Минимум одно предложение в каждом поле. После — проверьте через Алису или GigaChat.</p>
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--tx);margin-bottom:8px">Тема эссе: «SQL нужен оператору ИС, потому что…»</div>
+          <p style="font-size:13px;color:var(--mu);margin-bottom:15px">Минимум одно предложение в каждом поле.</p>
           <div class="pg">
             <div class="pc"><div class="pb">П</div><div class="pl">П — Позиция: «Я полагаю, что…»</div><textarea id="pP" placeholder="Я полагаю, что SQL необходим специалисту…"></textarea></div>
             <div class="pc"><div class="pb">О</div><div class="pl">О — Обоснование: «Потому что…»</div><textarea id="pO" placeholder="Потому что без SQL невозможно…"></textarea></div>
             <div class="pc"><div class="pb">П</div><div class="pl">П — Пример: «Например…»</div><textarea id="pPr" placeholder="Например, когда регистратор ищет данные пациента…"></textarea></div>
             <div class="pc"><div class="pb">С</div><div class="pl">С — Следствие: «Таким образом…»</div><textarea id="pS" placeholder="Таким образом, владение SQL позволяет…"></textarea></div>
           </div>
-
         </div>
-        <div class="sec-rate"><span class="sec-rate-label">Оцените этап:</span><div class="rate-dots" id="sr7"></div></div>
+        <div class="sec-rate"><span class="sec-rate-label">Оцените этап:</span><div class="rate-dots" id="sr6"></div></div>
       </div>
     </section>
     <hr class="rule">
@@ -2051,13 +802,13 @@
     <!-- ── 08 ОЦЕНИВАНИЕ ── -->
     <section class="sec sec-locked" id="s8" data-sec="8">
       <div class="sec-hd">
-        <span class="sec-tag">08</span>
+        <span class="sec-tag">07</span>
         <span class="sec-name">Подведение итогов, оценивание</span>
         <span class="sec-min">4 мин</span>
       </div>
       <div class="sec-body">
         <div class="card">
-          <div class="ctitle">Эталон ответов</div>
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--tx);margin-bottom:8px">Эталон ответов</div>
           <div id="etLocked" style="padding:12px;text-align:center;color:var(--mu);font-family:var(--cond);font-size:14px">🔒 Эталон откроет преподаватель после сверки</div>
           <div class="etalon-body" id="etBody">
             <div class="etalon-row"><span class="etalon-num">1</span><span>INSERT: <span class="etalon-code">'Нилов Андрей', '+79221009090', 'Петрова А.И.', 'Терапевт', 'Консультация', 700, '101'</span></span></div>
@@ -2071,7 +822,7 @@
         </div>
 
         <div class="card">
-          <div class="ctitle">Сверьтесь с эталоном — отметьте выполненное</div>
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--tx);margin-bottom:8px">Сверьтесь с эталоном — отметьте выполненное</div>
           <p style="font-size:13px;color:var(--mu);margin-bottom:13px">1 задание = 1 балл.</p>
           <div id="assessList"></div>
           <div class="gbox-row">
@@ -2082,7 +833,7 @@
         </div>
 
         <div class="card">
-          <div class="ctitle">Рефлексия на занятие</div>
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--tx);margin-bottom:8px">Рефлексия на занятие</div>
           <div class="g2">
             <div><label class="lbl">Что было труднее всего?</label><textarea id="hard" placeholder="Труднее всего мне дался…"></textarea></div>
             <div><label class="lbl">Что пригодится в профессии?</label><textarea id="take" placeholder="В работе оператора ИС пригодится…"></textarea></div>
@@ -2090,12 +841,12 @@
         </div>
 
         <div class="card card-cy" style="margin-top:16px">
-          <div class="ctitle ctitle-cy">Финальный итог</div>
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--cy);margin-bottom:8px">Финальный итог</div>
           <p style="font-size:14px;color:var(--tx2);line-height:1.8">
             <strong>Цель</strong> — научиться составлять SQL-запросы. Каждый из вас написал минимум 6 запросов за урок, плюс INSERT. <strong>Цель достигнута.</strong><br><br>
             <strong>Задачи:</strong><br>
-            ✓ Сформировать понятийный аппарат — через ГОСТ-конструктор<br>
-            ✓ Объяснить синтаксис — через Duolingo-конструктор и демонстрацию<br>
+            ✓ Сформировать понятийный аппарат — через ГОСТ-сопоставление<br>
+            ✓ Объяснить синтаксис — через конструктор и демонстрацию<br>
             ✓ Научить составлять SELECT и INSERT — на практике<br><br>
             <strong>Все задачи закрыты. Спасибо за работу!</strong>
           </p>
@@ -2106,9 +857,17 @@
   </main>
 
   <!-- ══ ТАЙМЕР ══ -->
-  <div class="timer">
+  <div class="timer" id="timerBox">
     <span id="timerD">45:00</span>
     <button class="tbtn2" id="timerBtn" onclick="toggleTimer()">▶</button>
+  </div>
+
+  <!-- ══ ТАЙМЕР ОВЕРЛЕЙ (финиш) ══ -->
+  <div id="timerOverlay">
+    <div class="shockwave"></div>
+    <div class="shockwave"></div>
+    <div class="shockwave"></div>
+    <div class="time-up-text">⏰ Время вышло!</div>
   </div>
 
   <!-- ══ КОНФЕТТИ ══ -->
@@ -2131,6 +890,14 @@
       <div class="sec-ctrl">
         <span class="sc-name">Показать эталон студентам</span>
         <button class="sc-btn locked" id="etTeacherBtn" onclick="toggleEtalonTeacher()">🔒 Скрыт</button>
+      </div>
+    </div>
+
+    <div class="tp-sec">
+      <div class="tp-stl">ГОСТ-сопоставление</div>
+      <div class="sec-ctrl">
+        <span class="sc-name">Показать результаты студентам</span>
+        <button class="sc-btn locked" id="matchRevealBtn" onclick="toggleMatchReveal()">🔒 Скрыт</button>
       </div>
     </div>
 
@@ -2161,6 +928,9 @@
     </div>
   </div>
 
+  <!-- ══ SQL.js (встроенный SQLite) ══ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
+
   <!-- ══ СКРИПТЫ ══ -->
   <script>
     const FB = {
@@ -2176,9 +946,9 @@
     const PASS = "sql2025";
     const SESSION = "lesson_" + new Date().toISOString().slice(0, 10);
 
-    // Секции: ключи без 4 (физкультминутка удалена)
+    // Обновлённые секции (без физкультминутки)
     const SEC_IDS = [1, 2, 3, 5, 6, 7, 8];
-    const SEC_NAMES = ["—", "Целеполагание", "Актуализация", "Демонстрация", "Физкультминутка", "Практика", "ДЗ", "Рефлексия", "Оценивание"];
+    const SEC_NAMES = { 1: "Целеполагание", 2: "Актуализация", 3: "Демонстрация", 5: "Практика", 6: "ДЗ", 7: "Рефлексия", 8: "Оценивание" };
 
     let db = null;
     let SK = localStorage.getItem("sk") || ("s" + Math.random().toString(36).slice(2, 9));
@@ -2191,6 +961,25 @@
     function el(id) { return document.getElementById(id); }
     function ld(k, d) { try { return JSON.parse(localStorage.getItem(k)) || d; } catch { return d; } }
     function sv(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
+
+    /* ── АВТОРИЗАЦИЯ ── */
+    const AUTH_CODE = "sql2025db"; // Код для студентов
+    let authed = localStorage.getItem("authed_session") === SESSION;
+    if (authed) {
+      el("authOverlay").style.display = "none";
+    }
+    function tryAuth() {
+      const code = el("authCode").value.trim().toLowerCase();
+      if (code === AUTH_CODE || code === PASS) {
+        localStorage.setItem("authed_session", SESSION);
+        el("authOverlay").style.display = "none";
+        authed = true;
+      } else {
+        el("authHint").innerHTML = '<span style="color:#ffad7a">Неверный код. Попробуйте ещё раз.</span>';
+        el("authCode").style.borderColor = "#ffad7a";
+        setTimeout(() => { el("authCode").style.borderColor = "rgba(255,255,255,.3)"; }, 1500);
+      }
+    }
 
     /* ── Firebase ── */
     function initFB() {
@@ -2207,36 +996,35 @@
         el("tpNamed").textContent = ks.filter(k => d[k].name).length;
       });
       R("scores").on("value", s => { tpScores(s.val() || {}); });
-      // КЛЮЧЕВОЙ FIX: слушаем secLocks и при подключении/обновлении получаем текущее состояние
-      R("secLocks").on("value", s => {
-        const d = s.val() || {};
-        applyLocks(d);
-        // Сохраняем в localStorage как кэш на случай потери связи
-        sv("secLocksCache", d);
+      R("secLocks").on("value", s => { const d = s.val() || {}; applyLocks(d); sv("secLocksCache", d); });
+      // Синхронизация таймера
+      R("timer").on("value", s => {
+        const d = s.val();
+        if (!d) return;
+        applyTimerState(d);
       });
+      // ГОСТ результаты
+      R("matchReveal").on("value", s => {
+        matchRevealed = s.val() === true;
+        applyMatchReveal();
+      });
+      // Эталон
+      R("etalonOpen").on("value", s => { applyEtalon(s.val() === true); });
     }
 
     /* ── ИМЯ ── */
     el("nameIn").value = ld("uname", "");
     el("grpIn").value = ld("ugrp", "");
     updateNameConfirm();
-
-    function setName(v) {
-      sv("uname", v);
-      updateNameConfirm();
-      if (db) R("presence/" + SK + "/name").set(v);
-    }
-    function setGrp(v) {
-      sv("ugrp", v);
-      if (db) R("presence/" + SK + "/grp").set(v);
-    }
+    function setName(v) { sv("uname", v); updateNameConfirm(); if (db) R("presence/" + SK + "/name").set(v); }
+    function setGrp(v) { sv("ugrp", v); if (db) R("presence/" + SK + "/grp").set(v); }
     function updateNameConfirm() {
       const n = ld("uname", ""), g = ld("ugrp", "");
       el("nameConfirm").textContent = n ? "✓ Сохранено" + (g ? " · Группа: " + g : "") : "";
     }
 
     /* ── МАРШРУТ ── */
-    const ROUTE_COUNT = 9;
+    const ROUTE_COUNT = 8;
     let routeDone = ld("route", []);
     routeDone.forEach(i => {
       const b = document.querySelector("#rr" + i + " .chb");
@@ -2256,20 +1044,15 @@
       const pct = routeDone.length / ROUTE_COUNT * 100;
       const bar = el("rProg");
       bar.style.width = pct + "%";
-      // red(0%) → orange(33%) → yellow(66%) → green(100%)
       const r = pct < 50 ? 220 : Math.round(220 - (pct - 50) * 4.0);
       const g = pct < 50 ? Math.round(60 + pct * 2.8) : 180;
-      const b = pct < 50 ? 20 : Math.round(20 + (pct - 50) * 0.8);
-      bar.style.backgroundColor = `rgb(${Math.max(0,Math.min(255,r))},${Math.max(0,Math.min(255,g))},${Math.max(0,Math.min(255,b))})`;
+      const b2 = pct < 50 ? 20 : Math.round(20 + (pct - 50) * 0.8);
+      bar.style.backgroundColor = `rgb(${Math.max(0,Math.min(255,r))},${Math.max(0,Math.min(255,g))},${Math.max(0,Math.min(255,b2))})`;
     }
 
-    /* ── РЕЙТИНГ ЭТАПОВ (1-5 как в такси) ── */
+    /* ── РЕЙТИНГ ЭТАПОВ ── */
     let stageRatings = ld("stageRatings", {});
-    // Mapping: section id → route row index
-    // sr1→rr1 (row 1), sr2→rr2 (row 2), ..., sr7→rr7 (row 7)
-    // Route row 0 (Подготовка) and row 8 (Итоги) have no section rating widget
-
-    function renderRatingDots(containerId, rowIdx, size) {
+    function renderRatingDots(containerId, rowIdx) {
       const container = el(containerId);
       if (!container) return;
       let html = '';
@@ -2279,45 +1062,24 @@
       }
       container.innerHTML = html;
     }
-
     function buildAllRatings() {
-      // Route table cells (all rows 0-8)
-      for (let r = 0; r < ROUTE_COUNT; r++) {
-        renderRatingDots("rc" + r, r);
-      }
-      // Section-embedded ratings (rows 1-7)
-      for (let r = 1; r <= 7; r++) {
-        renderRatingDots("sr" + r, r);
-      }
+      for (let r = 0; r < ROUTE_COUNT; r++) renderRatingDots("rc" + r, r);
+      for (let r = 1; r <= 6; r++) renderRatingDots("sr" + r, r);
     }
-
     function setRating(row, sourceId) {
-      // Find clicked button score via event
       const score = parseInt(event.target.dataset.score);
       if (!score) return;
-      // Toggle off if same
-      if (stageRatings[row] === score) {
-        delete stageRatings[row];
-      } else {
-        stageRatings[row] = score;
-      }
+      if (stageRatings[row] === score) delete stageRatings[row];
+      else stageRatings[row] = score;
       sv("stageRatings", stageRatings);
-      // Re-render both route table cell AND section widget for this row
       renderRatingDots("rc" + row, row);
-      if (row >= 1 && row <= 7) renderRatingDots("sr" + row, row);
-      // Firebase
-      if (db) {
-        R("ratings/" + SK).set({
-          name: ld("uname", "") || SK,
-          ratings: stageRatings
-        });
-      }
+      if (row >= 1 && row <= 6) renderRatingDots("sr" + row, row);
+      if (db) R("ratings/" + SK).set({ name: ld("uname", "") || SK, ratings: stageRatings });
     }
     buildAllRatings();
 
-    /* ── СЕКЦИИ-ЗАМКИ (ИСПРАВЛЕННАЯ ЛОГИКА) ── */
+    /* ── СЕКЦИИ-ЗАМКИ ── */
     let locksState = {};
-
     function buildSecControls() {
       el("secControls").innerHTML = SEC_IDS.map(i => `
     <div class="sec-ctrl">
@@ -2326,23 +1088,16 @@
     </div>`).join("");
     }
     buildSecControls();
-
     function toggleLock(i) {
       const nowLocked = locksState[i] !== false;
-      const newState = !nowLocked; // если было locked → станет false (unlocked)
-      locksState[i] = newState;
-      if (db) {
-        R("secLocks/" + i).set(newState);
-      } else {
-        sv("secLocksCache", locksState);
-        applyLocks(locksState);
-      }
+      locksState[i] = !nowLocked;
+      if (db) R("secLocks/" + i).set(!nowLocked);
+      else { sv("secLocksCache", locksState); applyLocks(locksState); }
     }
-
     function applyLocks(data) {
       locksState = data;
       SEC_IDS.forEach(i => {
-        const locked = data[i] !== false; // если нет записи или true — заблокировано
+        const locked = data[i] !== false;
         const sec = el("s" + i);
         const btn = el("scBtn" + i);
         if (!sec) return;
@@ -2356,7 +1111,6 @@
         }
       });
     }
-
     function addLockOverlay(sec) {
       if (sec.querySelector(".lock-overlay")) return;
       const ov = document.createElement("div");
@@ -2364,10 +1118,9 @@
       ov.innerHTML = '<div class="lock-icon">🔒</div><div class="lock-text">Раздел откроет преподаватель</div>';
       sec.appendChild(ov);
     }
-
     function unlockSection(sec) {
       const ov = sec.querySelector(".lock-overlay");
-      if (!sec.classList.contains("sec-locked") && !ov) return; // уже открыт
+      if (!sec.classList.contains("sec-locked") && !ov) return;
       if (ov) {
         sec.classList.add("unlocking");
         ov.style.animation = "unlockAnim .45s ease forwards";
@@ -2375,74 +1128,183 @@
           sec.classList.remove("sec-locked", "unlocking");
           ov.remove();
           const body = sec.querySelector(".sec-body");
-          if (body) { body.style.animation = "fadeIn .4s ease"; }
+          if (body) body.style.animation = "fadeIn .4s ease";
         }, 460);
-      } else {
-        sec.classList.remove("sec-locked");
-      }
+      } else sec.classList.remove("sec-locked");
     }
-
-    // Инициализация: если Firebase подключён — ждём данные из on("value"),
-    // если нет — берём кэш из localStorage, а если и кэша нет — всё закрыто
     if (!db) {
       const cached = ld("secLocksCache", null);
-      if (cached) {
-        applyLocks(cached);
-      } else {
-        const initLocks = {};
-        SEC_IDS.forEach(i => { initLocks[i] = true; });
-        applyLocks(initLocks);
-      }
+      if (cached) applyLocks(cached);
+      else { const initLocks = {}; SEC_IDS.forEach(i => { initLocks[i] = true; }); applyLocks(initLocks); }
     }
 
+    /* ── ГОСТ МАТЧ (drag & drop, равные блоки, результат по команде) ── */
+    const GOST = [
+      { term: "SELECT", def: "Оператор языка SQL для выборки данных из одной или нескольких таблиц (ISO/IEC 9075)" },
+      { term: "INSERT INTO", def: "Оператор языка SQL для добавления новых строк в таблицу (ISO/IEC 9075)" },
+      { term: "WHERE", def: "Предложение оператора SQL, задающее условие отбора строк результата (ISO/IEC 9075)" },
+      { term: "База данных", def: "Совокупность данных, организованных в соответствии с концептуальной структурой (ГОСТ 33707–2016)" },
+      { term: "Первичный ключ", def: "Ключ отношения, выбранный для уникальной идентификации каждого кортежа (ГОСТ 33707–2016)" },
+      { term: "Запись", def: "Совокупность связанных элементов данных, рассматриваемая как единое целое (ГОСТ 33707–2016)" },
+    ];
+    let matchPlacements = {}; // { slotIndex: defIndex }
+    let matchFixed = false;
+    let matchRevealed = false;
 
+    function buildMatch() {
+      const board = el("matchBoard");
+      const pool = el("matchPool");
+      // Build slots
+      board.innerHTML = GOST.map((g, i) => `
+        <div class="match-slot">
+          <div class="match-term">${g.term}</div>
+          <div class="match-def-slot" id="mslot${i}"
+            ondragover="event.preventDefault();this.classList.add('drag-over')"
+            ondragleave="this.classList.remove('drag-over')"
+            ondrop="dropDef(event,${i})">
+            <span style="color:var(--mu);font-size:12px">Перетащите сюда</span>
+          </div>
+        </div>`).join("");
+
+      // Shuffle defs
+      const shuffled = GOST.map((g, i) => ({ def: g.def, idx: i })).sort(() => Math.random() - .5);
+      pool.innerHTML = '<div class="match-pool-title">Определения (перетащите в ячейки выше)</div>' +
+        shuffled.map(d => `
+          <div class="match-def-item" id="mdef${d.idx}" draggable="true"
+            ondragstart="event.dataTransfer.setData('text/plain','${d.idx}')">${d.def}</div>`).join("");
+      matchPlacements = {};
+      matchFixed = false;
+      updateMatchSt();
+    }
+    function dropDef(e, slotIdx) {
+      e.preventDefault();
+      if (matchFixed) return;
+      const defIdx = parseInt(e.dataTransfer.getData("text/plain"));
+      const slot = el("mslot" + slotIdx);
+      slot.classList.remove("drag-over");
+
+      // If slot already has something, return it to pool
+      Object.entries(matchPlacements).forEach(([si, di]) => {
+        if (parseInt(si) === slotIdx) {
+          el("matchPool").appendChild(el("mdef" + di));
+          delete matchPlacements[si];
+        }
+      });
+
+      // If this def was in another slot, remove it
+      Object.entries(matchPlacements).forEach(([si, di]) => {
+        if (di === defIdx) {
+          const oldSlot = el("mslot" + si);
+          oldSlot.innerHTML = '<span style="color:var(--mu);font-size:12px">Перетащите сюда</span>';
+          delete matchPlacements[si];
+        }
+      });
+
+      // Place def in slot
+      slot.innerHTML = "";
+      slot.appendChild(el("mdef" + defIdx));
+      slot.classList.add("filled");
+      matchPlacements[slotIdx] = defIdx;
+      updateMatchSt();
+    }
+    function updateMatchSt() {
+      el("mSt").textContent = "Расставлено: " + Object.keys(matchPlacements).length + " / 6";
+    }
+    function fixMatch() {
+      if (Object.keys(matchPlacements).length < 6) {
+        el("mSt").textContent = "Расставьте все 6 определений!";
+        return;
+      }
+      matchFixed = true;
+      el("mSt").textContent = "✓ Ответ зафиксирован. Ожидайте проверку преподавателя.";
+      // Save to firebase
+      if (db) {
+        R("matchAnswers/" + SK).set({
+          name: ld("uname", "") || SK,
+          placements: matchPlacements,
+          t: Date.now()
+        });
+      }
+      if (matchRevealed) showMatchResults();
+    }
+    function resetMatch() {
+      matchFixed = false;
+      buildMatch();
+      el("matchResult").style.display = "none";
+    }
+    function toggleMatchReveal() {
+      matchRevealed = !matchRevealed;
+      if (db) R("matchReveal").set(matchRevealed);
+      else applyMatchReveal();
+    }
+    function applyMatchReveal() {
+      const btn = el("matchRevealBtn");
+      if (btn) {
+        btn.textContent = matchRevealed ? "🔓 Показано" : "🔒 Скрыт";
+        btn.className = matchRevealed ? "sc-btn unlocked" : "sc-btn locked";
+      }
+      if (matchRevealed && matchFixed) showMatchResults();
+    }
+    function showMatchResults() {
+      let correct = 0;
+      GOST.forEach((g, i) => {
+        const slot = el("mslot" + i);
+        if (matchPlacements[i] === i) {
+          slot.classList.add("correct");
+          slot.classList.remove("incorrect");
+          correct++;
+        } else if (matchPlacements[i] !== undefined) {
+          slot.classList.add("incorrect");
+          slot.classList.remove("correct");
+        }
+      });
+      const res = el("matchResult");
+      res.style.display = "block";
+      res.innerHTML = `<div style="padding:10px 14px;font-family:var(--mono);font-size:13px;${correct === 6 ? 'background:var(--grl);color:var(--gr);border-left:3px solid var(--gr)' : 'background:var(--or3);color:var(--or);border-left:3px solid var(--or)'}">
+        Результат: ${correct} из 6 верно${correct === 6 ? ' — отлично!' : ''}</div>`;
+      if (correct === 6) confetti();
+    }
+    buildMatch();
 
     /* ── ГОЛОСОВАНИЕ ── */
     let myVote = localStorage.getItem("myvote");
     function castVote(idx) {
       if (myVote !== null) return;
-      myVote = String(idx);
-      localStorage.setItem("myvote", myVote);
+      myVote = String(idx); localStorage.setItem("myvote", myVote);
       document.querySelectorAll(".vopt")[idx].classList.add("mv");
-      if (db) { R("votes/" + SK).set(idx); }
-      else { const lv = ld("lv", [0, 0, 0, 0]); lv[idx]++; sv("lv", lv); renderVotesArr(lv); }
+      if (db) R("votes/" + SK).set(idx);
+      else { const lv = ld("lv", [0,0,0,0]); lv[idx]++; sv("lv", lv); renderVotesArr(lv); }
     }
-    function renderVotes(data) {
-      const c = [0, 0, 0, 0]; Object.values(data).forEach(v => { if (c[v] !== undefined) c[v]++; });
-      renderVotesArr(c);
-    }
+    function renderVotes(data) { const c = [0,0,0,0]; Object.values(data).forEach(v => { if (c[v] !== undefined) c[v]++; }); renderVotesArr(c); }
     function renderVotesArr(c) {
       const t = c.reduce((a, b) => a + b, 0) || 1;
       document.querySelectorAll(".vopt").forEach((o, i) => {
         const p = Math.round(c[i] / t * 100);
         o.querySelector(".vf").style.width = p + "%";
-        el("vc" + i).textContent = c[i];
-        el("vp" + i).textContent = p + "%";
+        el("vc" + i).textContent = c[i]; el("vp" + i).textContent = p + "%";
       });
       if (myVote !== null) document.querySelectorAll(".vopt")[+myVote]?.classList.add("mv");
     }
-    if (myVote !== null) { document.querySelectorAll(".vopt")[+myVote]?.classList.add("mv"); if (!db) renderVotesArr(ld("lv", [0, 0, 0, 0])); }
+    if (myVote !== null) { document.querySelectorAll(".vopt")[+myVote]?.classList.add("mv"); if (!db) renderVotesArr(ld("lv", [0,0,0,0])); }
 
     /* ── СТЕНЫ ── */
     function submitTopic() {
       const v = el("topicIn").value.trim(); if (!v) return;
       const name = ld("uname", "") || SK; el("topicIn").value = "";
-      if (db) { R("topics").push({ name, text: v, votes: 0, t: Date.now() }); }
+      if (db) R("topics").push({ name, text: v, votes: 0, t: Date.now() });
       else { const l = ld("lt", []); l.push({ key: Date.now(), name, text: v, votes: 0 }); sv("lt", l); renderLocalWall("topicWall", l, true); }
     }
     function submitQ() {
       const v = el("qIn").value.trim(); if (!v) return;
       const name = ld("uname", "") || SK; el("qIn").value = "";
-      if (db) { R("questions").push({ name, text: v, votes: 0, t: Date.now() }); }
+      if (db) R("questions").push({ name, text: v, votes: 0, t: Date.now() });
       else { const l = ld("lq", []); l.push({ key: Date.now(), name, text: v, votes: 0 }); sv("lq", l); renderLocalWall("qWall", l, false); }
     }
     function renderWall(wid, data, canVote) {
       const w = el(wid); const items = Object.entries(data).sort((a, b) => (b[1].votes || 0) - (a[1].votes || 0));
       if (!items.length) { w.innerHTML = '<div style="color:var(--mu);font-size:13px">Пока нет записей…</div>'; return; }
       w.innerHTML = items.map(([k, it]) => `
-    <div class="wmsg">
-      <span class="wauth">${it.name || "?"}</span>
-      <span class="wbody">${it.text}</span>
+    <div class="wmsg"><span class="wauth">${it.name || "?"}</span><span class="wbody">${it.text}</span>
       ${canVote ? `<button class="upbtn" onclick="upvote('${wid}','${k}',this)">▲ ${it.votes || 0}</button>` : ""}
     </div>`).join("");
     }
@@ -2450,8 +1312,7 @@
       const w = el(wid);
       if (!items.length) { w.innerHTML = '<div style="color:var(--mu);font-size:13px">Пока нет записей…</div>'; return; }
       w.innerHTML = items.map(it => `
-    <div class="wmsg">
-      <span class="wauth">${it.name}</span><span class="wbody">${it.text}</span>
+    <div class="wmsg"><span class="wauth">${it.name}</span><span class="wbody">${it.text}</span>
       ${canVote ? `<button class="upbtn">▲ ${it.votes || 0}</button>` : ""}
     </div>`).join("");
     }
@@ -2462,98 +1323,18 @@
     }
     if (!db) { const lt = ld("lt", []); if (lt.length) renderLocalWall("topicWall", lt, true); const lq = ld("lq", []); if (lq.length) renderLocalWall("qWall", lq, false); }
 
-    /* ── ГОСТ МАТЧ ── */
-    const GOST = [
-      { term: "SELECT", def: "Оператор языка SQL для выборки данных из одной или нескольких таблиц (ISO/IEC 9075)" },
-      { term: "INSERT INTO", def: "Оператор языка SQL для добавления новых строк в таблицу (ISO/IEC 9075)" },
-      { term: "WHERE", def: "Предложение оператора SQL, задающее условие отбора строк результата (ISO/IEC 9075)" },
-      { term: "База данных", def: "Совокупность данных, организованных в соответствии с концептуальной структурой (ГОСТ 33707–2016, ст. 2.2.1)" },
-      { term: "Первичный ключ", def: "Ключ отношения, выбранный для уникальной идентификации каждого кортежа (ГОСТ 33707–2016, ст. 2.6.19)" },
-      { term: "Запись", def: "Совокупность связанных элементов данных, рассматриваемая как единое целое (ГОСТ 33707–2016, ст. 2.6.14)" },
-    ];
-    let matchLocked = ld("matchLocked", false);
-    let matchSortable = null;
-    
-    function initMatch() {
-      // Инициализация терминов
-      el("mT").innerHTML = GOST.map((d, i) => `<div class="mi"><span class="mi-kw">${d.term}</span></div>`).join("");
-      
-      // Загрузка порядка: сохраненный или рандомный
-      let savedOrder = ld("mOrder", null);
-      let sd = [];
-      if (savedOrder && savedOrder.length === GOST.length) {
-        sd = savedOrder.map(oi => ({ def: GOST[oi].def, oi }));
-      } else {
-        const indices = [0,1,2,3,4,5].sort(() => Math.random() - .5);
-        sd = indices.map(oi => ({ def: GOST[oi].def, oi }));
-      }
-
-      el("mD").innerHTML = sd.map(d => `<div class="mi" data-oi="${d.oi}" style="cursor:grab">${d.def}</div>`).join("");
-      
-      if (!matchLocked) {
-        matchSortable = new Sortable(el("mD"), {
-          animation: 150,
-          ghostClass: 'sel',
-          onEnd: function () {
-            // Сохраняем текущий порядок массива при перетаскивании
-            const currentOrder = Array.from(el("mD").children).map(c => parseInt(c.getAttribute("data-oi")));
-            sv("mOrder", currentOrder);
-          }
-        });
-      } else {
-        applyMatchLock();
-      }
-    }
-    
-    function lockMatch() {
-      if (matchLocked) return;
-      matchLocked = true;
-      sv("matchLocked", true);
-      if (matchSortable) { matchSortable.destroy(); matchSortable = null; }
-      applyMatchLock();
-    }
-    
-    function applyMatchLock() {
-      el("lockMatchBtn").style.display = "none";
-      el("mSt").textContent = "✓ Выбор зафиксирован (ожидание эталона)";
-      document.querySelectorAll("#mD .mi").forEach(e => e.style.cursor = "default");
-      evaluateMatch();
-    }
-    
-    function evaluateMatch() {
-      if (!matchLocked) return;
-      if (etalonOpen) {
-        let score = 0;
-        const currentElements = Array.from(el("mD").children);
-        currentElements.forEach((elD, idx) => {
-          const elT = el("mT").children[idx];
-          const isCorrect = (idx === parseInt(elD.getAttribute("data-oi")));
-          if (isCorrect) score++;
-          
-          let color = isCorrect ? "#186640" : "#a81c1c";
-          elT.style.borderColor = color; 
-          elT.style.background = isCorrect ? "var(--grl)" : "var(--rel)";
-          elD.style.borderColor = color; 
-          elD.style.background = isCorrect ? "var(--grl)" : "var(--rel)";
-        });
-        el("mSt").textContent = "Верных: " + score + " / 6";
-        if (score === 6) confetti();
-      }
-    }
-    initMatch();
-
     /* ── DUOLINGO ── */
     const DUO_TABLES = [
-      { cols: ["ID", "ФИО пациента", "ФИО врача", "Услуга", "Цена"], rows: [["1", "Иванов П.С.", "Петрова А.И.", "Первичный приём", "800"], ["2", "Смирнова О.В.", "Сидоров В.П.", "ЭКГ", "1200"], ["...", "...", "...", "...", "..."]] },
-      { cols: ["ID", "ФИО пациента", "Цена"], rows: [["2", "Смирнова О.В.", "1200"], ["5", "Смирнова О.В.", "2500"]] },
+      { cols: ["ID","ФИО пациента","ФИО врача","Услуга","Цена"], rows: [["1","Иванов П.С.","Петрова А.И.","Первичный приём","800"],["2","Смирнова О.В.","Сидоров В.П.","ЭКГ","1200"],["...","...","...","...","..."]] },
+      { cols: ["ID","ФИО пациента","Цена"], rows: [["2","Смирнова О.В.","1200"],["5","Смирнова О.В.","2500"]] },
       { cols: ["AVG(Tsena)"], rows: [["1180.00"]] },
     ];
     const DUOS = [
-      { q: "Выведите все строки и столбцы из таблицы Priemy", ans: ["SELECT", "*", "FROM", "Priemy", ";"], tokens: [{ t: "SELECT", c: "kw-t" }, { t: "*", c: "fn-t" }, { t: "FROM", c: "kw-t" }, { t: "Priemy", c: "tb-t" }, { t: ";", c: "sy-t" }, { t: "WHERE", c: "kw-t" }, { t: "ORDER BY", c: "kw-t" }], ok: "SELECT * FROM Priemy ;" },
-      { q: "Найдите все приёмы, где цена больше 1000 рублей", ans: ["SELECT", "*", "FROM", "Priemy", "WHERE", "Tsena", ">", "1000", ";"], tokens: [{ t: "SELECT", c: "kw-t" }, { t: "*", c: "fn-t" }, { t: "FROM", c: "kw-t" }, { t: "Priemy", c: "tb-t" }, { t: "WHERE", c: "kw-t" }, { t: "Tsena", c: "fn-t" }, { t: ">", c: "sy-t" }, { t: "<", c: "sy-t" }, { t: "1000", c: "fn-t" }, { t: ";", c: "sy-t" }, { t: "COUNT", c: "fn-t" }], ok: "SELECT * FROM Priemy WHERE Tsena > 1000 ;" },
-      { q: "Подсчитайте среднюю стоимость услуги из таблицы Priemy", ans: ["SELECT", "AVG", "(", "Tsena", ")", "FROM", "Priemy", ";"], tokens: [{ t: "SELECT", c: "kw-t" }, { t: "AVG", c: "fn-t" }, { t: "(", c: "sy-t" }, { t: "Tsena", c: "fn-t" }, { t: ")", c: "sy-t" }, { t: "FROM", c: "kw-t" }, { t: "Priemy", c: "tb-t" }, { t: ";", c: "sy-t" }, { t: "COUNT", c: "fn-t" }, { t: "SUM", c: "fn-t" }], ok: "SELECT AVG ( Tsena ) FROM Priemy ;" },
+      { q: "Выведите все строки и столбцы из таблицы Priemy", ans: ["SELECT","*","FROM","Priemy",";"], tokens: [{t:"SELECT",c:"kw-t"},{t:"*",c:"fn-t"},{t:"FROM",c:"kw-t"},{t:"Priemy",c:"tb-t"},{t:";",c:"sy-t"},{t:"WHERE",c:"kw-t"},{t:"ORDER BY",c:"kw-t"}], ok: "SELECT * FROM Priemy ;" },
+      { q: "Найдите все приёмы, где цена больше 1000 рублей", ans: ["SELECT","*","FROM","Priemy","WHERE","Tsena",">","1000",";"], tokens: [{t:"SELECT",c:"kw-t"},{t:"*",c:"fn-t"},{t:"FROM",c:"kw-t"},{t:"Priemy",c:"tb-t"},{t:"WHERE",c:"kw-t"},{t:"Tsena",c:"fn-t"},{t:">",c:"sy-t"},{t:"<",c:"sy-t"},{t:"1000",c:"fn-t"},{t:";",c:"sy-t"},{t:"COUNT",c:"fn-t"}], ok: "SELECT * FROM Priemy WHERE Tsena > 1000 ;" },
+      { q: "Подсчитайте среднюю стоимость услуги из таблицы Priemy", ans: ["SELECT","AVG","(","Tsena",")","FROM","Priemy",";"], tokens: [{t:"SELECT",c:"kw-t"},{t:"AVG",c:"fn-t"},{t:"(",c:"sy-t"},{t:"Tsena",c:"fn-t"},{t:")",c:"sy-t"},{t:"FROM",c:"kw-t"},{t:"Priemy",c:"tb-t"},{t:";",c:"sy-t"},{t:"COUNT",c:"fn-t"},{t:"SUM",c:"fn-t"}], ok: "SELECT AVG ( Tsena ) FROM Priemy ;" },
     ];
-    const DZ = [[], [], []];
+    const DZ = [[],[],[]];
     function buildDuo() {
       el("duoWrap").innerHTML = DUOS.map((d, i) => `
     <div class="duo" id="duo${i}">
@@ -2567,227 +1348,247 @@
       <div class="duo-res" id="dr${i}"></div>
       <div class="duo-table" id="dt${i}"></div>
     </div>`).join("");
-      [0, 1, 2].forEach(i => initDuo(i));
+      [0,1,2].forEach(i => initDuo(i));
     }
-    function initDuo(i) { DZ[i] = []; const sh = [...DUOS[i].tokens].sort(() => Math.random() - .5); el("dp" + i).innerHTML = sh.map((t, ti) => `<div class="tok ${t.c}" id="tk${i}_${ti}" data-t="${t.t}" onclick="addTok(${i},${ti},'${t.t}')">${t.t}</div>`).join(""); el("dz" + i).innerHTML = '<span style="color:var(--mu);font-size:12px">Нажимайте блоки снизу…</span>'; el("dr" + i).className = "duo-res"; el("dt" + i).className = "duo-table"; }
-    function addTok(ei, ti, t) { const tk = el("tk" + ei + "_" + ti); if (tk.classList.contains("used")) return; tk.classList.add("used"); DZ[ei].push({ t, ti }); renderDZ(ei); }
-    function renderDZ(ei) { const dz = el("dz" + ei); if (!DZ[ei].length) { dz.innerHTML = '<span style="color:var(--mu);font-size:12px">Нажимайте блоки снизу…</span>'; return; } dz.innerHTML = DZ[ei].map((item, pos) => `<div class="tok placed" onclick="removeTok(${ei},${pos})">${item.t}</div>`).join(""); }
-    function removeTok(ei, pos) { const rm = DZ[ei].splice(pos, 1)[0]; el("tk" + ei + "_" + rm.ti).classList.remove("used"); renderDZ(ei); }
-    function checkDuo(i) {
-      const given = DZ[i].map(x => x.t); const r = el("dr" + i); const tbl = el("dt" + i);
-      if (JSON.stringify(given) === JSON.stringify(DUOS[i].ans)) {
-        r.className = "duo-res ok"; r.textContent = "✓ Верно: " + given.join(" ");
-        confetti();
-        const td = DUO_TABLES[i];
-        tbl.className = "duo-table show";
-        tbl.innerHTML = `<div style="font-family:var(--cond);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mu);padding:6px 10px 4px">Результат запроса (пример)</div>
-    <table><thead><tr>${td.cols.map(c => `<th>${c}</th>`).join("")}</tr></thead>
-    <tbody>${td.rows.map(r => `<tr>${r.map(v => `<td>${v}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
-      } else {
-        r.className = "duo-res er"; r.textContent = "✗ Не так. Правильно: " + DUOS[i].ok; tbl.className = "duo-table";
-      }
+    function initDuo(i) { DZ[i]=[]; const sh=[...DUOS[i].tokens].sort(()=>Math.random()-.5); el("dp"+i).innerHTML=sh.map((t,ti)=>`<div class="tok ${t.c}" id="tk${i}_${ti}" data-t="${t.t}" onclick="addTok(${i},${ti},'${t.t}')">${t.t}</div>`).join(""); el("dz"+i).innerHTML='<span style="color:var(--mu);font-size:12px">Нажимайте блоки снизу…</span>'; el("dr"+i).className="duo-res"; el("dt"+i).className="duo-table"; }
+    function addTok(ei,ti,t){const tk=el("tk"+ei+"_"+ti);if(tk.classList.contains("used"))return;tk.classList.add("used");DZ[ei].push({t,ti});renderDZ(ei);}
+    function renderDZ(ei){const dz=el("dz"+ei);if(!DZ[ei].length){dz.innerHTML='<span style="color:var(--mu);font-size:12px">Нажимайте блоки снизу…</span>';return;}dz.innerHTML=DZ[ei].map((item,pos)=>`<div class="tok placed" onclick="removeTok(${ei},${pos})">${item.t}</div>`).join("");}
+    function removeTok(ei,pos){const rm=DZ[ei].splice(pos,1)[0];el("tk"+ei+"_"+rm.ti).classList.remove("used");renderDZ(ei);}
+    function checkDuo(i){
+      const given=DZ[i].map(x=>x.t);const r=el("dr"+i);const tbl=el("dt"+i);
+      if(JSON.stringify(given)===JSON.stringify(DUOS[i].ans)){
+        r.className="duo-res ok";r.textContent="✓ Верно: "+given.join(" ");confetti();
+        const td=DUO_TABLES[i];tbl.className="duo-table show";
+        tbl.innerHTML=`<div style="font-family:var(--cond);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mu);padding:6px 10px 4px">Результат запроса (пример)</div>
+    <table><thead><tr>${td.cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead>
+    <tbody>${td.rows.map(r=>`<tr>${r.map(v=>`<td>${v}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+      }else{r.className="duo-res er";r.textContent="✗ Не так. Правильно: "+DUOS[i].ok;tbl.className="duo-table";}
     }
-    function resetDuo(i) { initDuo(i); }
+    function resetDuo(i){initDuo(i);}
     buildDuo();
 
     /* ── INSERT ── */
-    const INS_A = ["'Нилов Андрей'", "'+79221009090'", "'Петрова А.И.'", "'Терапевт'", "'Консультация'", "700", "'101'"];
-    const INS_C = ["FIO_pacienta", "Telefon", "FIO_vracha", "Spec", "Usluga", "Tsena", "Cabinet"];
-    function checkInsert() {
-      const vals = INS_A.map((_, i) => el("i" + i).value.trim()); let ok = 0;
-      vals.forEach((v, i) => { const f = el("i" + i); const m = nrm(v) === nrm(INS_A[i]); f.className = "ins-f " + (m ? "ok" : "er"); if (m) ok++; });
-      const r = el("insRes"); r.textContent = ok + "/7 верно"; r.style.color = ok === 7 ? "var(--gr)" : "var(--re)";
-      if (ok === 7) confetti();
-      const p = el("insPrev"); p.style.display = "block";
-      p.innerHTML = `<span class="kw">INSERT INTO</span> <span class="tb">Priemy</span> (${INS_C.join(", ")})<br><span class="kw">VALUES</span> (${vals.map(v => v || "?").join(", ")});`;
+    const INS_A=["'Нилов Андрей'","'+79221009090'","'Петрова А.И.'","'Терапевт'","'Консультация'","700","'101'"];
+    const INS_C=["FIO_pacienta","Telefon","FIO_vracha","Spec","Usluga","Tsena","Cabinet"];
+    function checkInsert(){
+      const vals=INS_A.map((_,i)=>el("i"+i).value.trim());let ok=0;
+      vals.forEach((v,i)=>{const f=el("i"+i);const m=nrm(v)===nrm(INS_A[i]);f.className="ins-f "+(m?"ok":"er");if(m)ok++;});
+      const r=el("insRes");r.textContent=ok+"/7 верно";r.style.color=ok===7?"var(--gr)":"var(--re)";
+      if(ok===7)confetti();
+      const p=el("insPrev");p.style.display="block";
+      p.innerHTML=`<span class="kw">INSERT INTO</span> <span class="tb">Priemy</span> (${INS_C.join(", ")})<br><span class="kw">VALUES</span> (${vals.map(v=>v||"?").join(", ")});`;
     }
-    function nrm(s) { return s.replace(/[''""]/g, "'").trim().toLowerCase(); }
+    function nrm(s){return s.replace(/[''""]/g,"'").trim().toLowerCase();}
 
     /* ── SELECT ЗАДАНИЯ ── */
-    const STASKS = [
-      { id: 2, t: "Выберите все строки и столбцы таблицы", hint: null, exp: "SELECT * FROM Priemy;" },
-      { id: 3, t: "Выведите только ФИО пациента и цену", hint: null, exp: "SELECT FIO_pacienta, Tsena FROM Priemy;" },
-      { id: 4, t: "Найдите приёмы дороже 1000 рублей", hint: null, exp: "SELECT * FROM Priemy WHERE Tsena > 1000;" },
-      { id: 5, t: "Отсортируйте приёмы от дорогих к дешёвым", hint: null, exp: "SELECT * FROM Priemy ORDER BY Tsena DESC;" },
-      { id: 6, t: "Посчитайте количество всех записей", hint: null, exp: "SELECT COUNT(*) FROM Priemy;" },
-      { id: 7, t: "Письменно: что такое SQL и зачем он нужен оператору ИС? (2–3 предложения)", hint: null, exp: null, text: true },
+    const STASKS=[
+      {id:2,t:"Выберите все строки и столбцы таблицы",exp:"SELECT * FROM Priemy;"},
+      {id:3,t:"Выведите только ФИО пациента и цену",exp:"SELECT FIO_pacienta, Tsena FROM Priemy;"},
+      {id:4,t:"Найдите приёмы дороже 1000 рублей",exp:"SELECT * FROM Priemy WHERE Tsena > 1000;"},
+      {id:5,t:"Отсортируйте приёмы от дорогих к дешёвым",exp:"SELECT * FROM Priemy ORDER BY Tsena DESC;"},
+      {id:6,t:"Посчитайте количество всех записей",exp:"SELECT COUNT(*) FROM Priemy;"},
+      {id:7,t:"Письменно: что такое SQL и зачем он нужен оператору ИС? (2–3 предложения)",exp:null,text:true},
     ];
-    const savedAns = ld("tans", {});
-    function buildSel() {
-      el("selWrap").innerHTML = STASKS.map(t => `
+    const savedAns=ld("tans",{});
+    function buildSel(){
+      el("selWrap").innerHTML=STASKS.map(t=>`
     <div class="card" style="margin-top:12px">
-      <div class="ctitle">Задание ${t.id} <span style="color:var(--or)">[+1 б.]</span> — ${t.t}</div>
+      <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--tx);margin-bottom:8px">Задание ${t.id} <span style="color:var(--or)">[+1 б.]</span> — ${t.t}</div>
       ${!t.text
-          ? `<textarea class="code-in mb8" id="ta${t.id}" rows="2" placeholder="Напишите запрос..." oninput="saveA(${t.id},this.value)">${savedAns["t" + t.id] || ""}</textarea>
-             <button class="btn btn-out btn-sm" onclick="runInBrowserSQL('ta${t.id}', 'res${t.id}')">▶ Выполнить в терминале</button>
-             <div id="res${t.id}" class="dtbl-wrap mt8"></div>`
-          : `<textarea id="ta${t.id}" rows="3" oninput="saveA(${t.id},this.value)">${savedAns["t" + t.id] || ""}</textarea>`
-        }
+        ?`<textarea class="code-in" id="ta${t.id}" rows="2" oninput="saveA(${t.id},this.value)">${savedAns["t"+t.id]||""}</textarea>`
+        :`<textarea id="ta${t.id}" rows="3" oninput="saveA(${t.id},this.value)">${savedAns["t"+t.id]||""}</textarea>`
+      }
     </div>`).join("");
     }
-    function saveA(id, v) { savedAns["t" + id] = v; sv("tans", savedAns); }
+    function saveA(id,v){savedAns["t"+id]=v;sv("tans",savedAns);}
     buildSel();
 
-
-
-    /* ── ЭТАЛОН (управляется преподавателем) ── */
-    let etalonOpen = false;
-    function applyEtalon(open) {
-      etalonOpen = open;
-      el("etBody").classList.toggle("open", open);
-      el("etLocked").style.display = open ? "none" : "block";
-      const btn = el("etTeacherBtn");
-      if (btn) {
-        btn.textContent = open ? "🔓 Виден" : "🔒 Скрыт";
-        btn.className = open ? "sc-btn unlocked" : "sc-btn locked";
-      }
-      if (typeof evaluateMatch === "function") evaluateMatch();
+    /* ── ЭТАЛОН ── */
+    let etalonOpen=false;
+    function applyEtalon(open){
+      etalonOpen=open;
+      el("etBody").classList.toggle("open",open);
+      el("etLocked").style.display=open?"none":"block";
+      const btn=el("etTeacherBtn");
+      if(btn){btn.textContent=open?"🔓 Виден":"🔒 Скрыт";btn.className=open?"sc-btn unlocked":"sc-btn locked";}
     }
-    if (db) {
-      R("etalonOpen").on("value", s => { applyEtalon(s.val() === true); });
-    }
-    function toggleEtalonTeacher() {
-      etalonOpen = !etalonOpen;
-      if (db) { R("etalonOpen").set(etalonOpen); }
-      else { applyEtalon(etalonOpen); }
+    function toggleEtalonTeacher(){
+      etalonOpen=!etalonOpen;
+      if(db)R("etalonOpen").set(etalonOpen);
+      else applyEtalon(etalonOpen);
     }
 
     /* ── САМООЦЕНКА ── */
-    const TNAMES = ["Задание 1: INSERT — значения", "Задание 2: SELECT *", "Задание 3: два столбца", "Задание 4: WHERE", "Задание 5: ORDER BY", "Задание 6: COUNT(*)", "Задание 7: Письменный ответ"];
-    let chk = ld("assess", []);
-    function buildAssess() {
-      el("assessList").innerHTML = TNAMES.map((n, i) => {
-        const on = chk.includes(i);
-        return `<div class="chl"><div class="chb ${on ? "on" : ""}" onclick="toggleA(${i},this)">${on ? "✓" : ""}</div><span>${n}</span></div>`;
-      }).join("");
-      updateG();
+    const TNAMES=["Задание 1: INSERT — значения","Задание 2: SELECT *","Задание 3: два столбца","Задание 4: WHERE","Задание 5: ORDER BY","Задание 6: COUNT(*)","Задание 7: Письменный ответ"];
+    let chk=ld("assess",[]);
+    function buildAssess(){
+      el("assessList").innerHTML=TNAMES.map((n,i)=>{
+        const on=chk.includes(i);
+        return `<div class="chl"><div class="chb ${on?"on":""}" onclick="toggleA(${i},this)">${on?"✓":""}</div><span>${n}</span></div>`;
+      }).join("");updateG();
     }
-    function toggleA(i, btn) {
-      btn.classList.toggle("on"); btn.textContent = btn.classList.contains("on") ? "✓" : "";
-      const ix = chk.indexOf(i);
-      if (btn.classList.contains("on") && ix === -1) chk.push(i);
-      else if (!btn.classList.contains("on") && ix !== -1) chk.splice(ix, 1);
-      sv("assess", chk); updateG();
-      if (db) R("scores/" + SK).set({ name: ld("uname", "") || SK, score: chk.length });
+    function toggleA(i,btn){
+      btn.classList.toggle("on");btn.textContent=btn.classList.contains("on")?"✓":"";
+      const ix=chk.indexOf(i);
+      if(btn.classList.contains("on")&&ix===-1)chk.push(i);
+      else if(!btn.classList.contains("on")&&ix!==-1)chk.splice(ix,1);
+      sv("assess",chk);updateG();
+      if(db)R("scores/"+SK).set({name:ld("uname","")||SK,score:chk.length});
     }
-    function updateG() {
-      const s = chk.length; const g = s >= 6 ? "5" : s >= 5 ? "4" : s >= 3 ? "3" : s > 0 ? "2" : "—";
-      el("scoreN").textContent = s; el("gradeN").textContent = g;
+    function updateG(){
+      const s=chk.length;const g=s>=6?"5":s>=5?"4":s>=3?"3":s>0?"2":"—";
+      el("scoreN").textContent=s;el("gradeN").textContent=g;
     }
     buildAssess();
 
-    /* ── ТАЙМЕР ── */
-    let tSec = 45 * 60, tOn = false, tInt = null, tRef = null;
-    if (db) {
-      tRef = R("timer");
-      tRef.on("value", s => {
-        const val = s.val(); if (!val) return;
-        if (val.on) {
-          const passed = Math.floor(Date.now() / 1000) - val.ts;
-          tSec = Math.max(0, val.rem - passed);
-          tOn = true; el("timerBtn").textContent = "⏸";
-          if (!tInt) startLoop();
-        } else {
-          tSec = val.rem;
-          tOn = false; el("timerBtn").textContent = "▶";
-          if (tInt) { clearInterval(tInt); tInt = null; }
-          el("timerD").textContent = pad(Math.floor(tSec / 60)) + ":" + pad(tSec % 60);
-        }
-      });
-    }
+    /* ── ТАЙМЕР (синхронизированный через Firebase) ── */
+    let tSec = 45 * 60, tOn = false, tInt = null;
+    let isTeacherMode = false;
+
     function toggleTimer() {
+      if (!isTeacherMode) return; // Только преподаватель может управлять
       tOn = !tOn;
-      if (db) tRef.set({ on: tOn, ts: Math.floor(Date.now() / 1000), rem: tSec });
-      else {
-        el("timerBtn").textContent = tOn ? "⏸" : "▶";
-        if (tOn) startLoop(); else { clearInterval(tInt); tInt = null; }
+      if (db) {
+        if (tOn) {
+          R("timer").set({ running: true, startedAt: Date.now(), startSec: tSec });
+        } else {
+          R("timer").set({ running: false, remainSec: tSec });
+        }
+      } else {
+        if (tOn) startLocalTimer();
+        else stopLocalTimer();
       }
     }
-    function startLoop() {
-      if (tInt) clearInterval(tInt);
-      tInt = setInterval(() => {
-        if (tSec <= 0) { clearInterval(tInt); tInt = null; tOn = false; return; }
-        tSec--; el("timerD").textContent = pad(Math.floor(tSec / 60)) + ":" + pad(tSec % 60);
-      }, 1000);
+
+    function applyTimerState(d) {
+      if (d.running) {
+        const elapsed = Math.floor((Date.now() - d.startedAt) / 1000);
+        tSec = Math.max(0, d.startSec - elapsed);
+        tOn = true;
+        el("timerBtn").textContent = "⏸";
+        clearInterval(tInt);
+        tInt = setInterval(tickTimer, 1000);
+        updateTimerDisplay();
+      } else {
+        tSec = d.remainSec !== undefined ? d.remainSec : 45 * 60;
+        tOn = false;
+        el("timerBtn").textContent = "▶";
+        clearInterval(tInt);
+        updateTimerDisplay();
+      }
     }
-    function pad(n) { return String(n).padStart(2, "0") }
+
+    function startLocalTimer() {
+      tOn = true; el("timerBtn").textContent = "⏸";
+      tInt = setInterval(tickTimer, 1000);
+    }
+    function stopLocalTimer() {
+      tOn = false; el("timerBtn").textContent = "▶";
+      clearInterval(tInt);
+    }
+
+    function tickTimer() {
+      if (tSec <= 0) {
+        clearInterval(tInt); tOn = false;
+        el("timerBtn").textContent = "▶";
+        timerFinishEffect();
+        return;
+      }
+      tSec--;
+      updateTimerDisplay();
+      // Пульсация в последние 60 секунд
+      if (tSec <= 60 && tSec > 0) el("timerBox").classList.add("urgent");
+      else el("timerBox").classList.remove("urgent");
+    }
+
+    function updateTimerDisplay() {
+      el("timerD").textContent = pad(Math.floor(tSec / 60)) + ":" + pad(tSec % 60);
+    }
+
+    function timerFinishEffect() {
+      el("timerBox").classList.remove("urgent");
+      // Shockwave + text effect
+      const overlay = el("timerOverlay");
+      overlay.classList.add("active");
+      // Конфетти тоже
+      confetti();
+      setTimeout(() => { overlay.classList.remove("active"); }, 3000);
+    }
+
+    function pad(n) { return String(n).padStart(2, "0"); }
 
     /* ── КОНФЕТТИ ── */
-    function confetti() {
-      const wrap = el("confWrap"); wrap.innerHTML = "";
-      const cols = ["#0e7fc2", "#d95f0a", "#186640", "#ffd080", "#b8ddf5", "#f07830"];
-      for (let i = 0; i < 60; i++) {
-        const c = document.createElement("div");
-        c.className = "confetti-piece";
-        c.style.cssText = `left:${Math.random() * 100}%;background:${cols[i % cols.length]};width:${6 + Math.random() * 8}px;height:${6 + Math.random() * 8}px;border-radius:${Math.random() > 0.5 ? "50%" : "2px"};animation-duration:${1.2 + Math.random() * 1.5}s;animation-delay:${Math.random() * 0.4}s`;
+    function confetti(){
+      const wrap=el("confWrap");wrap.innerHTML="";
+      const cols=["#0e7fc2","#d95f0a","#186640","#ffd080","#b8ddf5","#f07830"];
+      for(let i=0;i<60;i++){
+        const c=document.createElement("div");c.className="confetti-piece";
+        c.style.cssText=`left:${Math.random()*100}%;background:${cols[i%cols.length]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>.5?"50%":"2px"};animation-duration:${1.2+Math.random()*1.5}s;animation-delay:${Math.random()*0.4}s`;
         wrap.appendChild(c);
       }
-      setTimeout(() => { wrap.innerHTML = ""; }, 3000);
+      setTimeout(()=>{wrap.innerHTML="";},3000);
     }
 
     /* ── ПАНЕЛЬ ПРЕПОДАВАТЕЛЯ ── */
-    let tpOpen = false;
-    function toggleTeacher() {
-      if (!tpOpen) { const p = prompt("Пароль:"); if (p !== PASS) return; }
-      tpOpen = !tpOpen;
-      el("tp").classList.toggle("open", tpOpen);
-      el("tBtn").classList.toggle("on", tpOpen);
+    let tpOpen=false;
+    function toggleTeacher(){
+      if(!tpOpen){const p=prompt("Пароль:");if(p!==PASS)return;isTeacherMode=true;}
+      tpOpen=!tpOpen;
+      el("tp").classList.toggle("open",tpOpen);
+      el("tBtn").classList.toggle("on",tpOpen);
     }
-    const VL = ["SELECT-запросы", "WHERE-фильтрация", "INSERT INTO", "COUNT/AVG/SUM"];
-    function tpV(data) { const c = [0, 0, 0, 0]; Object.values(data).forEach(v => { if (c[v] !== undefined) c[v]++; }); const t = c.reduce((a, b) => a + b, 0) || 1; el("tpV").innerHTML = VL.map((l, i) => `<div class="tp-vb"><div style="font-size:11px;color:#c8d8f0">${l}</div><div style="display:flex;align-items:center;gap:8px"><div class="tp-vf" style="width:${Math.round(c[i] / t * 100)}%;flex:1;min-height:4px"></div><span style="font-family:var(--mono);font-size:10px;color:var(--or4);white-space:nowrap">${c[i]} (${Math.round(c[i] / t * 100)}%)</span></div></div>`).join(""); }
-    function tpTopics(data) { const items = Object.values(data).sort((a, b) => (b.votes || 0) - (a.votes || 0)); el("tpT").innerHTML = items.length ? items.map(it => `<div class="tp-row"><span class="tp-au">${it.name || "?"}</span><span class="tp-bd">${it.text}</span><span style="font-family:var(--mono);font-size:10px;color:var(--or4)">▲${it.votes || 0}</span></div>`).join("") : '<div style="font-size:11px;color:#4e6890">Нет предложений</div>'; }
-    function tpQs(data) { const items = Object.values(data).sort((a, b) => (b.t || 0) - (a.t || 0)); el("tpQ").innerHTML = items.length ? items.map(it => `<div class="tp-row"><span class="tp-au">${it.name || "?"}</span><span class="tp-bd">${it.text}</span></div>`).join("") : '<div style="font-size:11px;color:#4e6890">Нет вопросов</div>'; }
-    function tpScores(data) { const items = Object.values(data).sort((a, b) => (b.score || 0) - (a.score || 0)); el("tpSc").innerHTML = items.length ? items.map(it => `<div class="tp-st"><span style="color:#c8d8f0;font-size:11px">${it.name || "?"}</span><span class="tp-nm">${it.score}/7</span></div>`).join("") : '<div style="font-size:11px;color:#4e6890">Нет данных</div>'; }
-    if (!db) { ["tpV", "tpT", "tpQ", "tpSc"].forEach(id => { el(id).innerHTML = '<div style="font-size:11px;color:#4e6890">Firebase не настроен — только локальный режим</div>'; }); }
+    const VL=["SELECT-запросы","WHERE-фильтрация","INSERT INTO","COUNT/AVG/SUM"];
+    function tpV(data){const c=[0,0,0,0];Object.values(data).forEach(v=>{if(c[v]!==undefined)c[v]++;});const t=c.reduce((a,b)=>a+b,0)||1;el("tpV").innerHTML=VL.map((l,i)=>`<div class="tp-vb"><div style="font-size:11px;color:#c8d8f0">${l}</div><div style="display:flex;align-items:center;gap:8px"><div class="tp-vf" style="width:${Math.round(c[i]/t*100)}%;flex:1;min-height:4px"></div><span style="font-family:var(--mono);font-size:10px;color:var(--or4);white-space:nowrap">${c[i]} (${Math.round(c[i]/t*100)}%)</span></div></div>`).join("");}
+    function tpTopics(data){const items=Object.values(data).sort((a,b)=>(b.votes||0)-(a.votes||0));el("tpT").innerHTML=items.length?items.map(it=>`<div class="tp-row"><span class="tp-au">${it.name||"?"}</span><span class="tp-bd">${it.text}</span><span style="font-family:var(--mono);font-size:10px;color:var(--or4)">▲${it.votes||0}</span></div>`).join(""):'<div style="font-size:11px;color:#4e6890">Нет предложений</div>';}
+    function tpQs(data){const items=Object.values(data).sort((a,b)=>(b.t||0)-(a.t||0));el("tpQ").innerHTML=items.length?items.map(it=>`<div class="tp-row"><span class="tp-au">${it.name||"?"}</span><span class="tp-bd">${it.text}</span></div>`).join(""):'<div style="font-size:11px;color:#4e6890">Нет вопросов</div>';}
+    function tpScores(data){const items=Object.values(data).sort((a,b)=>(b.score||0)-(a.score||0));el("tpSc").innerHTML=items.length?items.map(it=>`<div class="tp-st"><span style="color:#c8d8f0;font-size:11px">${it.name||"?"}</span><span class="tp-nm">${it.score}/7</span></div>`).join(""):'<div style="font-size:11px;color:#4e6890">Нет данных</div>';}
+    if(!db){["tpV","tpT","tpQ","tpSc"].forEach(id=>{el(id).innerHTML='<div style="font-size:11px;color:#4e6890">Firebase не настроен — только локальный режим</div>';});}
 
-    /* ── IN-BROWSER SQL.JS ── */
-    let dbSQL = null;
-    initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}` }).then(function(SQL){
-      dbSQL = new SQL.Database();
-      dbSQL.run(`
-        CREATE TABLE Priemy (
-          ID INTEGER PRIMARY KEY,
-          FIO_pacienta TEXT,
-          Telefon TEXT,
-          FIO_vracha TEXT,
-          Spec TEXT,
-          Usluga TEXT,
-          Tsena INTEGER,
-          Cabinet TEXT
-        );
-        INSERT INTO Priemy (FIO_pacienta, Telefon, FIO_vracha, Spec, Usluga, Tsena, Cabinet) VALUES 
-        ('Иванов П.С.', '+79001112233', 'Петрова А.И.', 'Терапевт', 'Первичный приём', 800, '101'),
-        ('Смирнова О.В.', '+79002223344', 'Сидоров В.П.', 'Кардиолог', 'ЭКГ', 1200, '202'),
-        ('Смирнова О.В.', '+79002223344', 'Сидоров В.П.', 'Кардиолог', 'Консультация', 2500, '202'),
-        ('Кузнецов И.А.', '+79003334455', 'Петрова А.И.', 'Терапевт', 'Справка', 500, '101'),
-        ('Волков А.М.', '+79008889900', 'Смирнов Д.С.', 'Офтальмолог', 'Проверка зрения', 1100, '305'),
-        ('Николаев С.П.', '+79001110011', 'Сидоров В.П.', 'Кардиолог', 'Повторный приём', 900, '202');
-      `);
-    });
+    /* ── ВСТРОЕННЫЙ SQL (sql.js) ── */
+    let sqlDB = null;
+    const SQL_DATA = [
+      [1,"Иванов П.С.","+79221001010","Петрова А.И.","Терапевт","Первичный приём",800,"101"],
+      [2,"Смирнова О.В.","+79221002020","Сидоров В.П.","Кардиолог","ЭКГ",1200,"205"],
+      [3,"Козлов А.Н.","+79221003030","Петрова А.И.","Терапевт","Повторный приём",500,"101"],
+      [4,"Иванов П.С.","+79221001010","Морозова Е.С.","Невролог","Консультация",1500,"310"],
+      [5,"Смирнова О.В.","+79221002020","Сидоров В.П.","Кардиолог","УЗИ сердца",2500,"205"],
+      [6,"Петров К.И.","+79221004040","Петрова А.И.","Терапевт","Анализы",600,"101"],
+      [7,"Козлов А.Н.","+79221003030","Морозова Е.С.","Невролог","МРТ",3500,"310"],
+      [8,"Сидорова М.В.","+79221005050","Сидоров В.П.","Кардиолог","Первичный приём",900,"205"],
+      [9,"Петров К.И.","+79221004040","Сидоров В.П.","Кардиолог","ЭКГ",1200,"205"],
+      [10,"Иванов П.С.","+79221001010","Петрова А.И.","Терапевт","Консультация",700,"101"],
+    ];
 
-    function runInBrowserSQL(inputId, resId) {
-      if(!dbSQL) { alert("База данных еще загружается, подождите секунду..."); return; }
-      const query = el(inputId).value.trim();
-      const resDiv = el(resId);
-      if(!query) { resDiv.innerHTML = '<span style="color:var(--re)">Введите запрос!</span>'; return; }
+    async function initSQLite() {
       try {
-        const stmt = dbSQL.prepare(query);
-        let rows = [];
-        while(stmt.step()) { rows.push(stmt.getAsObject()); }
-        stmt.free();
-        
-        if(rows.length === 0) { resDiv.innerHTML = '<span style="color:var(--mu)">Запрос выполнен (0 строк)</span>'; return; }
-        
-        const cols = Object.keys(rows[0]);
-        resDiv.innerHTML = `<table class="dtbl">
-          <thead><tr>${cols.map(c => `<th>${c}</th>`).join('')}</tr></thead>
-          <tbody>${rows.map(r => `<tr>${cols.map(c => `<td>${r[c]}</td>`).join('')}</tr>`).join('')}</tbody>
-        </table>`;
-      } catch(err) {
-        resDiv.innerHTML = `<span style="color:var(--re)">Error: ${err.message}</span>`;
+        const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${file}` });
+        sqlDB = new SQL.Database();
+        sqlDB.run("CREATE TABLE Priemy (ID INTEGER PRIMARY KEY, FIO_pacienta TEXT, Telefon TEXT, FIO_vracha TEXT, Spec TEXT, Usluga TEXT, Tsena INTEGER, Cabinet TEXT)");
+        SQL_DATA.forEach(r => {
+          sqlDB.run("INSERT INTO Priemy VALUES (?,?,?,?,?,?,?,?)", r);
+        });
+      } catch(e) { console.error("SQL.js init failed:", e); }
+    }
+
+    function runSQL(inputId, resultId) {
+      if (!sqlDB) { el(resultId).innerHTML = '<div class="sql-result-msg err">База данных загружается… Попробуйте через секунду.</div>'; return; }
+      const query = el(inputId).value.trim();
+      if (!query) return;
+      try {
+        const results = sqlDB.exec(query);
+        if (results.length === 0) {
+          el(resultId).innerHTML = '<div class="sql-result-msg ok">✓ Запрос выполнен (нет данных для отображения)</div>';
+        } else {
+          const r = results[0];
+          el(resultId).innerHTML = `<table><thead><tr>${r.columns.map(c => `<th>${c}</th>`).join("")}</tr></thead>
+            <tbody>${r.values.map(row => `<tr>${row.map(v => `<td>${v === null ? 'NULL' : v}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+        }
+      } catch (err) {
+        el(resultId).innerHTML = `<div class="sql-result-msg err">✗ Ошибка: ${err.message}</div>`;
       }
     }
+
+    initSQLite();
   </script>
 </body>
-
 </html>
