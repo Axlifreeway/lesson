@@ -336,19 +336,6 @@
     .mt16 { margin-top: 16px }
     .mb12 { margin-bottom: 12px }
 
-    /* ── АВТОРИЗАЦИЯ ПО КОДУ ── */
-    .auth-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--cy); z-index: 9000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; }
-    .auth-box { text-align: center; max-width: 400px; width: 90%; }
-    .auth-title { font-family: var(--cond); font-size: 28px; font-weight: 700; margin-bottom: 8px; }
-    .auth-sub { font-size: 14px; color: #b8ddf5; margin-bottom: 24px; }
-    .auth-input { width: 100%; padding: 14px 18px; font-family: var(--mono); font-size: 24px; text-align: center; letter-spacing: .15em; background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.3); color: #fff; outline: none; }
-    .auth-input::placeholder { color: rgba(255,255,255,.35); font-size: 16px; letter-spacing: .05em; }
-    .auth-input:focus { border-color: #fff; }
-    .auth-enter { margin-top: 16px; font-family: var(--cond); font-weight: 700; font-size: 16px; padding: 12px 36px; background: var(--or); color: #fff; border: none; cursor: pointer; }
-    .auth-code-display { margin-top: 24px; font-family: var(--mono); font-size: 12px; color: #b8ddf5; }
-    .auth-code-display strong { color: #fff; font-size: 14px; }
-    .auth-or { font-size: 12px; color: #b8ddf5; margin: 16px 0; }
-
     /* ── Print button ── */
     .print-btn { font-family: var(--cond); font-size: 11px; font-weight: 700; padding: 4px 10px; background: none; border: 1px solid rgba(255,255,255,.3); color: #b8ddf5; cursor: pointer; }
     .print-btn:hover { background: rgba(255,255,255,.1); }
@@ -362,18 +349,6 @@
 </head>
 
 <body>
-
-  <!-- ══ АВТОРИЗАЦИЯ ══ -->
-  <div class="auth-overlay" id="authOverlay">
-    <div class="auth-box">
-      <div class="auth-title">Электронная тетрадь</div>
-      <div class="auth-sub">ОПЦ.03 Базы данных · Комбинированный урок</div>
-      <input class="auth-input" id="authCode" placeholder="Код доступа" maxlength="10" onkeydown="if(event.key==='Enter')tryAuth()">
-      <br>
-      <button class="auth-enter" onclick="tryAuth()">Войти</button>
-      <div class="auth-code-display" id="authHint"></div>
-    </div>
-  </div>
 
   <!-- ══ ШАПКА ══ -->
   <header class="hdr">
@@ -396,10 +371,10 @@
       <a class="sn" href="#s1">Целеполагание</a>
       <a class="sn" href="#s2">Повторение</a>
       <a class="sn" href="#s3">Демонстрация</a>
-      <a class="sn" href="#s5">Практика</a>
-      <a class="sn" href="#s6">ДЗ</a>
-      <a class="sn" href="#s7">Рефлексия</a>
-      <a class="sn" href="#s8">Оценивание</a>
+      <a class="sn" href="#s4">Практика</a>
+      <a class="sn" href="#s5">ДЗ</a>
+      <a class="sn" href="#s6">Рефлексия</a>
+      <a class="sn" href="#s7">Оценивание</a>
     </div>
   </nav>
 
@@ -678,7 +653,7 @@
     <hr class="rule">
 
     <!-- ── 05 ПРАКТИКА ── -->
-    <section class="sec sec-locked" id="s5" data-sec="5">
+    <section class="sec sec-locked" id="s4" data-sec="4">
       <div class="sec-hd">
         <span class="sec-tag">04</span>
         <span class="sec-name">Практическая работа</span>
@@ -742,7 +717,7 @@
     <hr class="rule">
 
     <!-- ── 06 ДОМАШНЕЕ ЗАДАНИЕ ── -->
-    <section class="sec sec-locked" id="s6" data-sec="6">
+    <section class="sec sec-locked" id="s5" data-sec="5">
       <div class="sec-hd">
         <span class="sec-tag">05</span>
         <span class="sec-name">Домашнее задание</span>
@@ -752,7 +727,7 @@
         <div class="card">
           <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--or);margin-bottom:8px">Домашнее задание по SQL</div>
           <p style="font-size:14px;color:var(--tx2);line-height:1.7;margin-bottom:16px">
-            Откройте эту тетрадь дома (по тому же коду доступа) и используйте SQL-песочницу.<br>
+            Откройте эту тетрадь дома и используйте SQL-песочницу.<br>
             Выполните <strong>5 заданий по SQL</strong>: напишите запросы и сохраните результаты скриншотами.
           </p>
           <ol style="font-size:14px;color:var(--tx2);line-height:2;padding-left:20px">
@@ -777,7 +752,7 @@
     <hr class="rule">
 
     <!-- ── 07 РЕФЛЕКСИЯ ── -->
-    <section class="sec sec-locked" id="s7" data-sec="7">
+    <section class="sec sec-locked" id="s6" data-sec="6">
       <div class="sec-hd">
         <span class="sec-tag">06</span>
         <span class="sec-name">Рефлексия — П-О-П-С</span>
@@ -800,7 +775,7 @@
     <hr class="rule">
 
     <!-- ── 08 ОЦЕНИВАНИЕ ── -->
-    <section class="sec sec-locked" id="s8" data-sec="8">
+    <section class="sec sec-locked" id="s7" data-sec="7">
       <div class="sec-hd">
         <span class="sec-tag">07</span>
         <span class="sec-name">Подведение итогов, оценивание</span>
@@ -947,8 +922,8 @@
     const SESSION = "lesson_" + new Date().toISOString().slice(0, 10);
 
     // Обновлённые секции (без физкультминутки)
-    const SEC_IDS = [1, 2, 3, 5, 6, 7, 8];
-    const SEC_NAMES = { 1: "Целеполагание", 2: "Актуализация", 3: "Демонстрация", 5: "Практика", 6: "ДЗ", 7: "Рефлексия", 8: "Оценивание" };
+    const SEC_IDS = [1, 2, 3, 4, 5, 6, 7];
+    const SEC_NAMES = { 1: "Целеполагание", 2: "Актуализация", 3: "Демонстрация", 4: "Практика", 5: "ДЗ", 6: "Рефлексия", 7: "Оценивание" };
 
     let db = null;
     let SK = localStorage.getItem("sk") || ("s" + Math.random().toString(36).slice(2, 9));
@@ -961,25 +936,6 @@
     function el(id) { return document.getElementById(id); }
     function ld(k, d) { try { return JSON.parse(localStorage.getItem(k)) || d; } catch { return d; } }
     function sv(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
-
-    /* ── АВТОРИЗАЦИЯ ── */
-    const AUTH_CODE = "sql2025db"; // Код для студентов
-    let authed = localStorage.getItem("authed_session") === SESSION;
-    if (authed) {
-      el("authOverlay").style.display = "none";
-    }
-    function tryAuth() {
-      const code = el("authCode").value.trim().toLowerCase();
-      if (code === AUTH_CODE || code === PASS) {
-        localStorage.setItem("authed_session", SESSION);
-        el("authOverlay").style.display = "none";
-        authed = true;
-      } else {
-        el("authHint").innerHTML = '<span style="color:#ffad7a">Неверный код. Попробуйте ещё раз.</span>';
-        el("authCode").style.borderColor = "#ffad7a";
-        setTimeout(() => { el("authCode").style.borderColor = "rgba(255,255,255,.3)"; }, 1500);
-      }
-    }
 
     /* ── Firebase ── */
     function initFB() {
