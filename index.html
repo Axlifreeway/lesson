@@ -42,6 +42,7 @@
     @media print {
       .hdr, .sub, .timer, #tp, .confetti-wrap, .tbtn, .btn, .sec-rate, .lock-overlay,
       .task-return, .hdr-right, #timerOverlay { display: none !important; }
+      .bb-hidden { display: none !important; }
       .sec-locked .sec-body { opacity: 1 !important; pointer-events: auto !important; filter: none !important; }
       .sec-locked { position: static !important; }
       body { font-size: 12px; background: #fff; }
@@ -270,7 +271,8 @@
     @keyframes confFall { to { transform: translateY(110vh) rotate(720deg); opacity: 0 } }
 
     /* ── ТАЙМЕР ── */
-    .timer { position: fixed; bottom: 20px; right: 20px; background: var(--cy); color: #fff; border-bottom: 3px solid var(--or); padding: 9px 16px; display: flex; align-items: center; gap: 10px; z-index: 400; font-family: var(--mono); font-size: 16px; font-weight: 600; box-shadow: 0 4px 16px rgba(14,127,194,.3) }
+    .timer { position: fixed; bottom: 20px; right: 20px; background: var(--cy); color: #fff; border-bottom: 3px solid var(--or); padding: 9px 16px; display: flex; align-items: center; gap: 10px; z-index: 400; font-family: var(--mono); font-size: 16px; font-weight: 600; box-shadow: 0 4px 16px rgba(14,127,194,.3); transition: right .3s }
+    #tp.open ~ .timer, body:has(#tp.open) .timer { right: 380px }
     .timer.urgent { animation: timerPulse 1s ease infinite; }
     @keyframes timerPulse { 0%,100% { box-shadow: 0 4px 16px rgba(14,127,194,.3); } 50% { box-shadow: 0 4px 24px rgba(217,95,10,.6); background: var(--or); } }
     .tbtn2 { background: none; border: none; color: var(--or4); cursor: pointer; font-size: 13px; padding: 0 }
@@ -331,6 +333,31 @@
 
     /* ── СЕТКИ ── */
     .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px }
+
+    /* ── ЧЁРНЫЙ ЯЩИК ── */
+    .bb-hidden { display: none !important }
+    .bb-reveal { animation: bbReveal .8s cubic-bezier(.22,1,.36,1) forwards }
+    @keyframes bbReveal { 0% { opacity:0; transform: translateY(30px) scale(.97) } 100% { opacity:1; transform: translateY(0) scale(1) } }
+    .bb-hd { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid #1a1a2e; padding-bottom: 9px; margin-bottom: 20px }
+    .bb-tag { font-family: var(--mono); font-size: 10px; font-weight: 600; border: 1px solid #fff; color: #fff; background: #1a1a2e; padding: 2px 10px }
+    .bb-name { font-family: var(--cond); font-size: 21px; font-weight: 700; color: #1a1a2e }
+    .bb-card { background: #1a1a2e; border: 1px solid #2d2d4a; color: #e0e0f0; padding: 20px 24px; margin-bottom: 14px }
+    .bb-card-head { font-family: var(--cond); font-size: 14px; font-weight: 700; color: #ffd080; margin-bottom: 8px }
+    .bb-card p { font-size: 13px; color: #b0b0d0; line-height: 1.6 }
+    .bb-card .code { background: #0d0d1a; border: 1px solid #2d2d4a }
+    .bb-card .code-in { background: #12122a; color: #e0e0f0; border-color: #3a3a5a; border-left-color: #ffd080 }
+    .bb-card .code-in:focus { border-left-color: #ff8844 }
+    .bb-card .lbl { color: #8888aa }
+    .bb-intro { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 2px solid #ffd080; padding: 20px 24px; margin-bottom: 18px; text-align: center }
+    .bb-intro-icon { font-size: 48px; margin-bottom: 8px }
+    .bb-intro-title { font-family: var(--cond); font-size: 18px; font-weight: 700; color: #ffd080; margin-bottom: 6px }
+    .bb-intro-sub { font-size: 13px; color: #8888aa; line-height: 1.5 }
+    .bb-difficulty { display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 600; padding: 2px 8px; margin-left: 8px; border-radius: 2px }
+    .bb-diff-1 { background: #2d4a2d; color: #9ee89e }
+    .bb-diff-2 { background: #4a3d1a; color: #ffd080 }
+    .bb-diff-3 { background: #4a1a1a; color: #ff8888 }
+    .bb-nav-link { background: #1a1a2e; color: #ffd080; border-bottom-color: #1a1a2e }
+    .bb-nav-link:hover { color: #fff; border-bottom-color: #ffd080 }
     .mt8 { margin-top: 8px }
     .mt12 { margin-top: 12px }
     .mt16 { margin-top: 16px }
@@ -373,6 +400,7 @@
       <a class="sn" href="#s3">Демонстрация</a>
       <a class="sn" href="#s4">Практика</a>
       <a class="sn" href="#s5">ДЗ</a>
+      <a class="sn bb-hidden bb-nav-link" id="bbNav" href="#sBB">◼ Чёрный ящик</a>
       <a class="sn" href="#s6">Рефлексия</a>
       <a class="sn" href="#s7">Оценивание</a>
     </div>
@@ -693,13 +721,13 @@
           </div>
 
           <div class="ins-grid">
-            <div><label class="lbl">FIO_pacienta (текст — в кавычках)</label><input class="ins-f" id="i0" placeholder="'Нилов Андрей'"></div>
-            <div><label class="lbl">Telefon (текст)</label><input class="ins-f" id="i1" placeholder="'+79221009090'"></div>
-            <div><label class="lbl">FIO_vracha (текст)</label><input class="ins-f" id="i2" placeholder="'Петрова А.И.'"></div>
-            <div><label class="lbl">Spec (текст)</label><input class="ins-f" id="i3" placeholder="'Терапевт'"></div>
-            <div><label class="lbl">Usluga (текст)</label><input class="ins-f" id="i4" placeholder="'Консультация'"></div>
-            <div><label class="lbl">Tsena (число, без кавычек)</label><input class="ins-f" id="i5" placeholder="700"></div>
-            <div><label class="lbl">Cabinet (текст)</label><input class="ins-f" id="i6" placeholder="'101'"></div>
+            <div><label class="lbl">FIO_pacienta (текст — в кавычках)</label><input class="ins-f" id="i0" placeholder="Текстовое значение в кавычках"></div>
+            <div><label class="lbl">Telefon (текст)</label><input class="ins-f" id="i1" placeholder="Текстовое значение в кавычках"></div>
+            <div><label class="lbl">FIO_vracha (текст)</label><input class="ins-f" id="i2" placeholder="Текстовое значение в кавычках"></div>
+            <div><label class="lbl">Spec (текст)</label><input class="ins-f" id="i3" placeholder="Текстовое значение в кавычках"></div>
+            <div><label class="lbl">Usluga (текст)</label><input class="ins-f" id="i4" placeholder="Текстовое значение в кавычках"></div>
+            <div><label class="lbl">Tsena (число, без кавычек)</label><input class="ins-f" id="i5" placeholder="Числовое значение"></div>
+            <div><label class="lbl">Cabinet (текст)</label><input class="ins-f" id="i6" placeholder="Текстовое значение в кавычках"></div>
           </div>
           <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
             <button class="btn btn-or" onclick="checkInsert()">Проверить</button>
@@ -744,12 +772,97 @@
             <span class="nb-cmd">MAX()</span> — максимальное значение &nbsp;
             <span class="nb-cmd">MIN()</span> — минимальное значение</div>
           </div>
+
+          <div class="warn mt12" style="display:flex;align-items:flex-start;gap:10px">
+            <span style="font-size:18px;flex-shrink:0">📧</span>
+            <div>
+              <strong>Как сдать:</strong> Сделайте скриншоты выполненных запросов и результатов, соберите их в один документ (Word или PDF) и отправьте на почту преподавателя:<br>
+              <a href="mailto:a.a.aleshkin@utmn.ru" style="font-family:var(--mono);font-size:14px;color:var(--cy);font-weight:600;text-decoration:none;border-bottom:1px dashed var(--cy)">a.a.aleshkin@utmn.ru</a><br>
+              <span style="font-size:12px;color:var(--mu)">Тема письма: <span style="font-family:var(--mono)">БД ДЗ — Фамилия Имя — Группа</span></span>
+            </div>
+          </div>
         </div>
         <div class="task-return">ДЗ продолжает нашу задачу — применение SQL в самостоятельной работе.</div>
         <div class="sec-rate"><span class="sec-rate-label">Оцените этап:</span><div class="rate-dots" id="sr5"></div></div>
       </div>
     </section>
     <hr class="rule">
+
+    <!-- ── ЧЁРНЫЙ ЯЩИК (скрыт по умолчанию) ── -->
+    <section class="sec bb-hidden" id="sBB">
+      <div class="bb-hd">
+        <span class="bb-tag">◼</span>
+        <span class="bb-name">Чёрный ящик</span>
+        <span class="sec-min" style="color:#1a1a2e">доп. задания</span>
+      </div>
+
+      <div class="bb-intro">
+        <div class="bb-intro-icon">📦</div>
+        <div class="bb-intro-title">Задания повышенной сложности</div>
+        <div class="bb-intro-sub">Основная работа выполнена? Отлично. Здесь — задачи, которые<br>проверяют глубокое понимание SQL. Используйте песочницу выше.</div>
+      </div>
+
+      <!-- Задание BB-1 -->
+      <div class="bb-card">
+        <div class="bb-card-head">Задание BB-1 <span class="bb-difficulty bb-diff-1">★</span> — WHERE с несколькими условиями</div>
+        <p style="margin-bottom:12px">Выведите ФИО пациента, услугу и цену для приёмов, где цена <strong>от 800 до 1500</strong> рублей включительно и врач — <strong>не</strong> «Петрова А.И.».</p>
+        <div class="info" style="background:#12122a;border-color:#ffd080;color:#b0b0d0;font-size:12px">
+          <strong style="color:#ffd080">Подсказка:</strong> <code style="color:#7fbbff">WHERE Tsena BETWEEN 800 AND 1500</code> — диапазон, <code style="color:#7fbbff">AND FIO_vracha != '...'</code> — исключение
+        </div>
+        <label class="lbl mt12">Ваш запрос</label>
+        <textarea class="code-in" id="bb1" rows="2" placeholder="SELECT ..."></textarea>
+      </div>
+
+      <!-- Задание BB-2 -->
+      <div class="bb-card">
+        <div class="bb-card-head">Задание BB-2 <span class="bb-difficulty bb-diff-1">★</span> — WHERE + LIKE + OR</div>
+        <p style="margin-bottom:12px">Найдите все приёмы, где услуга содержит слово <strong>«приём»</strong> или специальность врача — <strong>«Невролог»</strong>. Выведите ФИО пациента, услугу и специальность.</p>
+        <div class="info" style="background:#12122a;border-color:#ffd080;color:#b0b0d0;font-size:12px">
+          <strong style="color:#ffd080">Подсказка:</strong> <code style="color:#7fbbff">LIKE '%приём%'</code> — поиск подстроки, <code style="color:#7fbbff">OR</code> — «или»
+        </div>
+        <label class="lbl mt12">Ваш запрос</label>
+        <textarea class="code-in" id="bb2" rows="2" placeholder="SELECT ..."></textarea>
+      </div>
+
+      <!-- Задание BB-3 -->
+      <div class="bb-card">
+        <div class="bb-card-head">Задание BB-3 <span class="bb-difficulty bb-diff-2">★★</span> — GROUP BY + агрегатные функции</div>
+        <p style="margin-bottom:12px">Для каждой <strong>специальности врача</strong> подсчитайте количество приёмов и среднюю стоимость услуги. Переименуйте столбцы: <strong>«Кол_во_приемов»</strong> и <strong>«Средняя_цена»</strong>.</p>
+        <div class="info" style="background:#12122a;border-color:#ffd080;color:#b0b0d0;font-size:12px">
+          <strong style="color:#ffd080">Подсказка:</strong> <code style="color:#7fbbff">COUNT(*) AS Кол_во_приемов</code> — псевдоним столбца через <code style="color:#7fbbff">AS</code>
+        </div>
+        <label class="lbl mt12">Ваш запрос</label>
+        <textarea class="code-in" id="bb3" rows="2" placeholder="SELECT ..."></textarea>
+      </div>
+
+      <!-- Задание BB-4 -->
+      <div class="bb-card">
+        <div class="bb-card-head">Задание BB-4 <span class="bb-difficulty bb-diff-2">★★</span> — MIN, MAX, SUM + AS</div>
+        <p style="margin-bottom:12px">Выведите для каждого <strong>врача</strong>: ФИО, минимальную цену (<strong>Мин_цена</strong>), максимальную цену (<strong>Макс_цена</strong>) и общую сумму всех приёмов (<strong>Выручка</strong>).</p>
+        <div class="info" style="background:#12122a;border-color:#ffd080;color:#b0b0d0;font-size:12px">
+          <strong style="color:#ffd080">Подсказка:</strong> <code style="color:#7fbbff">MIN(Tsena) AS Мин_цена, MAX(Tsena) AS Макс_цена, SUM(Tsena) AS Выручка</code> + <code style="color:#7fbbff">GROUP BY</code>
+        </div>
+        <label class="lbl mt12">Ваш запрос</label>
+        <textarea class="code-in" id="bb4" rows="2" placeholder="SELECT ..."></textarea>
+      </div>
+
+      <!-- Задание BB-5 -->
+      <div class="bb-card">
+        <div class="bb-card-head">Задание BB-5 <span class="bb-difficulty bb-diff-2">★★</span> — Сводный отчёт по кабинетам</div>
+        <p style="margin-bottom:12px">Составьте отчёт по <strong>кабинетам</strong>: для каждого кабинета выведите номер, количество приёмов (<strong>Всего_приемов</strong>), среднюю цену (<strong>Средняя_цена</strong>) и количество уникальных врачей (<strong>Врачей</strong>). Отсортируйте по количеству приёмов от большего к меньшему.</p>
+        <div class="info" style="background:#12122a;border-color:#ffd080;color:#b0b0d0;font-size:12px">
+          <strong style="color:#ffd080">Подсказка:</strong> <code style="color:#7fbbff">COUNT(DISTINCT FIO_vracha) AS Врачей</code> — подсчёт уникальных значений
+        </div>
+        <label class="lbl mt12">Ваш запрос</label>
+        <textarea class="code-in" id="bb5" rows="3" placeholder="SELECT ..."></textarea>
+      </div>
+
+      <div class="bb-card" style="text-align:center;border:2px dashed #ffd080;background:transparent">
+        <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:#ffd080;margin-bottom:4px">Все задания решены?</div>
+        <p style="color:#8888aa;font-size:13px">Покажите результаты преподавателю — он оценит ваш уровень лично.</p>
+      </div>
+    </section>
+    <hr class="rule bb-hidden" id="bbHr">
 
     <!-- ── 07 РЕФЛЕКСИЯ ── -->
     <section class="sec sec-locked" id="s6" data-sec="6">
@@ -873,6 +986,27 @@
       <div class="sec-ctrl">
         <span class="sc-name">Показать результаты студентам</span>
         <button class="sc-btn locked" id="matchRevealBtn" onclick="toggleMatchReveal()">🔒 Скрыт</button>
+      </div>
+    </div>
+
+    <div class="tp-sec">
+      <div class="tp-stl" style="color:#ffd080">◼ Чёрный ящик</div>
+      <div class="sec-ctrl" style="border-color:#ffd080">
+        <span class="sc-name">Доп. задания для быстрых</span>
+        <button class="sc-btn locked" id="bbTeacherBtn" onclick="toggleBlackBox()" style="border-color:#ffd080">📦 Скрыт</button>
+      </div>
+    </div>
+
+    <div class="tp-sec">
+      <div class="tp-stl">Таймер урока</div>
+      <div class="sec-ctrl" style="flex-wrap:wrap;gap:8px">
+        <span class="sc-name" id="tpTimerDisplay" style="font-family:var(--mono);font-size:16px;color:#fff">45:00</span>
+        <div style="display:flex;gap:6px">
+          <button class="sc-btn unlocked" id="tpTimerBtn" onclick="toggleTimer()" style="min-width:70px">▶ Старт</button>
+          <button class="sc-btn locked" onclick="resetTimerTo(45)">45м</button>
+          <button class="sc-btn locked" onclick="resetTimerTo(30)">30м</button>
+          <button class="sc-btn locked" onclick="resetTimerTo(15)">15м</button>
+        </div>
       </div>
     </div>
 
@@ -1139,22 +1273,36 @@
       const slot = el("mslot" + slotIdx);
       slot.classList.remove("drag-over");
 
-      // If slot already has something, return it to pool
-      Object.entries(matchPlacements).forEach(([si, di]) => {
-        if (parseInt(si) === slotIdx) {
-          el("matchPool").appendChild(el("mdef" + di));
-          delete matchPlacements[si];
-        }
-      });
+      // Remember what was previously in this slot (if anything)
+      let displacedDefIdx = null;
+      if (matchPlacements[slotIdx] !== undefined) {
+        displacedDefIdx = matchPlacements[slotIdx];
+      }
 
-      // If this def was in another slot, remove it
+      // If this def was already in another slot, clear that slot
+      let sourceSlotIdx = null;
       Object.entries(matchPlacements).forEach(([si, di]) => {
-        if (di === defIdx) {
-          const oldSlot = el("mslot" + si);
-          oldSlot.innerHTML = '<span style="color:var(--mu);font-size:12px">Перетащите сюда</span>';
-          delete matchPlacements[si];
+        if (di === defIdx && parseInt(si) !== slotIdx) {
+          sourceSlotIdx = parseInt(si);
         }
       });
+      if (sourceSlotIdx !== null) {
+        const oldSlot = el("mslot" + sourceSlotIdx);
+        oldSlot.innerHTML = '<span style="color:var(--mu);font-size:12px">Перетащите сюда</span>';
+        oldSlot.classList.remove("filled");
+        delete matchPlacements[sourceSlotIdx];
+      }
+
+      // If same def is dropped to same slot, do nothing extra
+      if (displacedDefIdx !== null && displacedDefIdx !== defIdx) {
+        // Return displaced item to pool
+        el("matchPool").appendChild(el("mdef" + displacedDefIdx));
+        delete matchPlacements[slotIdx];
+      } else if (displacedDefIdx === defIdx) {
+        // Dropped same item back — just keep it
+        updateMatchSt();
+        return;
+      }
 
       // Place def in slot
       slot.innerHTML = "";
@@ -1425,22 +1573,26 @@
         clearInterval(tInt);
         tInt = setInterval(tickTimer, 1000);
         updateTimerDisplay();
+        updateTimerButtons();
       } else {
         tSec = d.remainSec !== undefined ? d.remainSec : 45 * 60;
         tOn = false;
         el("timerBtn").textContent = "▶";
         clearInterval(tInt);
         updateTimerDisplay();
+        updateTimerButtons();
       }
     }
 
     function startLocalTimer() {
       tOn = true; el("timerBtn").textContent = "⏸";
       tInt = setInterval(tickTimer, 1000);
+      updateTimerButtons();
     }
     function stopLocalTimer() {
       tOn = false; el("timerBtn").textContent = "▶";
       clearInterval(tInt);
+      updateTimerButtons();
     }
 
     function tickTimer() {
@@ -1458,7 +1610,26 @@
     }
 
     function updateTimerDisplay() {
-      el("timerD").textContent = pad(Math.floor(tSec / 60)) + ":" + pad(tSec % 60);
+      const txt = pad(Math.floor(tSec / 60)) + ":" + pad(tSec % 60);
+      el("timerD").textContent = txt;
+      const tpd = el("tpTimerDisplay");
+      if (tpd) tpd.textContent = txt;
+    }
+
+    function updateTimerButtons() {
+      const btn = el("tpTimerBtn");
+      if (btn) btn.textContent = tOn ? "⏸ Пауза" : "▶ Старт";
+    }
+
+    function resetTimerTo(mins) {
+      tSec = mins * 60;
+      tOn = false;
+      clearInterval(tInt);
+      el("timerBtn").textContent = "▶";
+      updateTimerDisplay();
+      updateTimerButtons();
+      el("timerBox").classList.remove("urgent");
+      if (db) R("timer").set({ running: false, remainSec: tSec });
     }
 
     function timerFinishEffect() {
@@ -1499,6 +1670,46 @@
     function tpQs(data){const items=Object.values(data).sort((a,b)=>(b.t||0)-(a.t||0));el("tpQ").innerHTML=items.length?items.map(it=>`<div class="tp-row"><span class="tp-au">${it.name||"?"}</span><span class="tp-bd">${it.text}</span></div>`).join(""):'<div style="font-size:11px;color:#4e6890">Нет вопросов</div>';}
     function tpScores(data){const items=Object.values(data).sort((a,b)=>(b.score||0)-(a.score||0));el("tpSc").innerHTML=items.length?items.map(it=>`<div class="tp-st"><span style="color:#c8d8f0;font-size:11px">${it.name||"?"}</span><span class="tp-nm">${it.score}/7</span></div>`).join(""):'<div style="font-size:11px;color:#4e6890">Нет данных</div>';}
     if(!db){["tpV","tpT","tpQ","tpSc"].forEach(id=>{el(id).innerHTML='<div style="font-size:11px;color:#4e6890">Firebase не настроен — только локальный режим</div>';});}
+
+    /* ── ЧЁРНЫЙ ЯЩИК ── */
+    let bbOpen = false;
+    function toggleBlackBox() {
+      bbOpen = !bbOpen;
+      if (db) R("blackBox").set(bbOpen);
+      else applyBlackBox(bbOpen);
+    }
+    function applyBlackBox(open) {
+      bbOpen = open;
+      const sec = el("sBB");
+      const hr = el("bbHr");
+      const nav = el("bbNav");
+      const btn = el("bbTeacherBtn");
+      if (open) {
+        sec.classList.remove("bb-hidden");
+        sec.classList.add("bb-reveal");
+        hr.classList.remove("bb-hidden");
+        nav.classList.remove("bb-hidden");
+        if (btn) { btn.textContent = "📦 Виден"; btn.className = "sc-btn unlocked"; }
+      } else {
+        sec.classList.add("bb-hidden");
+        sec.classList.remove("bb-reveal");
+        hr.classList.add("bb-hidden");
+        nav.classList.add("bb-hidden");
+        if (btn) { btn.textContent = "📦 Скрыт"; btn.className = "sc-btn locked"; }
+      }
+    }
+    // Firebase sync
+    if (db) {
+      R("blackBox").on("value", s => { applyBlackBox(s.val() === true); });
+    }
+    // Save BB answers locally
+    document.querySelectorAll("[id^='bb']").forEach(ta => {
+      if (ta.tagName === "TEXTAREA") {
+        const saved = ld("bb_" + ta.id, "");
+        if (saved) ta.value = saved;
+        ta.addEventListener("input", () => { sv("bb_" + ta.id, ta.value); });
+      }
+    });
 
     /* ── ВСТРОЕННЫЙ SQL (sql.js) ── */
     let sqlDB = null;
